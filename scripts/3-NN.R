@@ -9,6 +9,8 @@ libs <- c( 'ggplot2', 'rgdal',  'data.table',
           'spatsoc', 'igraph', 'asnipe')
 lapply(libs, require, character.only = TRUE)
 
+devtools::install_github("rOpenSci/spatsoc")
+
 ### Input raw data ----
 DT <- fread("input/FogoCaribou.csv")
 
@@ -16,7 +18,7 @@ DT[, datetime := as.POSIXct(paste(idate, itime), format = "%Y-%m-%d %H:%M:%S" )]
 
 ## subset data to only winter (Jan 1 to ~March 15)
 DT[JDate > 1 & JDate < 75, season := 'winter']
-DT <- DT[!is.na(season),]
+DT <- DT[!is.na(season)]
 
 ## create unique IDYr's
 DT$IDYr <- as.factor(paste(DT$ANIMAL_ID, DT$Year, sep = "_"))
@@ -29,9 +31,12 @@ DT <- group_times(DT, datetime = 'datetime', threshold = '5 minutes')
 ####################################################
 
 ## Nearest neighbor at end step
-edist <- edge_dist(DT = DT, id = 'IDYr', coords = c('NORTHING', 'EASTING'),
+edist <- edge_dist(DT = DT, id = 'IDYr', coords = c('EASTING', 'NORTHING'),
                    timegroup = 'timegroup', threshold = 50, returnDist = TRUE, 
+                   fillNA = FALSE,
                    splitBy = c("Year"))
+
+edist2 <- edist[ID1 == "FO2016012_2018" & ID2 == "FO2017003_2018"]
 
 
 ###### GENERATE NETWORKS FROM RANDOM POINTS ######
