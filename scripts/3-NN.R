@@ -28,10 +28,8 @@ DT <- group_times(DT, datetime = 'datetime', threshold = '5 minutes')
 ############# CALCULDATE DISTANCE ##################
 ####################################################
 
-coords <- c('EASTING', 'NORTHING')
-
 ## Nearest neighbor at end step
-edist <- edge_dist(DT = DT, id = 'IDYr', coords = coords,
+edist <- edge_dist(DT = DT, id = 'IDYr', coords = c('NORTHING', 'EASTING'),
                    timegroup = 'timegroup', threshold = 50, returnDist = TRUE, 
                    splitBy = c("Year"))
 
@@ -46,7 +44,8 @@ DT <- group_pts(
   coords = coords
 )
 
-
+ggplot(DT[Year == "2018"]) +
+  geom_point(aes(EASTING, NORTHING, color = ANIMAL_ID))
 
 
 
