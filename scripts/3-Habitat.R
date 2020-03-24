@@ -22,6 +22,7 @@ crs = CRS("+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
 lcFogo<-raster("../nl-landcover/output/fogo_lc.tif") 
 Legend<-fread("../nl-landcover/input/FogoPoly/Legend.csv", header=T, sep=",", quote="",fill=TRUE)
 
+colnames(Legend) <- c("Value", "habitat")
 ## If you want to look at the mao:
 spplot(lcFogo)
 
@@ -33,24 +34,15 @@ source("functions/ExtractPoints.R")
 ## Northing = y axis = ycoord = north to south = latitude
 
 ## extract habitat type at end step
-DT[, habitat := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2),
+DT[, Value := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2),
                                           raster = lcFogo)] 
 
 ## rename habitat types
-DT$habitat[DT$habitat == "1"] <- "Wetland" ## Wetland
-DT$habitat[DT$habitat == "2"] <- "Broadleaf" ## Broadleaf
-DT$habitat[DT$habitat == "3"] <- "ConiferForest" ## Conifer forest
-DT$habitat[DT$habitat == "4"] <- "ConiferScrub" ## conifer scrub
-DT$habitat[DT$habitat == "5"] <- "MixedWood" ## mixed wood
-DT$habitat[DT$habitat == "6"] <- "Rock" ## rock
-DT$habitat[DT$habitat == "7"] <- "Water" ## water
-DT$habitat[DT$habitat == "8"] <- "Lichen" ## lichen
-DT$habitat[DT$habitat == "9"] <- "Anthro" ## antrho
+DT <- merge(DT, Legend, by = 'Value')
 
 ## check number of fixes by habitat type 
 #note how there are very few broadleaf and mixedwood
 DT[, .N, by = "habitat"]
-
 
 ### This next chunk is to calculate the proportion of each habitat type in a given radius
 lcFogo[is.na(lcFogo)] <- 10
