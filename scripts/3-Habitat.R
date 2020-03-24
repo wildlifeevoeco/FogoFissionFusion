@@ -83,18 +83,13 @@ openMoveBuff100 <- focal(openMove,openMoveBuff,na.rm=TRUE,pad=TRUE,padValue=0)
 ForestBuff100 <- focal(Forest,ForestBuff,na.rm=TRUE,pad=TRUE,padValue=0)
 LichenBuff100 <- focal(Lichen,LichenBuff,na.rm=TRUE,pad=TRUE,padValue=0)
 
-## Proportion of habitat at end point
-ptsFogo <- SpatialPoints(data.frame(r1$x2_,r1$y2_))
+## Proportion of habitat at each relocation
+ptsFogo <- SpatialPoints(data.frame(DT$EASTING,DT$NORTHING))
 
 ## extract proportion of each habitat type
-r1$propOpenMove <- raster::extract(openMoveBuff100Fogo, ptsFogo)
-r1$propForest <- raster::extract(ForestBuff100Fogo,ptsFogo)
-r1$propLichen <- raster::extract(LichenBuff100Fogo,ptsFogo)
-
-## assign value to each iteration
-r1[, Year := year(t1_)]
-r1$IDYr <- paste(r1$ANIMAL_ID, r1$Year, sep = "_")
-r1[, iter := 1:(N+1), by = .(IDYr, t2_)]
+DT$propOpenMove <- raster::extract(openMoveBuff100, ptsFogo)
+DT$propForest <- raster::extract(ForestBuff100,ptsFogo)
+DT$propLichen <- raster::extract(LichenBuff100,ptsFogo)
 
 saveRDS(r1, "output/2-clean-all-rdm.RDS")
 
