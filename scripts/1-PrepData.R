@@ -68,7 +68,3 @@ fogo <- fogo[(lowEastFogo < EASTING & EASTING < highEastFogo) &
 ## Export data
 saveRDS(fogo, 'output/1-clean-all.Rds')
 
-message('=== PREP COMPLETE ===')
-
-
-
