@@ -22,7 +22,7 @@ lcFogo<-raster("/Users/quinnwebber/Google Drive/Fogo/Data/Landcover/FOGOSDSS_RS.
 Legend<-fread("/Users/quinnwebber/Google Drive/Fogo/Data/Landcover/Legend.csv", header=T, sep=",", quote="",fill=TRUE)
 
 ## If you want to look at the mao:
-plot(lcFogo)
+spplot(lcFogo)
 
 ## read in functions
 source("functions/ExtractPoints.R")
@@ -90,6 +90,8 @@ ptsFogo <- SpatialPoints(data.frame(DT$EASTING,DT$NORTHING))
 DT$propOpenMove <- raster::extract(openMoveBuff100, ptsFogo)
 DT$propForest <- raster::extract(ForestBuff100,ptsFogo)
 DT$propLichen <- raster::extract(LichenBuff100,ptsFogo)
+
+str(DT)
 
 saveRDS(r1, "output/2-clean-all-rdm.RDS")
 
