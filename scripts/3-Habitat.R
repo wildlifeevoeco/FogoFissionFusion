@@ -12,10 +12,6 @@ lapply(libs, require, character.only = TRUE)
 ### Input raw data ----
 DT <- readRDS('output/2-clean-all-nn.Rds')
 
-## order by datetime
-DT <- DT[order(DT$datetime),]
-DT <- DT[!is.na(datetime)]
-
 ## Variables
 utm21N <- '+proj=utm +zone=21 ellps=WGS84'
 crs = CRS("+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
@@ -25,39 +21,28 @@ crs = CRS("+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
 lcFogo<-raster("/Users/quinnwebber/Google Drive/Fogo/Data/Landcover/FOGOSDSS_RS.tif") 
 Legend<-fread("/Users/quinnwebber/Google Drive/Fogo/Data/Landcover/Legend.csv", header=T, sep=",", quote="",fill=TRUE)
 
+## If you want to look at the mao:
+plot(lcFogo)
 
 ## read in functions
 source("functions/ExtractPoints.R")
-source("functions/rand_by.R")
 
 ### NOTE: everything needs to run by ID, except random steps
 ## Easting = x axis = x coord = east to west = longitude
 ## Northing = y axis = ycoord = north to south = latitude
 
-## Generate random steps by herd
-r1 <- DT[, rand_by(
-  x = EASTING,
-  y = NORTHING,
-  t = datetime,
-  n = N,
-  sl_distr = 'gamma',
-  ta_distr = 'vonmises',
-  crs = crs
-),
-by = ANIMAL_ID]
-
 ## extract habitat type at end step
-r1[, habitat := ExtractPoints(matrix(c(x2_, y2_), ncol = 2),
+DT[, habitat := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2),
                                           raster = lcFogo)] 
 
-## check number of fixes by habitat type: 
-r1[, .N, by = "habitat"]
+## check number of fixes by habitat type
+DT[, .N, by = "habitat"]
 
 ## rename habitat types
-r1$habitat[r1$habitat == "1"] <- "openMove" ## Wetland
-r1$habitat[r1$habitat == "2"] <- "Forest" ## Broadleaf
-r1$habitat[r1$habitat == "3"] <- "Forest" ## Conifer forest
-r1$habitat[r1$habitat == "4"] <- "Forest" ## conifer scrub
+r1$habitat[r1$habitat == "1"] <- "Wetland" ## Wetland
+r1$habitat[r1$habitat == "2"] <- "Broadleaf" ## Broadleaf
+r1$habitat[r1$habitat == "3"] <- "ConiferForest" ## Conifer forest
+r1$habitat[r1$habitat == "4"] <- "ConiferScrub" ## conifer scrub
 r1$habitat[r1$habitat == "5"] <- "Forest" ## mixed wood
 r1$habitat[r1$habitat == "6"] <- "openMove" ## rock
 r1$habitat[r1$habitat == "7"] <- "openMove" ## water
