@@ -21,8 +21,8 @@ crs = CRS("+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
 
 lcFogo<-raster("../nl-landcover/output/fogo_lc.tif") 
 Legend<-fread("../nl-landcover/input/FogoPoly/Legend.csv", header=T, sep=",", quote="",fill=TRUE)
-
 colnames(Legend) <- c("Value", "habitat")
+
 ## If you want to look at the mao:
 spplot(lcFogo)
 
