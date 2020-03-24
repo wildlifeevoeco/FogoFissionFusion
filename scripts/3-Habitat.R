@@ -18,8 +18,9 @@ crs = CRS("+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
 
 #### NOTE -- YOU NEED TO SET YOUR OWN DIRECTORY HERE!!
 ## It should be the same from 'Google Drive' onwards.
-lcFogo<-raster("/Users/quinnwebber/Google Drive/Fogo/Data/Landcover/FOGOSDSS_RS.tif") 
-Legend<-fread("/Users/quinnwebber/Google Drive/Fogo/Data/Landcover/Legend.csv", header=T, sep=",", quote="",fill=TRUE)
+
+lcFogo<-raster("../nl-landcover/output/fogo_lc.tif") 
+Legend<-fread("../nl-landcover/input/FogoPoly/Legend.csv", header=T, sep=",", quote="",fill=TRUE)
 
 ## If you want to look at the mao:
 spplot(lcFogo)
