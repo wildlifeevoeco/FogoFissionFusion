@@ -93,6 +93,6 @@ DT$propLichen <- raster::extract(LichenBuff100,ptsFogo)
 
 str(DT)
 
-saveRDS(r1, "output/2-clean-all-rdm.RDS")
+saveRDS(DT, "output/3-clean-all-nn-hab.RDS")
 
 
