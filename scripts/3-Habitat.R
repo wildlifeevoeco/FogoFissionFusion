@@ -35,6 +35,7 @@ DT[, .N, by = lc]
 
 ### This next chunk is to calculate the proportion of each habitat type in a given radius
 # TODO: why
+# Set NAs in lc to class 10
 lcFogo[is.na(lcFogo)] <- 10
 focals <- lapply(legend$Value, function(val) {
   subs(lcFogo, legend[, .(Value, Value == val)])
