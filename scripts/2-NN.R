@@ -35,16 +35,16 @@ edges <-
     splitBy = c("Year")
   )
 
-## add the same column as above to merge NN values with main dataset
+# add the same column as above to merge NN values with main dataset
 edges[, IDYrTime := as.factor(paste(ID, timegroup, sep = "_"))]
 
-## remove columns already in main dataset
+# remove columns already in main dataset
 edges[, c("Year", "timegroup", "ID") := NULL]
 
-DT <- merge(DT, edist, by = "IDYrTime")
+DT <- merge(DT, edges, by = "IDYrTime")
 
-## Generate spatial groups
-DT <- group_pts(
+### Generate spatial groups ----
+group_pts(
   DT,
   threshold = 50,
   splitBy = c('Year'),
@@ -53,7 +53,7 @@ DT <- group_pts(
   coords = projCols
 )
 
-## Export data
+### Export data ----
 saveRDS(DT, 'output/2-clean-all-nn.Rds')
 
 
