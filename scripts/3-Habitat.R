@@ -1,12 +1,8 @@
-
-## Cleaned Locs - generate random points ====
-# Authors: Quinn Webber, ..., Eric Vander Wal
-# Inputs: Cleaned collar data + NN
-# Outputs: 
+### Cleaned Locs - generate random points ====
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 'rgdal', 'spatsoc', 'amt',
-          'tidyverse', 'lubridate', 'raster', 'sp')
+libs <- c('data.table', 'ggplot2', 'rgdal', 'spatsoc', 
+          'lubridate', 'raster', 'sp')
 lapply(libs, require, character.only = TRUE)
 
 ### Input raw data ----
