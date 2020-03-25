@@ -36,13 +36,14 @@ DT[, .N, by = lc]
 ### This next chunk is to calculate the proportion of each habitat type in a given radius
 # TODO: why
 lcFogo[is.na(lcFogo)] <- 10
-lsfocal <- lapply(legend$Value, function(val) {
+focals <- lapply(legend$Value, function(val) {
   subs(lcFogo, legend[, .(Value, Value == val)])
 })
-names(lsfocal) <- legend$Landcover
+names(focals) <- legend$Value
 
-## combine habitat types into groupings of your choice 
-openMove <- WetlandFogo + RockFogo + WaterFogo + AnthroFogo
+# combine habitat types into groupings of your choice 
+# using the Value numbers from the legend
+openMove <- focals[[1]] + focals[[6]] + focals[[9]]
 Forest <- ConiferFogo + MixedWoodFogo + ScrubFogo + BroadleafFogo
 Lichen <- LichenFogo## Lichen stays the same
 
