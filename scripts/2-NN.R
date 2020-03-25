@@ -28,7 +28,7 @@ DT$IDYrTime <- as.factor(paste(DT$IDYr, DT$timegroup, sep = "_"))
 
 ## Nearest neighbor at end step
 edist <- edge_nn(DT = DT, id = 'IDYr', coords = c('EASTING', 'NORTHING'),
-                   timegroup = 'timegroup', threshold = 45000, returnDist = TRUE, 
+                   timegroup = 'timegroup', threshold = 45000, 
                    #fillNA = FALSE,
                    splitBy = c("Year"))
 
