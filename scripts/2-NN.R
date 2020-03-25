@@ -1,22 +1,22 @@
-
-## Cleaned Locs - Calculate NN ====
+### Cleaned Locs - Calculate NN ====
 
 ### Packages ----
 libs <- c( 'ggplot2', 'rgdal',  'data.table',
           'spatsoc', 'igraph', 'asnipe')
 lapply(libs, require, character.only = TRUE)
 
-#devtools::install_github("rOpenSci/spatsoc")
-
-## set variables
-projCols <- c('EASTING', 'NORTHING')
-
+#devtools::install_github("ropensci/spatsoc")
 
 ### Input raw data ----
 DT <- readRDS('output/1-clean-all.Rds')
 
-# Temporal grouping 
-DT <- group_times(DT, datetime = 'datetime', threshold = '5 minutes')
+
+### Variables ----
+projCols <- c('EASTING', 'NORTHING')
+
+
+### Temporal grouping ----
+group_times(DT, datetime = 'datetime', threshold = '5 minutes')
 
 ## new column so we can merge NN values back to main dataset
 DT$IDYrTime <- as.factor(paste(DT$IDYr, DT$timegroup, sep = "_"))
