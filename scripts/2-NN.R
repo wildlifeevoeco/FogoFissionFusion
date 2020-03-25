@@ -18,25 +18,28 @@ projCols <- c('EASTING', 'NORTHING')
 ### Temporal grouping ----
 group_times(DT, datetime = 'datetime', threshold = '5 minutes')
 
-## new column so we can merge NN values back to main dataset
-DT$IDYrTime <- as.factor(paste(DT$IDYr, DT$timegroup, sep = "_"))
+# new column so we can merge NN values back to main dataset
+DT[, IDYrTime := as.factor(paste(IDYr, timegroup, sep = "_"))]
 
 
-#####################################################
-############# CALCULDATE DISTANCE ##################
-####################################################
 
-## Nearest neighbor at end step
-edist <- edge_nn(DT = DT, id = 'IDYr', coords = c('EASTING', 'NORTHING'),
-                   timegroup = 'timegroup', threshold = 45000, 
-                   #fillNA = FALSE,
-                   splitBy = c("Year"))
+### Nearest neighbor at end step ----
+edges <-
+  edge_nn(
+    DT = DT,
+    id = 'IDYr',
+    coords = c('EASTING', 'NORTHING'),
+    timegroup = 'timegroup',
+    threshold = 45000,
+    #fillNA = FALSE,
+    splitBy = c("Year")
+  )
 
 ## add the same column as above to merge NN values with main dataset
-edist$IDYrTime <- as.factor(paste(edist$ID, edist$timegroup, sep = "_"))
+edges[, IDYrTime := as.factor(paste(ID, timegroup, sep = "_"))]
 
 ## remove columns already in main dataset
-edist[, c("Year", "timegroup", "ID") := NULL]
+edges[, c("Year", "timegroup", "ID") := NULL]
 
 DT <- merge(DT, edist, by = "IDYrTime")
 
