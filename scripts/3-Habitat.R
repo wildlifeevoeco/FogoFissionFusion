@@ -36,16 +36,10 @@ DT[, .N, by = lc]
 ### This next chunk is to calculate the proportion of each habitat type in a given radius
 # TODO: why
 lcFogo[is.na(lcFogo)] <- 10
-
-WetlandFogo <- subs(lcFogo, data.frame(Legend$Value, ifelse(Legend$Cover=="Wetland",1,0)))
-BroadleafFogo <- subs(lcFogo, data.frame(Legend$Value, ifelse(Legend$Cover=="Broadleaf",1,0)))
-ConiferFogo <- subs(lcFogo, data.frame(Legend$Value, ifelse(Legend$Cover=="ConiferForest",1,0)))
-ScrubFogo <- subs(lcFogo, data.frame(Legend$Value, ifelse(Legend$Cover=="ConiferScrub",1,0)))
-MixedWoodFogo <- subs(lcFogo, data.frame(Legend$Value, ifelse(Legend$Cover=="MixedWood",1,0)))
-RockFogo <- subs(lcFogo, data.frame(Legend$Value, ifelse(Legend$Cover=="Rocky",1,0)))
-WaterFogo <- subs(lcFogo, data.frame(Legend$Value, ifelse(Legend$Cover=="Water",1,0)))
-LichenFogo <- subs(lcFogo, data.frame(Legend$Value, ifelse(Legend$Cover=="Lichen",1,0)))
-AnthroFogo <- subs(lcFogo, data.frame(Legend$Value, ifelse(Legend$Cover=="Anthro",1,0)))
+lsfocal <- lapply(legend$Value, function(val) {
+  subs(lcFogo, legend[, .(Value, Value == val)])
+})
+names(lsfocal) <- legend$Landcover
 
 ## combine habitat types into groupings of your choice 
 openMove <- WetlandFogo + RockFogo + WaterFogo + AnthroFogo
