@@ -44,9 +44,9 @@ names(focals) <- legend$Value
 
 # combine habitat types into groupings of your choice 
 # using the Value numbers from the legend
-openMove <- focals[[1]] + focals[[6]] + focals[[9]]
-Forest <- ConiferFogo + MixedWoodFogo + ScrubFogo + BroadleafFogo
-Lichen <- LichenFogo## Lichen stays the same
+openMove <- Reduce("+", focals[c(1, 6, 9)])
+forest <- Reduce("+", focals[c(2, 3, 4, 5)])
+lichen <- focals[[8]]
 
 ### This step makes new raster layers that are "proportion of habitat within a 100 m 
 # buffer that is habitat x". Tends to make analyses more robust and less susceptible
