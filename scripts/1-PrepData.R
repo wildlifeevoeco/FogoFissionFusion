@@ -1,17 +1,14 @@
-
-
 ### All Locs - Cleaning ====
-# Authors: Quinn Webber, ..., Eric Vander Wal
-# Inputs: Collar data
-# Outputs: Prepped data
 
 ### Packages ----
 libs <- c('data.table', 'ggplot2', 'rgdal', 'lubridate')
 lapply(libs, require, character.only = TRUE)
 
-### Set variables ----
+### Input data ----
+fogo <- fread(paste0('input/FogoCaribou.csv'))
 
-# Filter by bounds
+### Set variables ----
+# Bounds
 lowEastFogo <- 690000; highEastFogo <- 800000
 lowNorthFogo <- 5450000; highNorthFogo <- 6000000
 
@@ -21,32 +18,40 @@ tz <- 'America/St_Johns'
 # Max moverate
 maxMoveRate <- 30000
 
-### Projection ----
+# Projected columns
 projCols <- c('EASTING', 'NORTHING')
 
+# Projection
 utm21N <- '+proj=utm +zone=21 ellps=WGS84'
 
-### Input raw data ----
-fogo <- fread(paste0('input/FogoCaribou.csv'))
-
 # Prep Fogo data to merge 
-fogo[, idate := as.IDate(idate)]
-fogo[, itime := as.ITime(itime)]
-fogo[, datetime := as.POSIXct(paste(idate,itime), format = "%Y-%m-%d %H:%M:%S" )]
+fogo[, idate := as.IDate(idate, tz = tz)]
+fogo[, itime := as.ITime(itime, tz = tz)]
+fogo[, datetime := as.POSIXct(paste(idate,itime), 
+                              format = "%Y-%m-%d %H:%M:%S", tz = tz)]
 
-### ID by Yr
-fogo$IDYr <- paste(fogo$ANIMAL_ID, fogo$Year, sep = "_")
+# ID by Yr
+fogo[, IDYr := paste(ANIMAL_ID, Year, sep = "_")]
 
 aa <- fogo[, .N, by = .(IDYr)]
 
-## remove  animals with malfunctioning collars
-fogo <- fogo[IDYr != "FO2016006_2017" & ## not enough fixes 
-             IDYr != "FO2016006_2018" & ## not enough fixes
-             IDYr != "FO2017006_2019" & ## not enough fixes
-             IDYr != "FO2017013_2018" & ## Dead animal
-             ANIMAL_ID != "FO2016001" &  ## Dead animal
-             IDYr !=  "FO2017004_2019" & ## not enough fixes
-             IDYr != "FO2017007_2019"] ## not enough fixes
+### Subset ----
+# remove  animals with malfunctioning collars
+dropIDYr <- c(
+  "FO2016006_2017", # not enough fixes 
+  "FO2016006_2018", # not enough fixes
+  "FO2017006_2019", # not enough fixes
+  "FO2017013_2018", # Dead animal
+  "FO2017004_2019", # not enough fixes
+  "FO2017007_2019"  # not enough fixes
+)
+
+dropID <- c(
+  'FO2016001' # Dead animal
+)
+
+fogo <- fogo[!(IDYr %in% dropIDYr) &
+               !(ANIMAL_ID %in% dropID)]
 
 ### round FO2016014 datetime to nearest hour to match fixes for rest of individuals
 fogo[, hour := hour(as.ITime(itime))]
