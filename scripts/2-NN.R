@@ -9,7 +9,7 @@ lapply(libs, require, character.only = TRUE)
 
 ### Input raw data ----
 DT <- readRDS('output/1-clean-all.Rds')
-
+alloc.col(DT)
 
 ### Variables ----
 projCols <- c('EASTING', 'NORTHING')
