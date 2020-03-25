@@ -8,40 +8,35 @@ lapply(libs, require, character.only = TRUE)
 ### Input raw data ----
 DT <- readRDS('output/2-clean-all-nn.Rds')
 
-## Variables
+lcFogo <- raster("../nl-landcover/output/fogo_lc.tif")
+legend <- fread("../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv")
+
+### Variables ----
 utm21N <- '+proj=utm +zone=21 ellps=WGS84'
-crs = CRS("+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
+crs <- CRS("+proj=utm +zone=14 +ellps=WGS84 +datum=WGS84 +units=m +no_defs")
 
-#### NOTE -- YOU NEED TO SET YOUR OWN DIRECTORY HERE!!
-## It should be the same from 'Google Drive' onwards.
-
-lcFogo<-raster("../nl-landcover/output/fogo_lc.tif") 
-Legend<-fread("../nl-landcover/input/FogoPoly/Legend.csv", header=T, sep=",", quote="",fill=TRUE)
-colnames(Legend) <- c("Value", "habitat")
-
-## If you want to look at the mao:
+### Plot landcover ----
 spplot(lcFogo)
 
-## read in functions
-source("functions/ExtractPoints.R")
+### Extract habitat type at end step
+# Easting = x axis = x coord = east to west = longitude
+# Northing = y axis = ycoord = north to south = latitude
 
-### NOTE: everything needs to run by ID, except random steps
-## Easting = x axis = x coord = east to west = longitude
-## Northing = y axis = ycoord = north to south = latitude
+# extract habitat type
+# TODO: why NA
+DT[, Value := extract(lcFogo, matrix(c(EASTING, NORTHING), ncol = 2))]
 
-## extract habitat type at end step
-DT[, Value := ExtractPoints(matrix(c(EASTING, NORTHING), ncol = 2),
-                                          raster = lcFogo)] 
+# rename habitat types by merging legend
+DT[legend, lc := Landcover, on = 'Value']
 
-## rename habitat types
-DT <- merge(DT, Legend, by = 'Value')
-
-## check number of fixes by habitat type 
-#note how there are very few broadleaf and mixedwood
-DT[, .N, by = "habitat"]
+# check number of fixes by habitat type 
+# note how there are very few broadleaf and mixedwood
+DT[, .N, by = lc]
 
 ### This next chunk is to calculate the proportion of each habitat type in a given radius
+# TODO: why
 lcFogo[is.na(lcFogo)] <- 10
+
 WetlandFogo <- subs(lcFogo, data.frame(Legend$Value, ifelse(Legend$Cover=="Wetland",1,0)))
 BroadleafFogo <- subs(lcFogo, data.frame(Legend$Value, ifelse(Legend$Cover=="Broadleaf",1,0)))
 ConiferFogo <- subs(lcFogo, data.frame(Legend$Value, ifelse(Legend$Cover=="ConiferForest",1,0)))
@@ -58,25 +53,23 @@ Forest <- ConiferFogo + MixedWoodFogo + ScrubFogo + BroadleafFogo
 Lichen <- LichenFogo## Lichen stays the same
 
 ### This step makes new raster layers that are "proportion of habitat within a 100 m 
-### buffer that is habitat x". Tends to make analyses more robust and less susceptible
-### to problems with autocorrelation.-MPL
+# buffer that is habitat x". Tends to make analyses more robust and less susceptible
+# to problems with autocorrelation.-MPL
 
-## Generate buffer size
-buff <- 100 ## you can change this number, but right now it is a 100m circle around each point
+# Generate buffer size
+# you can change this number, but right now it is a 100m circle around each point
+buff <- 100 
 
-openMoveBuff <- focalWeight(openMove, d = buff, type='circle')
-ForestBuff <- focalWeight(Forest, d = buff, type='circle')
-LichenBuff <- focalWeight(Lichen, d = buff, type='circle')
+openMoveBuff <- focalWeight(openMove, d = buff, type = 'circle')
+ForestBuff <- focalWeight(Forest, d = buff, type = 'circle')
+LichenBuff <- focalWeight(Lichen, d = buff, type = 'circle')
 
-openMoveBuff100 <- focal(openMove,openMoveBuff,na.rm=TRUE,pad=TRUE,padValue=0)
-ForestBuff100 <- focal(Forest,ForestBuff,na.rm=TRUE,pad=TRUE,padValue=0)
-LichenBuff100 <- focal(Lichen,LichenBuff,na.rm=TRUE,pad=TRUE,padValue=0)
+openMoveBuff100 <- focal(openMove, openMoveBuff, na.rm = TRUE, pad = TRUE, padValue = 0)
+ForestBuff100 <- focal(Forest, ForestBuff, na.rm = TRUE, pad = TRUE, padValue = 0)
+LichenBuff100 <- focal(Lichen, LichenBuff, na.rm = TRUE, pad = TRUE, padValue = 0)
 
-## Proportion of habitat at each relocation
-ptsFogo <- SpatialPoints(data.frame(DT$EASTING,DT$NORTHING))
-
-## extract proportion of each habitat type
-DT$propOpenMove <- raster::extract(openMoveBuff100, ptsFogo)
+# Proportion of habitat at each relocation
+DT[, propOpenMove := extract(openMoveBuff100, ptsFogo)
 DT$propForest <- raster::extract(ForestBuff100,ptsFogo)
 DT$propLichen <- raster::extract(LichenBuff100,ptsFogo)
 
