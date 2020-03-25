@@ -54,23 +54,19 @@ lichen <- focals[[8]]
 
 # Generate buffer size
 # you can change this number, but right now it is a 100m circle around each point
-buff <- 100 
+buff <- 100
 
-openMoveBuff <- focalWeight(openMove, d = buff, type = 'circle')
-ForestBuff <- focalWeight(Forest, d = buff, type = 'circle')
-LichenBuff <- focalWeight(Lichen, d = buff, type = 'circle')
+focweight <- focalWeight(lcFogo, d = buff, type = 'circle')
 
-openMoveBuff100 <- focal(openMove, openMoveBuff, na.rm = TRUE, pad = TRUE, padValue = 0)
-ForestBuff100 <- focal(Forest, ForestBuff, na.rm = TRUE, pad = TRUE, padValue = 0)
-LichenBuff100 <- focal(Lichen, LichenBuff, na.rm = TRUE, pad = TRUE, padValue = 0)
+openMoveBuff100 <- focal(openMove, focweight, na.rm = TRUE, pad = TRUE, padValue = 0)
+ForestBuff100 <- focal(forest, focweight, na.rm = TRUE, pad = TRUE, padValue = 0)
+LichenBuff100 <- focal(lichen, focweight, na.rm = TRUE, pad = TRUE, padValue = 0)
 
 # Proportion of habitat at each relocation
-DT[, propOpenMove := extract(openMoveBuff100, ptsFogo)
-DT$propForest <- raster::extract(ForestBuff100,ptsFogo)
-DT$propLichen <- raster::extract(LichenBuff100,ptsFogo)
+DT[, propOpenMove := extract(openMoveBuff100, matrix(c(EASTING, NORTHING), ncol = 2))]
+DT[, propForest := extract(ForestBuff100, matrix(c(EASTING, NORTHING), ncol = 2))]
+DT[, propLichen := extract(LichenBuff100, matrix(c(EASTING, NORTHING), ncol = 2))]
 
 str(DT)
 
 saveRDS(DT, "output/3-clean-all-nn-hab.RDS")
-
-
