@@ -35,7 +35,7 @@ hr.nets <- hr_network(locs,
                       returns = 'overlap')
 
 # Restructure IDs for consistency
-colnames(hr.nets) <- c("Year", "ID1", "ID2", "value")
+colnames(hr.nets) <- c("Year", "ID1", "ID2", "udoi")
 hr.nets$dyad <- as.factor(paste(hr.nets$ID1, hr.nets$ID2, sep = "_"))
 
 ### Output ----
