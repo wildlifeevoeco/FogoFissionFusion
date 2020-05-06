@@ -14,7 +14,7 @@ utm21N <- '+proj=utm +zone=21 ellps=WGS84'
 coords <- c('EASTING', 'NORTHING')
 pts <- SpatialPointsDataFrame(locs[, ..coords],
                               proj4string = CRS(utm21N),
-                              data = locs[, .(ANIMAL_ID)])
+                              data = locs[, .(IDYr)])
 
 ud <- kernelUD(pts, grid = 700, extent = 3)
 vertices <- getverticeshr(ud, 95)
