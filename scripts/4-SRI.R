@@ -31,7 +31,7 @@ source("functions/get_sri.R")
 
 nets <- get_sri(locs, id = 'ANIMAL_ID', by = c('Year'))
 
-nets$dyad <- as.factor(paste(nets$ID1, nets$ID2, sep = "_"))
+nets$dyad <- as.factor(paste(nets$ID1, nets$ID2, nets$Year, sep = "_"))
 
 saveRDS(nets, "output/4-sri.RDS")
 
