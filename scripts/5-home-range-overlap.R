@@ -28,15 +28,15 @@ vert.dt[, areaKM2 := area/100]
 
 ### Home Range Overlap Networks ----
 # Generate all homerange overlap networks
+source("functions/hr_network.R")
 hr.nets <- hr_network(locs, 
                       id = 'ANIMAL_ID', utm = utm21N, 
                       by = c('Year'),
                       returns = 'overlap')
 
 # Restructure IDs for consistency
-hr.nets[, ANIMAL_ID := ID]
-hr.nets[, ID := paste(ANIMAL_ID, season, Year, HERD, sep = '_')]
+colnames(hr.nets) <- c("Year", "ID1", "ID2", "value")
+hr.nets$dyad <- as.factor(paste(hr.nets$ID1, hr.nets$ID2, hr.nets$Year, sep = "_"))
 
 ### Output ----
-saveRDS(vert.dt, 'data/derived-data/vertices-dt.Rds')
-saveRDS(hr.nets, 'data/derived-data/homerange-networks.Rds')
+saveRDS(hr.nets, 'output/5-hro.Rds')
