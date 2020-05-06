@@ -36,8 +36,10 @@ mat$dyad <- as.factor(paste(mat$ID1, mat$ID2, sep = "_"))
 ### merge 
 sri_hro <- cbind(sri, hro[,c("Year", "ID1", "ID2", "dyad") := NULL])
 
-DT <- merge(sri_hro, mat, by = "dyad")
+DT <- merge(sri_hro, mat[,c("ID1", "ID2") := NULL], by = "dyad")
 
 saveRDS(DT, "output/6-all-dyad-data.RDS")
 fwrite(DT, "output/6-all-dyad-data.csv")
 
+ggplot(DT) +
+  geom_point(aes)
