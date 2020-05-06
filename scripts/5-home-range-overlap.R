@@ -40,3 +40,4 @@ hr.nets$dyad <- as.factor(paste(hr.nets$ID1, hr.nets$ID2, sep = "_"))
 
 ### Output ----
 saveRDS(hr.nets, 'output/5-hro.Rds')
+
