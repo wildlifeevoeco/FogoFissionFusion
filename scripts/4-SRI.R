@@ -12,7 +12,7 @@ locs <- readRDS('output/1-clean-all.Rds')
 ### Proximity Based Social Networks ----
 
 # Temporal grouping 
-group_times(locs, datetime = 'datetime', threshold = '5 minutes')
+locs <- group_times(locs, datetime = 'datetime', threshold = '5 minutes')
 
 group_pts(
   locs,
