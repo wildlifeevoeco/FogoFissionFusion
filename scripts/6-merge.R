@@ -3,7 +3,7 @@
 library(data.table)
 
 sri <- readRDS('output/4-sri.RDS')
-hr <- readRDS('output/5-hro.Rds')
+hro <- readRDS('output/5-hro.Rds')
 body <- fread('input/body.csv')
 
 body2 <- body[,c("date") := NULL][, lapply(.SD, mean, na.rm = T), by=ANIMAL_ID]
@@ -31,6 +31,13 @@ colnames(mat) <- c("ID1", "ID2", "delta_length")
 mat[, diff := (ID1==ID2)]
 mat <- mat[diff != TRUE][,c("diff") := NULL]
 
+mat$dyad <- as.factor(paste(mat$ID1, mat$ID2, sep = "_"))
 
+### merge 
+sri_hro <- cbind(sri, hro[,c("Year", "ID1", "ID2", "dyad") := NULL])
 
+DT <- merge(sri_hro, mat, by = "dyad")
+
+saveRDS(DT, "output/6-all-dyad-data.RDS")
+fwrite(DT, "output/6-all-dyad-data.csv")
 
