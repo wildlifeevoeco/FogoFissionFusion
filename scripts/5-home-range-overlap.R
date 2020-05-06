@@ -36,7 +36,7 @@ hr.nets <- hr_network(locs,
 
 # Restructure IDs for consistency
 colnames(hr.nets) <- c("Year", "ID1", "ID2", "value")
-hr.nets$dyad <- as.factor(paste(hr.nets$ID1, hr.nets$ID2, hr.nets$Year, sep = "_"))
+hr.nets$dyad <- as.factor(paste(hr.nets$ID1, hr.nets$ID2, sep = "_"))
 
 ### Output ----
 saveRDS(hr.nets, 'output/5-hro.Rds')
