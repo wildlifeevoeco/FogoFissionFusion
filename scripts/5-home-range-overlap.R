@@ -30,8 +30,8 @@ vert.dt[, areaKM2 := area/100]
 # Generate all homerange overlap networks
 hr.nets <- hr_network(locs, 
                       id = 'ANIMAL_ID', utm = utm21N, 
-                      by = c('season', 'HERD', 'Year'),
-                      returns = 'network-stats')
+                      by = c('Year'),
+                      returns = 'overlap')
 
 # Restructure IDs for consistency
 hr.nets[, ANIMAL_ID := ID]
