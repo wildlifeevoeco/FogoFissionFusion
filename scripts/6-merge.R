@@ -42,4 +42,4 @@ saveRDS(DT, "output/6-all-dyad-data.RDS")
 fwrite(DT, "output/6-all-dyad-data.csv")
 
 ggplot(DT) +
-  geom_point(aes)
+  geom_jitter(aes(sri,udoi, color = factor(Year))) 
