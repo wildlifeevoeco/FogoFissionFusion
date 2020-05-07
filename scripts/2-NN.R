@@ -5,7 +5,6 @@ libs <- c( 'ggplot2', 'rgdal',  'data.table',
           'spatsoc', 'igraph', 'asnipe')
 lapply(libs, require, character.only = TRUE)
 
-#devtools::install_github("ropensci/spatsoc")
 
 ### Input raw data ----
 DT <- readRDS('output/1-clean-all.Rds')
