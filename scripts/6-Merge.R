@@ -26,28 +26,14 @@ lendiff <- data.table(
   ID1 = rep(colnames(d), each = nrow(d)),
   ID2 = rep(rownames(d), ncol(d)),
   diff = as.vector(d)
-)
+)[!is.na(diff)]
 
 dyad_id(lendiff, 'ID1', 'ID2')
 
-    mymat_len[i,j] <- len_matrix[i] - len_matrix[j]
-  }}
-spatsoc::group_pts
-
-body_matrix <- as.matrix(abs(mymat_len))
-row.names(body_matrix) <- body2$ANIMAL_ID
-colnames(body_matrix) <- body2$ANIMAL_ID
-
-mat <- data.table(data.table::melt(body_matrix))
-colnames(mat) <- c("ID1", "ID2", "delta_length")
-
-## delete rows comparing individuals to themselves
-mat[, diff := (ID1==ID2)]
-mat <- mat[diff != TRUE][,c("diff") := NULL]
-
-mat$dyad <- as.factor(paste(mat$ID1, mat$ID2, sep = "_"))
 
 ### merge 
+lsDTs <- c(sri, hro, lendiff)
+Reduce(function(x, y) merge(x, y, by = 'dyadID'), lsDTs)
 sri_hro <- cbind(sri, hro[,c("Year", "ID1", "ID2", "dyad") := NULL])
 
 DT <- merge(sri_hro, mat[,c("ID1", "ID2") := NULL], by = "dyad")
