@@ -30,8 +30,11 @@ lendiff <- data.table(
 
 dyad_id(lendiff, 'ID1', 'ID2')
 
+# Check
+lendiff[sample(1), diff] == body2[ANIMAL_ID %in% c(lendiff[1, ID1], lendiff[1, ID2]), dist(total_length)]
 
-### merge 
+
+### Merge
 lsDTs <- c(sri, hro, lendiff)
 Reduce(function(x, y) merge(x, y, by = 'dyadID'), lsDTs)
 sri_hro <- cbind(sri, hro[,c("Year", "ID1", "ID2", "dyad") := NULL])
