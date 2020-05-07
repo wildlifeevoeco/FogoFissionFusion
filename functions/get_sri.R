@@ -25,11 +25,8 @@ get_sri <- function(DT = NULL, id = NULL, by = NULL) {
                                                        diag = FALSE,
                                                        weighted = TRUE)
     
-    out <- na.omit(reshape2::melt(gbi.net_df))
-    
-    out <- data.table(ID1 = out$Var1, 
-                      ID2 = out$Var2, 
-                      sri = out$value)
-    
+    data.table(ID1 = rep(colnames(gbi.net_df), each = nrow(gbi.net_df)), 
+               ID2 = rep(rownames(gbi.net_df), ncol(gbi.net_df)), 
+               sri = as.vector(gbi.net_df))
   }, by = by]
 }
