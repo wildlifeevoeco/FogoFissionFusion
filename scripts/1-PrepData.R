@@ -22,6 +22,7 @@ maxMoveRate <- 30000
 projCols <- c('EASTING', 'NORTHING')
 
 # Projection
+# TODO: fix this proj4string
 utm21N <- '+proj=utm +zone=21 ellps=WGS84'
 
 # Prep Fogo data to merge 

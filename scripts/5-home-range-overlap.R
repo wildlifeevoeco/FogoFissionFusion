@@ -1,14 +1,20 @@
-
 ### Home Range Analyses ====
 
 ### Packages ----
 libs <- c('data.table', 'sp', 'adehabitatHR')
 lapply(libs, require, character.only = TRUE)
 
+
+### Functions ----
+source('functions/hr_network.R')
+
+
 ### Input data ----
 locs <- readRDS('output/1-clean-all.Rds')
 
+
 ### Calculate Home range area for each individual ----
+# TODO: fix this proj4string
 utm21N <- '+proj=utm +zone=21 ellps=WGS84'
 
 coords <- c('EASTING', 'NORTHING')
@@ -24,19 +30,18 @@ vert.dt <- as.data.table(vertices)
 vert.dt[, c('ANIMAL_ID', 'Year') := tstrsplit(id, '_')]
 
 # convert from ha to km2
-vert.dt[, areaKM2 := area/100]
+vert.dt[, areaKM2 := area / 100]
 
 ### Home Range Overlap Networks ----
 # Generate all homerange overlap networks
-source("functions/hr_network.R")
 hr.nets <- hr_network(locs, 
                       id = 'ANIMAL_ID', utm = utm21N, 
                       by = c('Year'),
                       returns = 'overlap')
 
 # Restructure IDs for consistency
-colnames(hr.nets) <- c("Year", "ID1", "ID2", "udoi")
-hr.nets$dyad <- as.factor(paste(hr.nets$ID1, hr.nets$ID2, sep = "_"))
+setnames(hr.nets, c('Year', 'ID1', 'ID2', 'udoi'))
+hr.nets[, dyad := as.factor(paste(ID1, ID2, sep = '_'))]
 
 ### Output ----
 saveRDS(hr.nets, 'output/5-hro.Rds')
