@@ -1,17 +1,37 @@
+### Combine outputs ====
 
 
-library(data.table)
+### Packages ----
+libs <- c('data.table')
 
+
+### Input ----
 sri <- readRDS('output/4-sri.RDS')
 hro <- readRDS('output/5-hro.Rds')
 body <- fread('input/body.csv')
 
-body2 <- body[,c("date") := NULL][, lapply(.SD, mean, na.rm = T), by=ANIMAL_ID]
+
+### Body size ----
+body2 <- body[, lapply(.SD, mean, na.rm = T), 
+              by = ANIMAL_ID, .SDcols = -"date"]
 
 
-## generate delta length
-len_matrix <- c(body2$total_length)
-mymat_len <- matrix(data= len_matrix,nrow=31, ncol=31) 
+# Generate delta length
+d <- as.matrix(dist(body2$total_length))
+d[lower.tri(d, diag = TRUE)] <- NA
+dimnames(d) <- list(body2$ANIMAL_ID, body2$ANIMAL_ID)
+
+lendiff <- data.table(
+  ID1 = rep(colnames(d), each = nrow(d)),
+  ID2 = rep(rownames(d), ncol(d)),
+  diff = as.vector(d)
+)
+
+dyad_id(lendiff, 'ID1', 'ID2')
+
+mymat_len <- matrix(data = len_matrix, 
+                    nrow = length(len_matrix), 
+                    ncol = length(len_matrix))
 
 
 # calculate difference in size between all individuals
@@ -19,6 +39,7 @@ for(i in 1:31){
   for(j in 1:31){
     mymat_len[i,j] <- len_matrix[i] - len_matrix[j]
   }}
+spatsoc::group_pts
 
 body_matrix <- as.matrix(abs(mymat_len))
 row.names(body_matrix) <- body2$ANIMAL_ID
