@@ -18,7 +18,7 @@ projCols <- c('EASTING', 'NORTHING')
 group_times(DT, datetime = 'datetime', threshold = '5 minutes')
 
 # new column so we can merge NN values back to main dataset
-DT[, IDYrTime := as.factor(paste(IDYr, timegroup, sep = "_"))]
+DT[, IDYrTime := as.factor(paste(IDYr, timegroup, sep = '_'))]
 
 
 
@@ -30,17 +30,16 @@ edges <-
     coords = c('EASTING', 'NORTHING'),
     timegroup = 'timegroup',
     threshold = 45000,
-    #fillNA = FALSE,
-    splitBy = c("Year")
+    splitBy = c('Year')
   )
 
 # add the same column as above to merge NN values with main dataset
-edges[, IDYrTime := as.factor(paste(ID, timegroup, sep = "_"))]
+edges[, IDYrTime := as.factor(paste(ID, timegroup, sep = '_'))]
 
 # remove columns already in main dataset
-edges[, c("Year", "timegroup", "ID") := NULL]
+edges[, c('Year', 'timegroup', 'ID') := NULL]
 
-DT <- merge(DT, edges, by = "IDYrTime")
+DT <- merge(DT, edges, by = 'IDYrTime')
 
 ### Generate spatial groups ----
 group_pts(
