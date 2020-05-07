@@ -34,13 +34,20 @@ dyad_id(lendiff, 'ID1', 'ID2')
 lendiff[sample(1), diff] == body2[ANIMAL_ID %in% c(lendiff[1, ID1], lendiff[1, ID2]), dist(total_length)]
 
 
-### Merge
-lsDTs <- c(sri, hro, lendiff)
-Reduce(function(x, y) merge(x, y, by = 'dyadID'), lsDTs)
-sri_hro <- cbind(sri, hro[,c("Year", "ID1", "ID2", "dyad") := NULL])
+### Merge ----
+# List data.tables
+lsDTs <- list(sri, hro, lendiff)
 
-DT <- merge(sri_hro, mat[,c("ID1", "ID2") := NULL], by = "dyad")
+# Remove id columns from all data.table
+idcols <- c('ID1', 'ID2')
+lapply(lsDTs, function(DT) DT[, (idcols) := NULL])
 
+# Merge together
+DT <- merge(sri, hro, by = c('dyadID', 'Year'))
+DT[lendiff, diff := diff, on = 'dyadID']
+
+
+### Output ----
 saveRDS(DT, "output/6-all-dyad-data.RDS")
 fwrite(DT, "output/6-all-dyad-data.csv")
 
