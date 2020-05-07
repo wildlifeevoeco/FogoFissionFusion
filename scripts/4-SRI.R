@@ -27,9 +27,9 @@ group_pts(
 )
 
 # Calculate SRI for each year
-nets <- get_sri(locs, id = 'ANIMAL_ID', by = 'Year')
+nets <- get_sri(locs, id = 'ANIMAL_ID', by = 'Year')[!is.na(sri)]
 
-nets[, dyad := as.factor(paste(ID1, ID2, sep = '_'))]
+dyad_id(nets, 'ID1', 'ID2')
 
 ### Output ----
 saveRDS(nets, 'output/4-sri.RDS')
