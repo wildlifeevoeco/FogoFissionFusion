@@ -14,12 +14,12 @@
 #' 
 #' @return graph strength for each individual
 #' @export
-hr_network <- function(DT = NULL, id = NULL, utm = NULL, by = NULL, returns = NULL) {
+hr_network <- function(DT = NULL, id = NULL, coords = NULL, utm = NULL, by = NULL, returns = NULL) {
   # NSE
   value <- NULL
   
-  if (is.null(DT) | is.null(id) | is.null(utm)) {
-    stop('DT, id and utm must be provided')
+  if (is.null(DT) | is.null(id) | is.null(coords) | is.null(utm)) {
+    stop('DT, id, coords and utm must be provided')
   }
   
   if (is.null(returns) | !(returns %in% c('network-stats', 'overlap'))) {
@@ -37,22 +37,22 @@ hr_network <- function(DT = NULL, id = NULL, utm = NULL, by = NULL, returns = NU
                                 weighted = TRUE)
       list(strength = igraph::graph.strength(hr.grph_df),
            ID = names(igraph::degree(hr.grph_df)))
-    }, by = by, .SDcols = c('EASTING', 'NORTHING', 'ANIMAL_ID', by, id)]
+    }, by = by, .SDcols = c(coords, by, id)]
     
   } else if (returns == 'overlap') {
     
     DT[, {
-      KOver <- build_hr_net(.SD, id = id, utm = utm)
-      out.dt <- data.table::data.table(
-        data.table::melt(KOver, variable.factor = FALSE, value.factor = FALSE))[!is.na(value)]
-    }, by = by, .SDcols = c('EASTING', 'NORTHING', 'ANIMAL_ID', by, id)]
+      KOver <- build_hr_net(.SD, id = id, utm = utm, coords = coords)
+      out.dt <-
+        data.table::melt(KOver)
+    }, by = by, .SDcols = c(coords, by, id)]
   }
 }
 
 #' @import data.table
-build_hr_net <- function(DT, id, utm) {
+build_hr_net <- function(DT, id, utm, coords) {
   xy <- sp::SpatialPointsDataFrame(
-    coords = DT[, .SD, .SDcols = c('EASTING', 'NORTHING')],
+    coords = DT[, .SD, .SDcols = coords],
     proj4string = sp::CRS(utm),
     data = DT[, .SD, .SDcols = id])
 
