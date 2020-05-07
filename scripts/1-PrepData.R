@@ -28,22 +28,22 @@ utm21N <- '+proj=utm +zone=21 ellps=WGS84'
 fogo[, idate := as.IDate(idate, tz = tz)]
 fogo[, itime := as.ITime(itime, tz = tz)]
 fogo[, datetime := as.POSIXct(paste(idate,itime), 
-                              format = "%Y-%m-%d %H:%M:%S", tz = tz)]
+                              format = '%Y-%m-%d %H:%M:%S', tz = tz)]
 
 # ID by Yr
-fogo[, IDYr := paste(ANIMAL_ID, Year, sep = "_")]
+fogo[, IDYr := paste(ANIMAL_ID, Year, sep = '_')]
 
 aa <- fogo[, .N, by = .(IDYr)]
 
 ### Subset ----
 # remove  animals with malfunctioning collars
 dropIDYr <- c(
-  "FO2016006_2017", # not enough fixes 
-  "FO2016006_2018", # not enough fixes
-  "FO2017006_2019", # not enough fixes
-  "FO2017013_2018", # Dead animal
-  "FO2017004_2019", # not enough fixes
-  "FO2017007_2019"  # not enough fixes
+  'FO2016006_2017', # not enough fixes 
+  'FO2016006_2018', # not enough fixes
+  'FO2017006_2019', # not enough fixes
+  'FO2017013_2018', # Dead animal
+  'FO2017004_2019', # not enough fixes
+  'FO2017007_2019'  # not enough fixes
 )
 
 dropID <- c(
@@ -57,7 +57,7 @@ fogo <- fogo[!(IDYr %in% dropIDYr) &
 fogo[, hour := hour(as.ITime(itime))]
 is.odd <- function(x) x %% 2 != 0 
 fogo$hour <- is.odd(fogo$hour)
-fogo <- fogo[hour != "TRUE" ][, c("hour") := NULL]
+fogo <- fogo[hour != 'TRUE' ][, c('hour') := NULL]
 fogo[, datetime := floor_date(datetime, '1 hour')]
 fogo[, itime := as.ITime(datetime)]
 
