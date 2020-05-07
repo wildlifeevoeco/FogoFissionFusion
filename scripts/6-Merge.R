@@ -2,7 +2,8 @@
 
 
 ### Packages ----
-libs <- c('data.table')
+libs <- c('data.table', 'spatsoc')
+lapply(libs, require, character.only = TRUE)
 
 
 ### Input ----
@@ -16,7 +17,7 @@ body2 <- body[, lapply(.SD, mean, na.rm = T),
               by = ANIMAL_ID, .SDcols = -"date"]
 
 
-# Generate delta length
+# Calculate difference in size between all individuals
 d <- as.matrix(dist(body2$total_length))
 d[lower.tri(d, diag = TRUE)] <- NA
 dimnames(d) <- list(body2$ANIMAL_ID, body2$ANIMAL_ID)
@@ -29,14 +30,6 @@ lendiff <- data.table(
 
 dyad_id(lendiff, 'ID1', 'ID2')
 
-mymat_len <- matrix(data = len_matrix, 
-                    nrow = length(len_matrix), 
-                    ncol = length(len_matrix))
-
-
-# calculate difference in size between all individuals
-for(i in 1:31){
-  for(j in 1:31){
     mymat_len[i,j] <- len_matrix[i] - len_matrix[j]
   }}
 spatsoc::group_pts
