@@ -1,7 +1,7 @@
 ### Home Range Analyses ====
 
 ### Packages ----
-libs <- c('data.table', 'sp', 'adehabitatHR')
+libs <- c('data.table', 'sp', 'adehabitatHR', 'spatsoc')
 lapply(libs, require, character.only = TRUE)
 
 
@@ -41,7 +41,8 @@ hr.nets <- hr_network(locs,
 
 # Restructure IDs for consistency
 setnames(hr.nets, c('Year', 'ID1', 'ID2', 'udoi'))
-hr.nets[, dyad := as.factor(paste(ID1, ID2, sep = '_'))]
+
+dyad_id(hr.nets, 'ID1', 'ID2')
 
 ### Output ----
 saveRDS(hr.nets, 'output/5-hro.Rds')
