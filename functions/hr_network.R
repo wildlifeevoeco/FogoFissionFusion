@@ -44,7 +44,7 @@ hr_network <- function(DT = NULL, id = NULL, utm = NULL, by = NULL, returns = NU
     DT[, {
       KOver <- build_hr_net(.SD, id = id, utm = utm)
       out.dt <- data.table::data.table(
-        data.table::melt(KOver))[!is.na(value)]
+        data.table::melt(KOver, variable.factor = FALSE, value.factor = FALSE))[!is.na(value)]
     }, by = by, .SDcols = c('EASTING', 'NORTHING', 'ANIMAL_ID', by, id)]
   }
 }
