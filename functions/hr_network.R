@@ -1,4 +1,6 @@
 #' Homerange Networks
+#' 
+#' Author: Alec Robitaille
 #'
 #' Build home range networks using `adehabitatHR::kerneloverlap` and returns either graph statitics or home range overlap. 
 #' 
@@ -43,25 +45,6 @@ hr_network <- function(DT = NULL, id = NULL, utm = NULL, by = NULL, returns = NU
       KOver <- build_hr_net(.SD, id = id, utm = utm)
       out.dt <- data.table::data.table(
         data.table::melt(KOver))[!is.na(value)]
-      
-     # if (nrow(out.dt) == 0) {
-      #   list(
-      #    leftYear = as.integer(999),
-      #    rightYear = as.integer(999),
-      #    value = 999
-      #  )
-      #} else {
-      #  list(
-      #    leftYear = unlist(
-      #      data.table::tstrsplit(
-      #        out.dt$Var1, '_', keep = 3, type.convert = TRUE),
-      #      use.names = FALSE),
-      #    rightYear = unlist(
-      #      data.table::tstrsplit(
-      #        out.dt$Var2, '_', keep = 3, type.convert = TRUE),
-      #      use.names = FALSE),
-      #    value = out.dt$value)
-      #}
     }, by = by, .SDcols = c('EASTING', 'NORTHING', 'ANIMAL_ID', by, id)]
   }
 }
