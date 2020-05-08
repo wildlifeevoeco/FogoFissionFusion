@@ -26,5 +26,8 @@ out <- merge(DT, body, by = 'dyadID')
 
 
 ### Output ----
-saveRDS(DT, 'output/6-all-dyad-data.Rds')
-fwrite(DT, 'output/6-all-dyad-data.csv')
+saveRDS(out, 'output/6-all-dyad-data.Rds')
+fwrite(out, 'output/6-all-dyad-data.csv')
+
+
+
