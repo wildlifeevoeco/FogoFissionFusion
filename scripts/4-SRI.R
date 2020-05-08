@@ -32,4 +32,4 @@ nets <- get_sri(locs, id = 'ANIMAL_ID', by = 'Year')[!is.na(sri)]
 dyad_id(nets, 'ID1', 'ID2')
 
 ### Output ----
-saveRDS(nets, 'output/4-sri.RDS')
+saveRDS(nets, 'output/4-sri.Rds')
