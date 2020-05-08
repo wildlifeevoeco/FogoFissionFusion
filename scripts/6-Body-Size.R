@@ -1,5 +1,5 @@
 ### Body Size ====
-
+# Morgane Le Goff, Alec L. Robitaille
 
 ### Packages ----
 libs <- c('data.table', 'spatsoc')
@@ -41,34 +41,19 @@ bodyavg <- body[, lapply(.SD, mean, na.rm = T),
 # Calculate difference between all individuals
 varls <- bodyavg[, names(.SD), .SDcols = -idcol]
 
+lsdiff <- lapply(varls, diff_dyad, DT = bodyavg, id = idcol)
+
+diffs <- Reduce(function(x, y) merge(x, y, on = 'dyadID'),
+                lsdiff)
+
+
+## Other ways of using it:
 # eg. for one variable
 # diff_dyad(DT = bodyavg, col = 'total_length', id = idcol)
 
-Reduce(function(x, y) merge(x, y, on = 'dyadID'), lapply(varls, diff_dyad, DT = bodyavg, id = idcol))
-
-
-
-
-# Check
-lendiff[sample(1), diff] == body2[ANIMAL_ID %in% c(lendiff[1, ID1], lendiff[1, ID2]), dist(total_length)]
-
-
-### Merge ----
-# List data.tables
-lsDTs <- list(sri, hro, lendiff)
-
-# Remove id columns from all data.table
-idcols <- c('ID1', 'ID2')
-lapply(lsDTs, function(DT) DT[, (idcols) := NULL])
-
-# Merge together
-DT <- merge(sri, hro, by = c('dyadID', 'Year'))
-DT[lendiff, diff := diff, on = 'dyadID']
+# one liner (nice)
+# Reduce(function(x, y) merge(x, y, on = 'dyadID'), lapply(varls, diff_dyad, DT = bodyavg, id = idcol))
 
 
 ### Output ----
-saveRDS(DT, "output/6-all-dyad-data.RDS")
-fwrite(DT, "output/6-all-dyad-data.csv")
-
-ggplot(DT) +
-  geom_jitter(aes(sri,udoi, color = factor(Year))) 
+saveRDS(diffs, 'output/6-body-size-diffs.Rds')
