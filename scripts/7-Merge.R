@@ -22,12 +22,9 @@ lapply(lsDTs, function(DT) DT[, (idcols) := NULL])
 
 # Merge together
 DT <- merge(sri, hro, by = c('dyadID', 'Year'))
-DT[lendiff, diff := diff, on = 'dyadID']
+out <- merge(DT, body, by = 'dyadID')
 
 
 ### Output ----
-saveRDS(DT, 'output/6-all-dyad-data.RDS')
+saveRDS(DT, 'output/6-all-dyad-data.Rds')
 fwrite(DT, 'output/6-all-dyad-data.csv')
-
-ggplot(DT) +
-  geom_jitter(aes(sri,udoi, color = factor(Year))) 
