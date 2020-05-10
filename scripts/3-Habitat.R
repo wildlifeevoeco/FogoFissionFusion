@@ -12,14 +12,7 @@ lcFogo <- raster('../nl-landcover/output/fogo_lc.tif')
 legend <- fread('../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv')
 
 
-### Plot landcover ----
-spplot(lcFogo)
-
-### Extract habitat type at end step
-# Easting = x axis = x coord = east to west = longitude
-# Northing = y axis = ycoord = north to south = latitude
-
-# extract habitat type
+### Extract habitat type ----
 # TODO: why NA
 DT[, Value := extract(lcFogo, matrix(c(EASTING, NORTHING), ncol = 2))]
 
