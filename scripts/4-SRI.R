@@ -5,20 +5,22 @@
 libs <- c('data.table', 'spatsoc')
 lapply(libs, require, character.only = TRUE)
 
+
+### Input data ----
+DT <- readRDS('output/1-clean-all.Rds')
+alloc.col(DT)
+
+
 ### Functions ----
 source('functions/get_sri.R')
 
 
-### Input data ----
-locs <- readRDS('output/1-clean-all.Rds')
-alloc.col(locs)
-
 ### Proximity Based Social Networks ----
 # Temporal grouping 
-group_times(locs, datetime = 'datetime', threshold = '5 minutes')
+group_times(DT, datetime = 'datetime', threshold = '5 minutes')
 
 group_pts(
-  locs,
+  DT,
   threshold = 50,
   splitBy = c('Year'),
   timegroup = 'timegroup',
@@ -27,7 +29,7 @@ group_pts(
 )
 
 # Calculate SRI for each year
-nets <- get_sri(locs, id = 'ANIMAL_ID', by = 'Year')[!is.na(sri)]
+nets <- get_sri(DT, id = 'ANIMAL_ID', by = 'Year')[!is.na(sri)]
 
 dyad_id(nets, 'ID1', 'ID2')
 
