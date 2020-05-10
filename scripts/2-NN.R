@@ -29,6 +29,8 @@ edges <-
     splitBy = c('Year')
   )
 
+# TODO: set max distance between NN, NN to NA
+
 out <- merge(
   DT,
   edges,
