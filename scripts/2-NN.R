@@ -29,11 +29,15 @@ edges <-
     splitBy = c('Year')
   )
 
-out <- merge(DT, edges, 
-            by.x = c('ANIMAL_ID', 'timegroup', 'Year'),
-            by.y = c('ID', 'timegroup', 'Year'))
+out <- merge(
+  DT,
+  edges,
+  by.x = c('ANIMAL_ID', 'timegroup', 'Year'),
+  by.y = c('ID', 'timegroup', 'Year')
+)
 
 ### Generate spatial groups ----
+# TODO: why generate these again in 4-SRI
 group_pts(
   out,
   threshold = 50,
