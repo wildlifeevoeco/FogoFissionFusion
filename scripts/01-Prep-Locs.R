@@ -1,7 +1,7 @@
 # === Prep Locs -----------------------------------------------------------
 
 # Packages ----------------------------------------------------------------
-libs <- c('data.table', 'ggplot2', 'rgdal', 'lubridate')
+libs <- c('lubridate', 'data.table', 'ggplot2', 'rgdal')
 lapply(libs, require, character.only = TRUE)
 
 
@@ -67,7 +67,7 @@ fogo <- fogo[!(IDYr %in% dropIDYr) &
 fogo[, hour := hour(as.ITime(itime))]
 is.odd <- function(x) x %% 2 != 0 
 fogo$hour <- is.odd(fogo$hour)
-fogo <- fogo[hour != 'TRUE' ][, c('hour') := NULL]
+fogo <- fogo[hour != 'TRUE' ][, hour := NULL]
 fogo[, datetime := floor_date(datetime, '1 hour')]
 fogo[, itime := as.ITime(datetime)]
 
