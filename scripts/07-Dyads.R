@@ -10,6 +10,22 @@ lapply(libs, require, character.only = TRUE)
 DT <- readRDS('output/04-nn-locs')
 alloc.col(DT)
 
+lc <- raster('../nl-landcover/output/fogo_lc.tif')
+legend <- fread('../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv')
+
+
+# Dyad centroid -----------------------------------------------------------
+# For each dyad * timegroup
+DT[, c('meanX', 'meanY') := lapply(.SD, mean), 
+   .SDcols = c('EASTING', 'NORTHING'), by = .(dyadID, timegroup)]
+
+
+# Extract land cover at centroid ------------------------------------------
+DT[, Value := extract(lc, matrix(c(meanX, meanY), ncol = 2))]
+
+# rename habitat types by merging legend
+DT[legend, lc := Landcover, on = 'Value']
+
 
 # Fusion and fission events -----------------------------------------------
 # Get the unique dyads by timegroup
@@ -41,4 +57,6 @@ dyads[, runCount := fifelse(difftimegrp == 1, .N, NA_integer_), by = .(runid, dy
 dyads[runCount > 1, start := fifelse(timegroup == min(timegroup), TRUE, NA), by = .(runid, dyadID)]
 
 dyads[runCount > 1, end := fifelse(timegroup == max(timegroup), TRUE, NA), by = .(runid, dyadID)]
+
+
 
