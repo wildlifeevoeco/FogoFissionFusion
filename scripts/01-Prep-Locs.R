@@ -78,4 +78,4 @@ aa <- fogo[, .N, by = .(ANIMAL_ID, Year)]
 
 
 # Output  -----------------------------------------------------------------
-saveRDS(fogo, 'output/1-prep-locs.Rds')
+saveRDS(fogo, 'output/01-prep-locs.Rds')

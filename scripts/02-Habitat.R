@@ -6,7 +6,7 @@ lapply(libs, require, character.only = TRUE)
 
 
 # Input data --------------------------------------------------------------------
-DT <- readRDS('output/1-prep-locs.Rds')
+DT <- readRDS('output/01-prep-locs.Rds')
 
 lc <- raster('../nl-landcover/output/fogo_lc.tif')
 legend <- fread('../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv')
@@ -52,4 +52,4 @@ DT[, .N, by = lc]
 
 
 # Output ------------------------------------------------------------------
-saveRDS(DT, 'output/2-habitat-locs.Rds')
+saveRDS(DT, 'output/02-habitat-locs.Rds')
