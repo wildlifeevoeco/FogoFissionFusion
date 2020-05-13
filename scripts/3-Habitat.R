@@ -35,9 +35,8 @@ focals <- lapply(legend$Value, function(val) {
 names(focals) <- legend$Value
 
 ## Combine habitat types using the Value numbers from the legend
-openMove <- Reduce('+', focals[c(1, 6, 9)])
+openMove <- Reduce('+', focals[c(1, 6, 8, 9)])
 forest <- Reduce('+', focals[c(2, 3, 4, 5)])
-lichen <- focals[[8]]
 
 ## Proportion of habitat in 100m buffer
 # Set buffer size
