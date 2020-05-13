@@ -1,24 +1,23 @@
-### Calculate NN ====
+# === Calculate NN --------------------------------------------------------
 
-### Packages ----
+
+# Packages ----------------------------------------------------------------
 libs <- c( 'ggplot2', 'rgdal',  'data.table',
           'spatsoc', 'igraph', 'asnipe')
 lapply(libs, require, character.only = TRUE)
 
 
-### Input raw data ----
-DT <- readRDS('output/1-clean-all.Rds')
+# Input data --------------------------------------------------------------
+DT <- readRDS('output/03-grouped-locs.Rds')
 alloc.col(DT)
 
-### Variables ----
+
+# Set variables -----------------------------------------------------------
 projCols <- c('EASTING', 'NORTHING')
 
 
-### Temporal grouping ----
-group_times(DT, datetime = 'datetime', threshold = '5 minutes')
 
-
-### Nearest neighbor at end step ----
+# Nearest neighbour -------------------------------------------------------
 # TODO: set max distance between NN, NN to NA
 edges <-
   edge_nn(
@@ -31,6 +30,8 @@ edges <-
   )
 
 
+
+# Merge -------------------------------------------------------------------
 out <- merge(
   DT,
   edges,
@@ -38,19 +39,6 @@ out <- merge(
   by.y = c('ID', 'timegroup', 'Year')
 )
 
-### Generate spatial groups ----
-# TODO: why generate these again in 4-SRI
-group_pts(
-  out,
-  threshold = 50,
-  splitBy = c('Year'),
-  timegroup = 'timegroup',
-  id = 'ANIMAL_ID',
-  coords = projCols
-)
 
-
-### Export data ----
-saveRDS(out, 'output/2-clean-all-nn.Rds')
-
-
+# Output ------------------------------------------------------------------
+saveRDS(out, 'output/04-nn-locs')
