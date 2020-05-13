@@ -32,6 +32,8 @@ edges <-
 maxdist <- 500
 edges[distance > maxdist, NN := NA]
 
+# Set dyad id
+dyad_id(edges, 'ID', 'NN')
 
 # Merge -------------------------------------------------------------------
 m <- merge(
@@ -41,7 +43,7 @@ m <- merge(
   by.y = c('ID', 'timegroup', 'Year')
 )
 
-out <- m[, .(ANIMAL_ID, NN, idate, itime, datetime, timegroup, Year,
+out <- m[, .(ANIMAL_ID, NN, dyadID, idate, itime, datetime, timegroup, Year,
              season, distance, EASTING, NORTHING)]
 
 # Output ------------------------------------------------------------------
