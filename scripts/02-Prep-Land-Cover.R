@@ -1,8 +1,7 @@
-### Habitat ====
+### Prep Land Cover ====
 
 ### Packages ----
-libs <- c('data.table', 'ggplot2', 'rgdal', 'spatsoc', 
-          'lubridate', 'raster', 'sp')
+libs <- c('data.table', 'rgdal', 'raster', 'sp')
 lapply(libs, require, character.only = TRUE)
 
 ### Input raw data ----
