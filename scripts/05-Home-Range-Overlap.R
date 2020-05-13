@@ -55,6 +55,5 @@ hr.nets[, (idcols) := lapply(.SD, as.character), .SDcols = idcols]
 dyad_id(hr.nets, idcols[[1]], idcols[[2]])
 
 
-
 # Output ------------------------------------------------------------------
 saveRDS(hr.nets, 'output/05-hro.Rds')
