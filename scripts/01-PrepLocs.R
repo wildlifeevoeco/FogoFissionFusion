@@ -1,13 +1,15 @@
-### All Locs - Cleaning ====
+# === Prep Locs -----------------------------------------------------------
 
-### Packages ----
+# Packages ----------------------------------------------------------------
 libs <- c('data.table', 'ggplot2', 'rgdal', 'lubridate')
 lapply(libs, require, character.only = TRUE)
 
-### Input data ----
+
+# Input data --------------------------------------------------------------
 fogo <- fread(paste0('input/FogoCaribou.csv'))
 
-### Set variables ----
+
+# Set variables -----------------------------------------------------------
 # Bounds
 lowEastFogo <- 690000; highEastFogo <- 800000
 lowNorthFogo <- 5450000; highNorthFogo <- 6000000
@@ -34,10 +36,17 @@ fogo[, datetime := as.POSIXct(paste(idate,itime),
 # ID by Yr
 fogo[, IDYr := paste(ANIMAL_ID, Year, sep = '_')]
 
-aa <- fogo[, .N, by = .(IDYr)]
+# Winter season (Jan 1 to March 16)
+fogo[JDate >= 1 & JDate <= 75, season := 'winter']
+fogo <- fogo[!is.na(season)]
 
-### Subset ----
-# remove  animals with malfunctioning collars
+# UTM zone 21N
+fogo[, (projCols) := as.data.table(project(cbind(X_COORD, Y_COORD), utm21N))]
+fogo <- fogo[(lowEastFogo < EASTING & EASTING < highEastFogo) &
+               (lowNorthFogo < NORTHING & EASTING < highNorthFogo)]
+
+# Subset ------------------------------------------------------------------
+# Remove  animals with malfunctioning collars
 dropIDYr <- c(
   'FO2016006_2017', # not enough fixes 
   'FO2016006_2018', # not enough fixes
@@ -54,7 +63,7 @@ dropID <- c(
 fogo <- fogo[!(IDYr %in% dropIDYr) &
                !(ANIMAL_ID %in% dropID)]
 
-### round FO2016014 datetime to nearest hour to match fixes for rest of individuals
+# Round FO2016014 datetime to nearest hour to match fixes for rest of individuals
 fogo[, hour := hour(as.ITime(itime))]
 is.odd <- function(x) x %% 2 != 0 
 fogo$hour <- is.odd(fogo$hour)
@@ -62,15 +71,11 @@ fogo <- fogo[hour != 'TRUE' ][, c('hour') := NULL]
 fogo[, datetime := floor_date(datetime, '1 hour')]
 fogo[, itime := as.ITime(datetime)]
 
-## assign winter season (Jan 1 to March 16)
-fogo[JDate >= 1 & JDate <= 75, season := 'winter']
-fogo <- fogo[!is.na(season)]
 
-# UTM zone 21N
-fogo[, (projCols) := as.data.table(project(cbind(X_COORD, Y_COORD), utm21N))]
-fogo <- fogo[(lowEastFogo < EASTING & EASTING < highEastFogo) &
-               (lowNorthFogo < NORTHING & EASTING < highNorthFogo)]
 
-## Export data
-saveRDS(fogo, 'output/1-clean-all.Rds')
+# Summary -----------------------------------------------------------------
+aa <- fogo[, .N, by = .(ANIMAL_ID, Year)]
 
+
+# Output  -----------------------------------------------------------------
+saveRDS(fogo, 'output/1-prep-locs.Rds')
