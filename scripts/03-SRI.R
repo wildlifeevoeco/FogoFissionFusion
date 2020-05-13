@@ -7,7 +7,7 @@ lapply(libs, require, character.only = TRUE)
 
 
 # Input data --------------------------------------------------------------
-DT <- readRDS('output/1-prep-locs.Rds')
+DT <- readRDS('output/01-prep-locs.Rds')
 alloc.col(DT)
 
 
@@ -39,4 +39,5 @@ dyad_id(nets, 'ID1', 'ID2')
 
 
 # Output ------------------------------------------------------------------
-saveRDS(nets, 'output/3-sri.Rds')
+saveRDS(nets, 'output/03-sri.Rds')
+saveRDS(DT, 'output/03-grouped-locs.Rds')
