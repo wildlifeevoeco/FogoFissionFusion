@@ -50,6 +50,7 @@ ForestBuff100 <- focal(forest, focweight, na.rm = TRUE, pad = TRUE, padValue = 0
 LichenBuff100 <- focal(lichen, focweight, na.rm = TRUE, pad = TRUE, padValue = 0)
 
 # Proportion of habitat at each relocation
+# TODO: drop open"Move"
 DT[, propOpenMove := extract(openMoveBuff100, matrix(c(EASTING, NORTHING), ncol = 2))]
 DT[, propForest := extract(ForestBuff100, matrix(c(EASTING, NORTHING), ncol = 2))]
 DT[, propLichen := extract(LichenBuff100, matrix(c(EASTING, NORTHING), ncol = 2))]

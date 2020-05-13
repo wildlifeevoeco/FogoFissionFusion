@@ -19,6 +19,7 @@ group_times(DT, datetime = 'datetime', threshold = '5 minutes')
 
 
 ### Nearest neighbor at end step ----
+# TODO: set max distance between NN, NN to NA
 edges <-
   edge_nn(
     DT = DT,
@@ -29,7 +30,6 @@ edges <-
     splitBy = c('Year')
   )
 
-# TODO: set max distance between NN, NN to NA
 
 out <- merge(
   DT,
