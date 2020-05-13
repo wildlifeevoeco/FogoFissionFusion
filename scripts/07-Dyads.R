@@ -65,5 +65,14 @@ dyads[runCount > 1, start := fifelse(timegroup == min(timegroup), TRUE, NA), by 
 
 dyads[runCount > 1, end := fifelse(timegroup == max(timegroup), TRUE, NA), by = .(runid, dyadID)]
 
+## if runCount > 1, dyad stayed together = TRUE
+dyads[, gt2 := fifelse(runCount > 2, TRUE, FALSE)]
 
 
+## Fusion 0 = 
+##   a) fussion events where dyads are together > 1 consecutive relocations
+##   or b) individuals where NN = NA
+
+# TODO: consider dropping where nearest neighbour distance was greater than some maximum (no opportunity to be social)
+
+dyads[, fusion0 := ((start) & (gt2)) | is.na(NN)]
