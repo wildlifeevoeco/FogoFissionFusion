@@ -1,17 +1,17 @@
-### Body Size ====
-# Morgane Le Goff, Alec L. Robitaille
+# === Body Size -----------------------------------------------------------
 
-### Packages ----
+
+
+# Packages ----------------------------------------------------------------
 libs <- c('data.table', 'spatsoc')
 lapply(libs, require, character.only = TRUE)
 
 
-### Input ----
+# Input data --------------------------------------------------------------
 body <- fread('input/body.csv')
 
-idcol <- 'ANIMAL_ID'
 
-### Functions ----
+# Functions ---------------------------------------------------------------
 #' @param DT input data.table 
 #' @param col column to measure difference in
 #' @param id id column
@@ -33,10 +33,15 @@ diff_dyad <- function(DT, col, id) {
 }
 
 
-### Body size ----
+# Set variables -----------------------------------------------------------
+idcol <- 'ANIMAL_ID'
+
+
+
+# Body size ---------------------------------------------------------------
+# Average body size for each individual (some with multiple observations)
 bodyavg <- body[, lapply(.SD, mean, na.rm = T), 
                 by = idcol, .SDcols = -'date']
-
 
 # Calculate difference between all individuals
 varls <- bodyavg[, names(.SD), .SDcols = -idcol]
@@ -46,8 +51,7 @@ lsdiff <- lapply(varls, diff_dyad, DT = bodyavg, id = idcol)
 diffs <- Reduce(function(x, y) merge(x, y, on = 'dyadID'),
                 lsdiff)
 
-
-## Other ways of using it:
+## Other ways of using diff_dyad:
 # eg. for one variable
 # diff_dyad(DT = bodyavg, col = 'total_length', id = idcol)
 
@@ -55,5 +59,6 @@ diffs <- Reduce(function(x, y) merge(x, y, on = 'dyadID'),
 # Reduce(function(x, y) merge(x, y, on = 'dyadID'), lapply(varls, diff_dyad, DT = bodyavg, id = idcol))
 
 
-### Output ----
-saveRDS(diffs, 'output/6-body-size-diffs.Rds')
+
+# Output ------------------------------------------------------------------
+saveRDS(diffs, 'output/06-body-size-diffs.Rds')
