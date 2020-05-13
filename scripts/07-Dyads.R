@@ -29,7 +29,14 @@ DT[legend, lc := Landcover, on = 'Value']
 
 # Fusion and fission events -----------------------------------------------
 # Get the unique dyads by timegroup
-dyads <- unique(DT, by = c('timegroup', 'dyadID'))
+dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))
+
+# Get where NN was NA
+dyadNA <- DT[is.na(NN)]
+
+# Combine where NN is NA
+dyads <- rbindlist(list(dyadNN, dyadNA))
+
 
 # Set the order of the rows
 setorder(dyads, timegroup)
