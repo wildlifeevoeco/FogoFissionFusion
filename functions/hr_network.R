@@ -18,8 +18,8 @@ hr_network <- function(DT = NULL, id = NULL, coords = NULL, srs = NULL, by = NUL
   # NSE
   value <- NULL
   
-  if (is.null(DT) | is.null(id) | is.null(coords) | is.null(utm)) {
-    stop('DT, id, coords and utm must be provided')
+  if (is.null(DT) | is.null(id) | is.null(coords) | is.null(srs)) {
+    stop('DT, id, coords and srs must be provided')
   }
   
   if (is.null(returns) | !(returns %in% c('network-stats', 'overlap'))) {
