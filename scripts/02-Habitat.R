@@ -5,7 +5,7 @@ libs <- c('data.table', 'rgdal', 'raster', 'sp')
 lapply(libs, require, character.only = TRUE)
 
 
-# Data --------------------------------------------------------------------
+# Input data --------------------------------------------------------------------
 DT <- readRDS('output/1-prep-locs.Rds')
 
 lc <- raster('../nl-landcover/output/fogo_lc.tif')
