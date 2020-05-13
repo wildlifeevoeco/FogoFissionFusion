@@ -1,26 +1,30 @@
-### Home Range Analyses ====
+# === Home Range Overlap --------------------------------------------------
 
-### Packages ----
+
+# Packages ----------------------------------------------------------------
 libs <- c('data.table', 'sp', 'adehabitatHR', 'spatsoc')
 lapply(libs, require, character.only = TRUE)
 
 
-### Functions ----
+# Input data --------------------------------------------------------------
+DT <- readRDS('output/01-prep-locs.Rds')
+
+
+# Functions ---------------------------------------------------------------
 source('functions/hr_network.R')
 
 
-### Input data ----
-locs <- readRDS('output/1-clean-all.Rds')
 
-
-### Calculate Home range area for each individual ----
-# TODO: fix this proj4string
-utm21N <- '+proj=utm +zone=21 ellps=WGS84'
-
+# Set variables -----------------------------------------------------------
 coords <- c('EASTING', 'NORTHING')
-pts <- SpatialPointsDataFrame(locs[, ..coords],
-                              proj4string = CRS(utm21N),
-                              data = locs[, .(IDYr)])
+
+srs <- 'EPSG:32621'
+
+
+# Calculate home range area -----------------------------------------------
+pts <- SpatialPointsDataFrame(DT[, ..coords],
+                              proj4string = CRS(SRS_string = srs),
+                              data = DT[, .(IDYr)])
 
 ud <- kernelUD(pts, grid = 700, extent = 3)
 vertices <- getverticeshr(ud, 95)
@@ -32,22 +36,25 @@ vert.dt[, c('ANIMAL_ID', 'Year') := tstrsplit(id, '_')]
 # convert from ha to km2
 vert.dt[, areaKM2 := area / 100]
 
-### Home Range Overlap Networks ----
-# Generate all homerange overlap networks
-hr.nets <- hr_network(locs, 
+
+# Home range overlap networks ---------------------------------------------
+hr.nets <- hr_network(DT, 
                       id = 'ANIMAL_ID', 
                       coords = c('EASTING', 'NORTHING'),
-                      utm = utm21N, 
+                      srs = srs, 
                       by = c('Year'),
                       returns = 'overlap')[!is.na(value)]
+
 
 # Restructure IDs for consistency
 idcols <- c('ID1', 'ID2')
 setnames(hr.nets, c('Year', idcols, 'udoi'))
 hr.nets[, (idcols) := lapply(.SD, as.character), .SDcols = idcols]
 
+# Generate dyad id
 dyad_id(hr.nets, idcols[[1]], idcols[[2]])
 
-### Output ----
-saveRDS(hr.nets, 'output/5-hro.Rds')
 
+
+# Output ------------------------------------------------------------------
+saveRDS(hr.nets, 'output/05-hro.Rds')
