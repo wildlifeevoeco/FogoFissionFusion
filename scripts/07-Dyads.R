@@ -27,7 +27,8 @@ DT[, Value := extract(lc, matrix(c(meanX, meanY), ncol = 2))]
 DT[legend, lc := Landcover, on = 'Value']
 
 
-# Fusion and fission events -----------------------------------------------
+
+# Unique dyads and NN=NA --------------------------------------------------
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))
 
@@ -37,16 +38,18 @@ dyadNA <- DT[is.na(NN)]
 # Combine where NN is NA
 dyads <- rbindlist(list(dyadNN, dyadNA))
 
-
 # Set the order of the rows
 setorder(dyads, timegroup)
 
-## Count number of timegroups dyads are observed together
+
+# Count number of timegroups dyads are observed together ------------------
 dyads[, nObs := .N, by = .(dyadID)]
 
-## Count consecutive relocations together
+
+
+# Count consecutive relocations together ----------------------------------
 # Shift the timegroup within dyadIDs
-dyads[, shifttimegrp := shift(timegroup, 1), by =  dyadID]
+dyads[, shifttimegrp := shift(timegroup, 1), by = dyadID]
 
 # Difference between consecutive timegroups for each dyadID
 # where difftimegrp == 1, the dyads remained together in consecutive timegroups
