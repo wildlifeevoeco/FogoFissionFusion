@@ -62,20 +62,27 @@ dyads[, runid := rleid(difftimegrp), by = dyadID]
 # N consecutive observations of dyadIDs
 dyads[, runCount := fifelse(difftimegrp == 1, .N, NA_integer_), by = .(runid, dyadID)]
 
-## Start and end of consecutive relocations for each dyad
-# Dont consider where runs aren't more than one relocation
-dyads[runCount > 1, start := fifelse(timegroup == min(timegroup), TRUE, NA), by = .(runid, dyadID)]
 
-dyads[runCount > 1, end := fifelse(timegroup == max(timegroup), TRUE, NA), by = .(runid, dyadID)]
+# Flag start and end locs for each dyad -----------------------------------
+# Dont consider where runs are less than 2 relocations
+dyads[runCount > 1, start := fifelse(timegroup == min(timegroup), TRUE, FALSE), by = .(runid, dyadID)]
 
-## if runCount > 1, dyad stayed together = TRUE
-dyads[, gt2 := fifelse(runCount > 2, TRUE, FALSE)]
+dyads[runCount > 1, end := fifelse(timegroup == max(timegroup), TRUE, FALSE), by = .(runid, dyadID)]
+
+dyads[runCount <= 1 | is.na(runCount), c('start', 'end') := FALSE]
+
+## if runCount is minimum 2, dyad stayed together (min2) = TRUE
+dyads[, min2 := fifelse(runCount >= 2 & !is.na(runCount), TRUE, FALSE)]
 
 
+# Calculate fusion 0 ------------------------------------------------------
 ## Fusion 0 = 
 ##   a) fussion events where dyads are together > 1 consecutive relocations
 ##   or b) individuals where NN = NA
+dyads[, fusion0 := ((start) & (min2)) | is.na(NN) | !is.na()]
 
 # TODO: consider dropping where nearest neighbour distance was greater than some maximum (no opportunity to be social)
 
-dyads[, fusion0 := ((start) & (gt2)) | is.na(NN)]
+
+
+
