@@ -85,4 +85,5 @@ dyads[, fusion0 := ((start) & (min2)) | is.na(NN)]
 
 
 
-
+# Output ------------------------------------------------------------------
+saveRDS(dyads, 'output/07-dyads.Rds')
