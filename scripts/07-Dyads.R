@@ -49,7 +49,7 @@ dyads[, nObs := .N, by = .(dyadID)]
 
 # Count consecutive relocations together ----------------------------------
 # Shift the timegroup within dyadIDs
-dyads[, shifttimegrp := shift(timegroup, 1), by = dyadID]
+dyads[, shifttimegrp := data.table::shift(timegroup, 1), by = dyadID]
 
 # Difference between consecutive timegroups for each dyadID
 # where difftimegrp == 1, the dyads remained together in consecutive timegroups
