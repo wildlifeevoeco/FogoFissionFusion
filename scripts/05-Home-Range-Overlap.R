@@ -18,12 +18,12 @@ source('functions/hr_network.R')
 # Set variables -----------------------------------------------------------
 coords <- c('EASTING', 'NORTHING')
 
-srs <- 'EPSG:32621'
+crs <- 'EPSG:32621'
 
 
 # Calculate home range area -----------------------------------------------
 pts <- SpatialPointsDataFrame(DT[, ..coords],
-                              proj4string = CRS(SRS_string = srs),
+                              proj4string = CRS(crs),
                               data = DT[, .(IDYr)])
 
 ud <- kernelUD(pts, grid = 700, extent = 3)
@@ -41,7 +41,7 @@ vert.dt[, areaKM2 := area / 100]
 hr.nets <- hr_network(DT, 
                       id = 'ANIMAL_ID', 
                       coords = c('EASTING', 'NORTHING'),
-                      srs = srs, 
+                      crs = crs, 
                       by = c('Year'),
                       returns = 'overlap')[!is.na(value)]
 

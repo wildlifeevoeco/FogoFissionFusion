@@ -8,18 +8,18 @@
 #' 
 #' @param DT `data.table`` of relocations.
 #' @param id individual identifier column name. 
-#' @param srs SRS string for passing to CRS(SRS_string = ) 
+#' @param crs crs string for passing to CRS() of the format "+init=epsg:4326"
 #' @param by columns in input DT to split home range network generation and comparison by. For example: c('season', 'year') or 'herd'. Expects character vector. 
 #' @param returns either 'network-stats' or 'overlap'. See Details. 
 #' 
 #' @return graph strength for each individual
 #' @export
-hr_network <- function(DT = NULL, id = NULL, coords = NULL, srs = NULL, by = NULL, returns = NULL) {
+hr_network <- function(DT = NULL, id = NULL, coords = NULL, crs = NULL, by = NULL, returns = NULL) {
   # NSE
   value <- NULL
   
-  if (is.null(DT) | is.null(id) | is.null(coords) | is.null(srs)) {
-    stop('DT, id, coords and srs must be provided')
+  if (is.null(DT) | is.null(id) | is.null(coords) | is.null(crs)) {
+    stop('DT, id, coords and crs must be provided')
   }
   
   if (is.null(returns) | !(returns %in% c('network-stats', 'overlap'))) {
@@ -42,7 +42,7 @@ hr_network <- function(DT = NULL, id = NULL, coords = NULL, srs = NULL, by = NUL
   } else if (returns == 'overlap') {
     
     DT[, {
-      KOver <- build_hr_net(.SD, id = id, srs = srs, coords = coords)
+      KOver <- build_hr_net(.SD, id = id, crs = crs, coords = coords)
       out.dt <-
         data.table::melt(KOver)
     }, by = by, .SDcols = c(coords, by, id)]
@@ -50,10 +50,10 @@ hr_network <- function(DT = NULL, id = NULL, coords = NULL, srs = NULL, by = NUL
 }
 
 #' @import data.table
-build_hr_net <- function(DT, id, srs, coords) {
+build_hr_net <- function(DT, id, crs, coords) {
   xy <- sp::SpatialPointsDataFrame(
     coords = DT[, .SD, .SDcols = coords],
-    proj4string = sp::CRS(SRS_string = srs),
+    proj4string = sp::CRS(crs),
     data = DT[, .SD, .SDcols = id])
 
   KOver = adehabitatHR::kerneloverlap(xy,
