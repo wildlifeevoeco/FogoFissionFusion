@@ -18,8 +18,7 @@ source('functions/hr_network.R')
 # Set variables -----------------------------------------------------------
 coords <- c('EASTING', 'NORTHING')
 
-crs <- 'EPSG:32621'
-
+crs <- '+init=epsg:32621'
 
 # Calculate home range area -----------------------------------------------
 pts <- SpatialPointsDataFrame(DT[, ..coords],
