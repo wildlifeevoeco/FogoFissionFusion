@@ -44,7 +44,10 @@ hr_network <- function(DT = NULL, id = NULL, coords = NULL, crs = NULL, by = NUL
     DT[, {
       KOver <- build_hr_net(.SD, id = id, crs = crs, coords = coords)
       out.dt <-
-        data.table::melt(KOver)
+      data.frame(col = rep(colnames(KOver), each = nrow(KOver)), 
+                 row = rep(rownames(KOver), ncol(KOver)), 
+                 value = as.vector(KOver))
+      
     }, by = by, .SDcols = c(coords, by, id)]
   }
 }
