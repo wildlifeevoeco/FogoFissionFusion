@@ -11,11 +11,10 @@ lapply(libs, require, character.only = TRUE)
 body <- fread('input/body.csv')
 
 
-#Add columns, remove columns
-body[,c("hump_girth","neck"):= NULL]
-values=body[,.(total_length,heart_girth)]
-body[,sum_heart_length := rowSums(values)]
-body[,volume:=(body$total_length*body$heart_girth^2)/4*pi]
+# Add columns, remove columns
+body[, c('hump_girth', 'neck') := NULL]
+body[, sum_heart_length := total_length + heart_girth]
+body[, volume := (total_length * heart_girth ^ 2) / 4 * pi]
 
 # Functions ---------------------------------------------------------------
 #' @param DT input data.table 
