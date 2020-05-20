@@ -43,8 +43,8 @@ fogo <- fogo[!is.na(season)]
 # Add relocation ID by individual and determine last loc for each individual
 setorder(fogo, 'datetime')
 
-fogo[, locID := rleid(datetime), by = ANIMAL_ID]
-fogo[, lastLoc := locID == max(locID), by = ANIMAL_ID]
+fogo[, locID := rleid(datetime), by = .(ANIMAL_ID, Year)]
+fogo[, lastLoc := locID == max(locID), by = .(ANIMAL_ID, Year)]
 
 
 # UTM zone 21N
