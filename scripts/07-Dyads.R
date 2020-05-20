@@ -26,13 +26,12 @@ DT[, Value := extract(lc, matrix(c(meanX, meanY), ncol = 2))]
 # rename habitat types by merging legend
 DT[legend, lc := Landcover, on = 'Value']
 
-# new column for open vs closed (for the survival analysis)
-Habitat=ifelse(DT$Value %in% c(1, 6, 8, 9),"open","")
-Habitat=ifelse(DT$Value %in% c("1", "6", "8", "9"),"open","closed")
-DT[ ,habitat:= "open",Value %in% c(1, 6, 8,9)]
-DT[ ,habitat:= "closed",Value %in% c(2, 3, 4,5)]
-DT[, habitat:= Habitat]
+# Open vs closed (for the survival analysis)
+DT[Value %in% c(1, 6, 8, 9), habitat := "open"]
+DT[Value %in% c(2, 3, 4, 5), habitat := "closed"]
 
+# Check 
+DT[, .N, habitat]
 
 # Unique dyads and NN=NA --------------------------------------------------
 # Get the unique dyads by timegroup
