@@ -44,7 +44,8 @@ m <- merge(
 )
 
 out <- m[, .(ANIMAL_ID, NN, dyadID, idate, itime, datetime, timegroup, Year,
-             season, distance, EASTING, NORTHING)]
+             season, distance, EASTING, NORTHING,
+             locID, lastLoc)]
 
 # Output ------------------------------------------------------------------
 saveRDS(out, 'output/04-nn-locs')
