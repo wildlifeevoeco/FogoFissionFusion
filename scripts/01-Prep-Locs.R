@@ -33,6 +33,12 @@ fogo[, itime := as.ITime(itime, tz = tz)]
 fogo[, datetime := as.POSIXct(paste(idate,itime), 
                               format = '%Y-%m-%d %H:%M:%S', tz = tz)]
 
+# Add relocation ID by individual and determine last loc for each individual
+setorder(fogo, 'datetime')
+
+fogo[, locID := rleid(datetime), by = ANIMAL_ID]
+fogo[, lastLoc := locID == max(locID), by = ANIMAL_ID]
+
 # ID by Yr
 fogo[, IDYr := paste(ANIMAL_ID, Year, sep = '_')]
 
