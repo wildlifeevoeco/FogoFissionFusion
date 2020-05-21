@@ -14,8 +14,8 @@ lc <- raster('../nl-landcover/output/fogo_lc.tif')
 legend <- fread('../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv')
 
 
-# Put LastLoc data in binary O-1n censored data are incomplete data used in 
-#survival analysis
+# Put LastLoc data in binary O-1, censored data are incomplete data used in 
+# survival analysis
 
 DT[lastLoc%in% "TRUE", censored:= 0]
 DT[lastLoc%in% "FALSE", censored:= 1]
@@ -29,6 +29,11 @@ DT[, c('meanX', 'meanY') := lapply(.SD, mean),
 
 # Extract land cover at centroid ------------------------------------------
 DT[, Value := extract(lc, matrix(c(meanX, meanY), ncol = 2))]
+
+
+# Proportion of habitat at centroid
+DT[, propOpen := extract(openProp, matrix(c(meanX, meanY), ncol = 2))]
+DT[, propClosed := extract(closedProp, matrix(c(meanX, meanY), ncol = 2))]
 
 # rename habitat types by merging legend
 DT[legend, lc := Landcover, on = 'Value']
@@ -85,6 +90,10 @@ dyads[runCount <= 1 | is.na(runCount), c('start', 'end') := FALSE]
 
 ## if runCount is minimum 2, dyad stayed together (min2) = TRUE
 dyads[, min2 := fifelse(runCount >= 2 & !is.na(runCount), TRUE, FALSE)]
+
+
+# one dyad - one runCount - one habitat percentage (for survival analysis) 
+DT[,mean_open := mean(propOpen), by= runCoubt]
 
 
 # Calculate fusion 0 ------------------------------------------------------
