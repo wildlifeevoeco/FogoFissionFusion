@@ -30,15 +30,14 @@ DT[, c('meanX', 'meanY') := lapply(.SD, mean),
 
 
 # Extract land cover at centroid ------------------------------------------
-DT[, Value := extract(lc, matrix(c(meanX, meanY), ncol = 2))]
-
+DT[, dyadValue := extract(landcover, matrix(c(meanX, meanY), ncol = 2))]
 
 # Proportion of habitat at centroid
-DT[, propOpen := extract(openProp, matrix(c(meanX, meanY), ncol = 2))]
-DT[, propClosed := extract(closedProp, matrix(c(meanX, meanY), ncol = 2))]
+DT[, dyadPropOpen := extract(openProp, matrix(c(meanX, meanY), ncol = 2))]
+DT[, dyadPropClosed := extract(closedProp, matrix(c(meanX, meanY), ncol = 2))]
 
 # rename habitat types by merging legend
-DT[legend, lc := Landcover, on = 'Value']
+DT[legend, dyadLC := Landcover, on = 'dyadValue == Value']
 
 # Open vs closed (for the survival analysis)
 DT[Value %in% c(1, 6, 8, 9), habitat := "open"]
