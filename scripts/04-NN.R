@@ -44,6 +44,7 @@ m <- merge(
 )
 
 out <- m[, .(ANIMAL_ID, NN, dyadID, idate, itime, datetime, timegroup, Year,
+             Value, lc, propOpen, propClosed,
              season, distance, EASTING, NORTHING,
              locID, lastLoc)]
 
