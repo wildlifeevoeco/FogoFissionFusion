@@ -93,8 +93,8 @@ dyads[runCount <= 1 | is.na(runCount), c('start', 'end') := FALSE]
 dyads[, min2 := fifelse(runCount >= 2 & !is.na(runCount), TRUE, FALSE)]
 
 
-# one dyad - one runCount - one habitat percentage (for survival analysis) 
-DT[,mean_open := mean(propOpen), by= runCoubt]
+# one dyad - one runCount - one habitat percentage (for survival analysis)
+dyads[, mean_open := mean(propOpen), by = .(runid, dyadID)]
 
 
 # Calculate fusion 0 ------------------------------------------------------
