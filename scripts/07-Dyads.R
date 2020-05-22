@@ -17,8 +17,8 @@ legend <- fread('../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv')
 # Put LastLoc data in binary O-1, censored data are incomplete data used in 
 # survival analysis
 
-DT[lastLoc%in% "TRUE", censored:= 0]
-DT[lastLoc%in% "FALSE", censored:= 1]
+DT[(lastLoc), censored := 0]
+DT[!(lastLoc), censored := 1]
 DT[,.N,censored]
 
 # Dyad centroid -----------------------------------------------------------
