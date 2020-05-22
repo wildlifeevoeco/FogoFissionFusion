@@ -7,7 +7,7 @@ lapply(libs, require, character.only = TRUE)
 
 
 # Input data --------------------------------------------------------------
-DT <- readRDS('output/01-prep-locs.Rds')
+DT <- readRDS('output/02-habitat-locs.Rds')
 alloc.col(DT)
 
 
