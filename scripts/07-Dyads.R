@@ -10,13 +10,15 @@ lapply(libs, require, character.only = TRUE)
 DT <- readRDS('output/04-nn-locs')
 alloc.col(DT)
 
-lc <- raster('../nl-landcover/output/fogo_lc.tif')
+landcover <- raster('../nl-landcover/output/fogo_lc.tif')
 legend <- fread('../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv')
+
+openProp <- raster('output/02-open-proportion.tif')
+closedProp <- raster('output/02-closed-proportion.tif')
 
 
 # Put LastLoc data in binary O-1, censored data are incomplete data used in 
 # survival analysis
-
 DT[(lastLoc), censored := 0]
 DT[!(lastLoc), censored := 1]
 DT[,.N,censored]
