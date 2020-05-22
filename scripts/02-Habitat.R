@@ -53,3 +53,5 @@ DT[, .N, by = lc]
 
 # Output ------------------------------------------------------------------
 saveRDS(DT, 'output/02-habitat-locs.Rds')
+writeRaster(openProp, 'output/02-open-proportion.tif')
+writeRaster(closedProp, 'output/02-closed-proportion.tif')
