@@ -97,8 +97,8 @@ dyads[, min2 := fifelse(runCount >= 2 & !is.na(runCount), TRUE, FALSE)]
 dyads[, mean_open := mean(propOpen), by = .(runid, dyadID)]
 
 # dominant habitat during the consecutive fixes dyads spent together put in 07-dyad
-dyads[mean_open> "0.5", DyadDominantLC := "open"]
-dyads[mean_open< "0.5", DyadDominantLC := "closed"]
+dyads[mean_open > 0.5, DyadDominantLC := "open"]
+dyads[mean_open < 0.5, DyadDominantLC := "closed"]
 
 # Calculate fusion 0 ------------------------------------------------------
 ## Fusion 0 = 
