@@ -104,6 +104,8 @@ dyadNA <- DT[is.na(NN)]
 
 dyadNA[, c('start', 'end', 'min2') := FALSE]
 
+dyadNA[, shifttimegrp := prevTimegrpNNNA]
+
 # Combine where NN is NA
 dyads <- rbindlist(list(dyadNN, dyadNA), fill = TRUE)
 
