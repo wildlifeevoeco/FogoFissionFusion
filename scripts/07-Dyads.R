@@ -144,3 +144,4 @@ intervals <- dyads[, .(
 # Output ------------------------------------------------------------------
 saveRDS(dyads, 'output/07-dyads.Rds')
 
+saveRDS(intervals, 'output/07-intervals.Rds')
