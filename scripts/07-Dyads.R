@@ -109,6 +109,16 @@ dyads[, fusion0 := ((start) & (min2)) | is.na(NN)]
 # TODO: consider dropping where nearest neighbour distance was greater than some maximum (no opportunity to be social)
 
 
+# Start/Stop --------------------------------------------------------------
+intervals <- dyads[, .(
+  dyadID, 
+  start = timegroup, 
+  stop = shifttimegrp,
+  min2,
+  
+  
+)]
+
 
 # Output ------------------------------------------------------------------
 saveRDS(dyads, 'output/07-dyads.Rds')
