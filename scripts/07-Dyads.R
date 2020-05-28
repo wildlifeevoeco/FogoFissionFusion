@@ -50,55 +50,57 @@ DT[, .N, habitat]
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))
 
-# Get where NN was NA
-dyadNA <- DT[is.na(NN)]
-
-# Combine where NN is NA
-dyads <- rbindlist(list(dyadNN, dyadNA))
-
 # Set the order of the rows
-setorder(dyads, timegroup)
+setorder(dyadNN, timegroup)
 
 
 # Count number of timegroups dyads are observed together ------------------
-dyads[, nObs := .N, by = .(dyadID)]
-
+dyadNN[, nObs := .N, by = .(dyadID)]
 
 
 # Count consecutive relocations together ----------------------------------
 # Shift the timegroup within dyadIDs
-dyads[, shifttimegrp := data.table::shift(timegroup, 1), by = dyadID]
+dyadNN[, shifttimegrp := data.table::shift(timegroup, 1), by = ANIMAL_ID]
 
 # Difference between consecutive timegroups for each dyadID
 # where difftimegrp == 1, the dyads remained together in consecutive timegroups
-dyads[, difftimegrp := timegroup - shifttimegrp]
+dyadNN[, difftimegrp := timegroup - shifttimegrp]
 
 
 # Run id of diff timegroups
-dyads[, runid := rleid(difftimegrp), by = dyadID]
+dyadNN[, runid := rleid(difftimegrp), by = dyadID]
 
 # N consecutive observations of dyadIDs
-dyads[, runCount := fifelse(difftimegrp == 1, .N, NA_integer_), by = .(runid, dyadID)]
+dyadNN[, runCount := fifelse(difftimegrp == 1, .N, NA_integer_), by = .(runid, dyadID)]
 
 
 # Flag start and end locs for each dyad -----------------------------------
 # Dont consider where runs are less than 2 relocations
-dyads[runCount > 1, start := fifelse(timegroup == min(timegroup), TRUE, FALSE), by = .(runid, dyadID)]
+dyadNN[runCount > 1, start := fifelse(timegroup == min(timegroup), TRUE, FALSE), by = .(runid, dyadID)]
 
-dyads[runCount > 1, end := fifelse(timegroup == max(timegroup), TRUE, FALSE), by = .(runid, dyadID)]
+dyadNN[runCount > 1, end := fifelse(timegroup == max(timegroup), TRUE, FALSE), by = .(runid, dyadID)]
 
-dyads[runCount <= 1 | is.na(runCount), c('start', 'end') := FALSE]
+dyadNN[runCount <= 1 | is.na(runCount), c('start', 'end') := FALSE]
 
 ## if runCount is minimum 2, dyad stayed together (min2) = TRUE
-dyads[, min2 := fifelse(runCount >= 2 & !is.na(runCount), TRUE, FALSE)]
+dyadNN[, min2 := fifelse(runCount >= 2 & !is.na(runCount), TRUE, FALSE)]
 
 
 # one dyad - one runCount - one habitat percentage (for survival analysis)
-dyads[, mean_open := mean(propOpen), by = .(runid, dyadID)]
+dyadNN[, mean_open := mean(propOpen, na.rm = TRUE), by = .(runid, dyadID)]
 
 # dominant habitat during the consecutive fixes dyads spent together put in 07-dyad
-dyads[mean_open > 0.5, DyadDominantLC := "open"]
-dyads[mean_open < 0.5, DyadDominantLC := "closed"]
+dyadNN[mean_open > 0.5, DyadDominantLC := "open"]
+dyadNN[mean_open < 0.5, DyadDominantLC := "closed"]
+
+
+# Get where NN was NA
+dyadNA <- DT[is.na(NN)]
+
+dyadNA[, c('start', 'end', 'min2') := FALSE]
+
+# Combine where NN is NA
+dyads <- rbindlist(list(dyadNN, dyadNA), fill = TRUE)
 
 # Calculate fusion 0 ------------------------------------------------------
 ## Fusion 0 = 
