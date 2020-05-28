@@ -122,7 +122,8 @@ dyads[, fusion0 := ((start) & (min2)) | is.na(NN)]
 dyads[, meanOpenStop := shift(mean_open), by = .(runid, dyadID)]
 dyads[, dyadPropOpenStop := shift(dyadPropOpen), by = .(runid, dyadID)]
 
-# TODO: why FO2016011 start stop same
+# TODO: adjust timegroup for dyads when observations are sequential? use prev timegroup instead?
+
 intervals <- dyads[, .(
   ANIMAL_ID,
   NN,
