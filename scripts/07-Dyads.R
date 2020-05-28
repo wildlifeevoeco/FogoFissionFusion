@@ -110,13 +110,16 @@ dyads[, fusion0 := ((start) & (min2)) | is.na(NN)]
 
 
 # Start/Stop --------------------------------------------------------------
+dyads[, meanOpenStop := shift(mean_open), by = .(runid, dyadID)]
 intervals <- dyads[, .(
   dyadID, 
-  start = timegroup, 
-  stop = shifttimegrp,
-  min2,
-  
-  
+  start = shifttimegrp, 
+  stop = timegroup,
+  start,
+  end,
+  min2, 
+  stayedTogether = min2 & (!end),
+  meanOpenStop
 )]
 
 
