@@ -111,7 +111,12 @@ dyads[, fusion0 := ((start) & (min2)) | is.na(NN)]
 
 # Start/Stop --------------------------------------------------------------
 dyads[, meanOpenStop := shift(mean_open), by = .(runid, dyadID)]
+dyads[, dyadPropOpenStop := shift(dyadPropOpen), by = .(runid, dyadID)]
+
+# TODO: why FO2016011 start stop same
 intervals <- dyads[, .(
+  ANIMAL_ID,
+  NN,
   dyadID, 
   start = shifttimegrp, 
   stop = timegroup,
@@ -119,7 +124,10 @@ intervals <- dyads[, .(
   end,
   min2, 
   stayedTogether = min2 & (!end),
-  meanOpenStop
+  meanOpenStop,
+  dyadPropOpenStop,
+  DyadDominantLC,
+  runid
 )]
 
 
