@@ -23,6 +23,11 @@ DT[(lastLoc), censored := 0]
 DT[!(lastLoc), censored := 1]
 DT[,.N,censored]
 
+
+# Calc previous timegroup for downstream when NN is NA
+DT[, prevTimegrpNNNA := shift(timegroup), by = ANIMAL_ID]
+
+
 # Dyad centroid -----------------------------------------------------------
 # For each dyad * timegroup
 DT[, c('meanX', 'meanY') := lapply(.SD, mean), 
