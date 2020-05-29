@@ -15,7 +15,7 @@ legend <- fread('../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv')
 
 openProp <- raster('output/02-open-proportion.tif')
 closedProp <- raster('output/02-closed-proportion.tif')
-
+shannon<-raster('output/02-shannon.tif')
 
 # Put LastLoc data in binary O-1, censored data are incomplete data used in 
 # survival analysis
@@ -36,6 +36,10 @@ DT[, c('meanX', 'meanY') := lapply(.SD, mean),
 
 # Extract land cover at centroid ------------------------------------------
 DT[, dyadValue := extract(landcover, matrix(c(meanX, meanY), ncol = 2))]
+
+
+#extract shannon index at centroid
+DT[, ShanIndex := extract(shannon, matrix(c(meanX, meanY), ncol = 2))]
 
 # Proportion of habitat at centroid
 DT[, dyadPropOpen := extract(openProp, matrix(c(meanX, meanY), ncol = 2))]
@@ -81,7 +85,7 @@ dyadNN[, runCount := fifelse(difftimegrp == 1, .N, NA_integer_), by = .(runid, d
 
 # Flag start and end locs for each dyad -----------------------------------
 # Dont consider where runs are less than 2 relocations
-dyadNN[runCount > 1, start := fifelse(timegroup == min(timegroup), TRUE, FALSE), by = .(runid, dyadID)]
+dyadNN[runCount > 1, Start := fifelse(timegroup == min(timegroup), TRUE, FALSE), by = .(runid, dyadID)]
 
 dyadNN[runCount > 1, end := fifelse(timegroup == max(timegroup), TRUE, FALSE), by = .(runid, dyadID)]
 
@@ -102,7 +106,7 @@ dyadNN[mean_open < 0.5, DyadDominantLC := "closed"]
 # Get where NN was NA
 dyadNA <- DT[is.na(NN)]
 
-dyadNA[, c('start', 'end', 'min2') := FALSE]
+dyadNA[, c('Start', 'end', 'min2') := FALSE]
 
 dyadNA[, shifttimegrp := prevTimegrpNNNA]
 
@@ -113,7 +117,7 @@ dyads <- rbindlist(list(dyadNN, dyadNA), fill = TRUE)
 ## Fusion 0 = 
 ##   a) fussion events where dyads are together > 1 consecutive relocations
 ##   or b) individuals where NN = NA
-dyads[, fusion0 := ((start) & (min2)) | is.na(NN)]
+dyads[, fusion0 := ((Start) & (min2)) | is.na(NN)]
 
 # TODO: consider dropping where nearest neighbour distance was greater than some maximum (no opportunity to be social)
 
@@ -126,18 +130,20 @@ dyads[, dyadPropOpenStop := shift(dyadPropOpen), by = .(runid, dyadID)]
 
 intervals <- dyads[, .(
   ANIMAL_ID,
+  Year,
   NN,
   dyadID, 
   start = shifttimegrp, 
   stop = timegroup,
-  start,
+  Start,
   end,
   min2, 
   stayedTogether = min2 & (!end),
   meanOpenStop,
   dyadPropOpenStop,
   DyadDominantLC,
-  runid
+  runid,
+  ShanIndex
 )]
 
 
@@ -145,3 +151,4 @@ intervals <- dyads[, .(
 saveRDS(dyads, 'output/07-dyads.Rds')
 
 saveRDS(intervals, 'output/07-intervals.Rds')
+
