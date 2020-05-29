@@ -45,6 +45,16 @@ closedProp <- focal(closed, weight, na.rm = TRUE, pad = TRUE, padValue = 0)
 DT[, propOpen := extract(openProp, matrix(c(EASTING, NORTHING), ncol = 2))]
 DT[, propClosed := extract(closedProp, matrix(c(EASTING, NORTHING), ncol = 2))]
 
+# shannon index at each relocation in a new raster 
+shannon <- function(x, ...) {
+  cnts <- table(x)
+  cnts <- cnts / sum(cnts)
+  -sum(cnts * log(cnts))
+}  
+
+shanOut <- focal(lc, weight, fun=shannon, pad=T)
+
+DT[ ,ShannonIdx :=extract(shanOut,matrix(c(EASTING,NORTHING),ncol=2))]
 
 
 # Summary -----------------------------------------------------------------
@@ -55,3 +65,4 @@ DT[, .N, by = lc]
 saveRDS(DT, 'output/02-habitat-locs.Rds')
 writeRaster(openProp, 'output/02-open-proportion.tif')
 writeRaster(closedProp, 'output/02-closed-proportion.tif')
+writeRaster(shanOut,'output/02-shannon.tif', overwrite=TRUE)
