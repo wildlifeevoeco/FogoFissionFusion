@@ -85,7 +85,7 @@ dyadNN[, runCount := fifelse(difftimegrp == 1, .N, NA_integer_), by = .(runid, d
 
 # Flag start and end locs for each dyad -----------------------------------
 # Dont consider where runs are less than 2 relocations
-dyadNN[runCount > 1, Start := fifelse(timegroup == min(timegroup), TRUE, FALSE), by = .(runid, dyadID)]
+dyadNN[runCount > 1, start := fifelse(timegroup == min(timegroup), TRUE, FALSE), by = .(runid, dyadID)]
 
 dyadNN[runCount > 1, end := fifelse(timegroup == max(timegroup), TRUE, FALSE), by = .(runid, dyadID)]
 
@@ -106,7 +106,7 @@ dyadNN[mean_open < 0.5, DyadDominantLC := "closed"]
 # Get where NN was NA
 dyadNA <- DT[is.na(NN)]
 
-dyadNA[, c('Start', 'end', 'min2') := FALSE]
+dyadNA[, c('start', 'end', 'min2') := FALSE]
 
 dyadNA[, shifttimegrp := prevTimegrpNNNA]
 
@@ -117,7 +117,7 @@ dyads <- rbindlist(list(dyadNN, dyadNA), fill = TRUE)
 ## Fusion 0 = 
 ##   a) fussion events where dyads are together > 1 consecutive relocations
 ##   or b) individuals where NN = NA
-dyads[, fusion0 := ((Start) & (min2)) | is.na(NN)]
+dyads[, fusion0 := ((start) & (min2)) | is.na(NN)]
 
 # TODO: consider dropping where nearest neighbour distance was greater than some maximum (no opportunity to be social)
 
