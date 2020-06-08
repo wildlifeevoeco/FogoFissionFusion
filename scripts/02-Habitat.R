@@ -50,11 +50,11 @@ shannon <- function(x, ...) {
   cnts <- table(x)
   cnts <- cnts / sum(cnts)
   -sum(cnts * log(cnts))
-}  
+}
 
-shanOut <- focal(lc, weight, fun=shannon, pad=T)
+shanOut <- focal(lc, weight, fun = shannon, pad = T)
 
-DT[ ,ShannonIdx :=extract(shanOut,matrix(c(EASTING,NORTHING),ncol=2))]
+DT[, ShannonIdx := extract(shanOut, matrix(c(EASTING, NORTHING), ncol = 2))]
 
 
 # Summary -----------------------------------------------------------------
@@ -63,6 +63,6 @@ DT[, .N, by = lc]
 
 # Output ------------------------------------------------------------------
 saveRDS(DT, 'output/02-habitat-locs.Rds')
-writeRaster(openProp, 'output/02-open-proportion.tif')
-writeRaster(closedProp, 'output/02-closed-proportion.tif')
+writeRaster(openProp, 'output/02-open-proportion.tif', overwrite=TRUE)
+writeRaster(closedProp, 'output/02-closed-proportion.tif', overwrite=TRUE)
 writeRaster(shanOut,'output/02-shannon.tif', overwrite=TRUE)
