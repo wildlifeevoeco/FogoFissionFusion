@@ -15,13 +15,13 @@ legend <- fread('../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv')
 
 openProp <- raster('output/02-open-proportion.tif')
 closedProp <- raster('output/02-closed-proportion.tif')
-shannon<-raster('output/02-shannon.tif')
+shannon <- raster('output/02-shannon.tif')
 
 # Put LastLoc data in binary O-1, censored data are incomplete data used in 
 # survival analysis
 DT[(lastLoc), censored := 0]
 DT[!(lastLoc), censored := 1]
-DT[,.N,censored]
+DT[, .N, censored]
 
 
 # Calc previous timegroup for downstream when NN is NA
@@ -39,10 +39,11 @@ DT[, dyadValue := extract(landcover, matrix(c(meanX, meanY), ncol = 2))]
 
 # Contiguity metrics
 #check data
-check_landscape(landcover) # ok
-sample_points=matrix(c(DT$meanX,DT$meanY), ncol=2)
-sample_lsm(lc, y=sample_points, shape='circle', size=100)
+check_landscape(landcover)
 
+pcontigrst <- spatialize_lsm(landcover, 'patch', 'contig')[[1]][[1]]
+
+DT[, pcontig := extract(pcontigrst, matrix(c(meanX, meanY), ncol = 2))]
 
 
 #extract shannon index at centroid
