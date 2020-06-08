@@ -1,9 +1,8 @@
 # === Habitat -----------------------------------------------------
 
 # Packages ----------------------------------------------------------------
-libs <- c('data.table', 'rgdal', 'raster', 'sp')
+libs <- c('data.table', 'rgdal', 'raster', 'sp', 'vegan')
 lapply(libs, require, character.only = TRUE)
-library(landscapemetrics)
 
 # Input data --------------------------------------------------------------------
 DT <- readRDS('output/01-prep-locs.Rds')
@@ -46,7 +45,6 @@ DT[, propOpen := extract(openProp, matrix(c(EASTING, NORTHING), ncol = 2))]
 DT[, propClosed := extract(closedProp, matrix(c(EASTING, NORTHING), ncol = 2))]
 
 # shannon index at each relocation in a new raster 
-library(vegan)
 shannon <- function(x, ...) {
   diversity(table(x), index="shannon")
 }
