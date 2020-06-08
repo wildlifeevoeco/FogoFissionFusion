@@ -3,7 +3,7 @@
 # Packages ----------------------------------------------------------------
 libs <- c('data.table', 'rgdal', 'raster', 'sp')
 lapply(libs, require, character.only = TRUE)
-
+library(landscapemetrics)
 
 # Input data --------------------------------------------------------------------
 DT <- readRDS('output/01-prep-locs.Rds')
@@ -46,20 +46,20 @@ DT[, propOpen := extract(openProp, matrix(c(EASTING, NORTHING), ncol = 2))]
 DT[, propClosed := extract(closedProp, matrix(c(EASTING, NORTHING), ncol = 2))]
 
 # shannon index at each relocation in a new raster 
+library(vegan)
 shannon <- function(x, ...) {
-  cnts <- table(x)
-  cnts <- cnts / sum(cnts)
-  -sum(cnts * log(cnts))
+  diversity(table(x), index="shannon")
 }
-
-shanOut <- focal(lc, weight, fun = shannon, pad = T)
+weightShannon <- focalWeight(lc, d = 200, type = 'circle')
+shanOut <- focal(lc, weightShannon, fun=shannon, pad=T)
 
 DT[, ShannonIdx := extract(shanOut, matrix(c(EASTING, NORTHING), ncol = 2))]
 
 
+
+
 # Summary -----------------------------------------------------------------
 DT[, .N, by = lc]
-
 
 # Output ------------------------------------------------------------------
 saveRDS(DT, 'output/02-habitat-locs.Rds')
