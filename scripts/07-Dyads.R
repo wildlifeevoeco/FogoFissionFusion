@@ -41,13 +41,19 @@ DT[, dyadValue := extract(landcover, matrix(c(meanX, meanY), ncol = 2))]
 #check data
 check_landscape(landcover)
 
+# Extract Contiguity index at centroid-------------------------------------
+# Assign patch metrics (contiguity) to each cell
 pcontigrst <- spatialize_lsm(landcover, 'patch', 'contig')[[1]][[1]]
+weightcontig <- focalWeight(landcover, d = 100, type = 'circle')
+contig <- focal(pcontigrst, weightcontig, pad=T)
+DT[, pcontig := extract(contig, matrix(c(meanX, meanY), ncol = 2))]
 
-DT[, pcontig := extract(pcontigrst, matrix(c(meanX, meanY), ncol = 2))]
-
-
-#extract shannon index at centroid
+# Extract shannon index at centroid----------------------------------------
 DT[, ShanIndex := extract(shannon, matrix(c(meanX, meanY), ncol = 2))]
+
+# Chech correlation landscape metrics
+cor.test(DT$ShanIndex,DT$pcontig, method='pearson')
+#correlated but non redundant: spatial configuration vs composition  
 
 # Proportion of habitat at centroid
 DT[, dyadPropOpen := extract(openProp, matrix(c(meanX, meanY), ncol = 2))]
