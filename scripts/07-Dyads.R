@@ -37,6 +37,13 @@ DT[, c('meanX', 'meanY') := lapply(.SD, mean),
 # Extract land cover at centroid ------------------------------------------
 DT[, dyadValue := extract(landcover, matrix(c(meanX, meanY), ncol = 2))]
 
+# Contiguity metrics
+#check data
+check_landscape(landcover) # ok
+sample_points=matrix(c(DT$meanX,DT$meanY), ncol=2)
+sample_lsm(lc, y=sample_points, shape='circle', size=100)
+
+
 
 #extract shannon index at centroid
 DT[, ShanIndex := extract(shannon, matrix(c(meanX, meanY), ncol = 2))]
