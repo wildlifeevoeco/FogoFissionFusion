@@ -2,7 +2,7 @@
 
 
 # Packages ----------------------------------------------------------------
-libs <- c('raster', 'data.table', 'spatsoc', 'rgdal')
+libs <- c('raster', 'data.table', 'spatsoc', 'rgdal', 'landscapemetrics')
 lapply(libs, require, character.only = TRUE)
 
 
