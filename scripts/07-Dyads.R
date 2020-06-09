@@ -28,6 +28,8 @@ DT[, .N, censored]
 DT[, prevTimegrpNNNA := shift(timegroup), by = ANIMAL_ID]
 
 
+# ====== LANDSCAPE METRICS ======= #
+
 # Dyad centroid -----------------------------------------------------------
 # For each dyad * timegroup
 DT[, c('meanX', 'meanY') := lapply(.SD, mean), 
@@ -45,7 +47,7 @@ check_landscape(landcover)
 # Assign patch metrics (contiguity) to each cell
 pcontigrst <- spatialize_lsm(landcover, 'patch', 'contig')[[1]][[1]]
 weightcontig <- focalWeight(landcover, d = 100, type = 'circle')
-contig <- focal(pcontigrst, weightcontig, pad=T)
+contig <- focal(pcontigrst, weightcontig,na.rm=TRUE, pad=T)
 DT[, pcontig := extract(contig, matrix(c(meanX, meanY), ncol = 2))]
 
 # Extract shannon index at centroid----------------------------------------
@@ -69,17 +71,26 @@ DT[Value %in% c(2, 3, 4, 5), habitat := "closed"]
 # Check 
 DT[, .N, habitat]
 
+
+
+# ====== REARRANGEMENT for fission/fusion  ====== #
+
 # Unique dyads and NN=NA --------------------------------------------------
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))
 
+# one dyad - one runCount - one habitat percentage (for survival analysis)
+dyadNN[, mean_open := mean(propOpen, na.rm = TRUE), by = .(runid, dyadID)]
+
+# dominant habitat during the consecutive fixes dyads spent together 
+dyadNN[mean_open > 0.5, DyadDominantLC := "open"]
+dyadNN[mean_open < 0.5, DyadDominantLC := "closed"]
+
 # Set the order of the rows
 setorder(dyadNN, timegroup)
 
-
 # Count number of timegroups dyads are observed together ------------------
 dyadNN[, nObs := .N, by = .(dyadID)]
-
 
 # Count consecutive relocations together ----------------------------------
 # Shift the timegroup within dyadIDs
@@ -88,7 +99,6 @@ dyadNN[, shifttimegrp := data.table::shift(timegroup, 1), by = ANIMAL_ID]
 # Difference between consecutive timegroups for each dyadID
 # where difftimegrp == 1, the dyads remained together in consecutive timegroups
 dyadNN[, difftimegrp := timegroup - shifttimegrp]
-
 
 # Run id of diff timegroups
 dyadNN[, runid := rleid(difftimegrp), by = dyadID]
@@ -107,15 +117,6 @@ dyadNN[runCount <= 1 | is.na(runCount), c('start', 'end') := FALSE]
 
 ## if runCount is minimum 2, dyad stayed together (min2) = TRUE
 dyadNN[, min2 := fifelse(runCount >= 2 & !is.na(runCount), TRUE, FALSE)]
-
-
-# one dyad - one runCount - one habitat percentage (for survival analysis)
-dyadNN[, mean_open := mean(propOpen, na.rm = TRUE), by = .(runid, dyadID)]
-
-# dominant habitat during the consecutive fixes dyads spent together put in 07-dyad
-dyadNN[mean_open > 0.5, DyadDominantLC := "open"]
-dyadNN[mean_open < 0.5, DyadDominantLC := "closed"]
-
 
 # Get where NN was NA
 dyadNA <- DT[is.na(NN)]
@@ -137,8 +138,9 @@ dyads[, fusion0 := ((start) & (min2)) | is.na(NN)]
 
 
 # Start/Stop --------------------------------------------------------------
-dyads[, meanOpenStop := shift(mean_open), by = .(runid, dyadID)]
-dyads[, dyadPropOpenStop := shift(dyadPropOpen), by = .(runid, dyadID)]
+dyads[, dyadPropOpenStop := shift(dyadPropOpen), by = .(runid, dyadID)]  # by dyadID only nop?
+dyads[, pcontigStop := shift(pcontig), by = .(runid, dyadID)]
+dyads[, ShannonStop := shift(ShanIndex), by = .(runid, dyadID)]
 
 # TODO: adjust timegroup for dyads when observations are sequential? use prev timegroup instead?
 
@@ -149,16 +151,24 @@ intervals <- dyads[, .(
   dyadID, 
   start = shifttimegrp, 
   stop = timegroup,
-  Start,
+  start,
   end,
   min2, 
   stayedTogether = min2 & (!end),
-  meanOpenStop,
   dyadPropOpenStop,
-  DyadDominantLC,
   runid,
-  ShanIndex
+  ShannonStop,
+  pcontigStop
 )]
+
+
+setorderv(intervals,c('dyadID','stop'),1)
+# seems to work but what does it do to the other columns about the order
+# + some intervals are not one, quid of the shift function right after then?
+
+intervals[,futureEvent:=shift(stayedTogether,n=1, type='lead'),by=.(dyadID,runid)] #why NA???
+intervals[,pastEvent:=shift(stayedTogether,n=1, type='lag'),by=.(dyadID,runid)]
+
 
 
 # Output ------------------------------------------------------------------
