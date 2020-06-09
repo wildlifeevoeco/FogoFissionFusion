@@ -27,7 +27,7 @@ names(focals) <- legend$Value
 
 # Combine rasters ---------------------------------------------------------
 # Combine land cover types using the Value numbers from the legend
-open <- Reduce('+', focals[c(1, 6, 8, 9)])
+open <- Reduce('+', focals[c(1, 6, 7, 8, 9)])
 closed <- Reduce('+', focals[c(2, 3, 4, 5)])
 
 
@@ -48,7 +48,7 @@ DT[, propClosed := extract(closedProp, matrix(c(EASTING, NORTHING), ncol = 2))]
 shannon <- function(x, ...) {
   diversity(table(x), index="shannon")
 }
-weightShannon <- focalWeight(lc, d = 200, type = 'circle')
+weightShannon <- focalWeight(lc, d = 100, type = 'circle')
 shanOut <- focal(lc, weightShannon, fun=shannon, pad=T)
 
 DT[, ShannonIdx := extract(shanOut, matrix(c(EASTING, NORTHING), ncol = 2))]
