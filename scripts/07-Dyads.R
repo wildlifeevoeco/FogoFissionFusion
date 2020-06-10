@@ -145,6 +145,9 @@ dyads[, ShannonStop := shift(ShanIndex), by = .(runid, dyadID)]
 
 # TODO: adjust timegroup for dyads when observations are sequential? use prev timegroup instead?
 
+# remove NAs for NN
+dyads <- dyads[!is.na(NN)]
+
 intervals <- dyads[, .(
   ANIMAL_ID,
   Year,
