@@ -80,6 +80,7 @@ DT[, .N, habitat]
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))
 
 # one dyad - one runCount - one habitat percentage (for survival analysis)
+# TODO -- QW: runid isn't defined before this point so get an error.
 dyadNN[, mean_open := mean(propOpen, na.rm = TRUE), by = .(runid, dyadID)]
 
 # dominant habitat during the consecutive fixes dyads spent together 
