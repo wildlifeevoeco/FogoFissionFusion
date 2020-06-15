@@ -1,6 +1,6 @@
 # === Dyads ---------------------------------------------------------------
 
-
+ 
 # Packages ----------------------------------------------------------------
 libs <- c('raster', 'data.table', 'spatsoc', 'rgdal', 'landscapemetrics')
 lapply(libs, require, character.only = TRUE)
@@ -39,23 +39,10 @@ DT[, c('meanX', 'meanY') := lapply(.SD, mean),
 # Extract land cover at centroid ------------------------------------------
 DT[, dyadValue := extract(landcover, matrix(c(meanX, meanY), ncol = 2))]
 
-# Contiguity metrics
-#check data
-check_landscape(landcover)
-
-# Extract Contiguity index at centroid-------------------------------------
-# Assign patch metrics (contiguity) to each cell
-pcontigrst <- spatialize_lsm(landcover, 'patch', 'contig')[[1]][[1]]
-weightcontig <- focalWeight(landcover, d = 100, type = 'circle')
-contig <- focal(pcontigrst, weightcontig,na.rm=TRUE, pad=T)
-DT[, pcontig := extract(contig, matrix(c(meanX, meanY), ncol = 2))]
 
 # Extract shannon index at centroid----------------------------------------
 DT[, ShanIndex := extract(shannon, matrix(c(meanX, meanY), ncol = 2))]
 
-# Chech correlation landscape metrics
-cor.test(DT$ShanIndex,DT$pcontig, method='pearson')
-#correlated but non redundant: spatial configuration vs composition  
 
 # Proportion of habitat at centroid
 DT[, dyadPropOpen := extract(openProp, matrix(c(meanX, meanY), ncol = 2))]
@@ -79,20 +66,6 @@ DT[, .N, habitat]
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))
 
-# one dyad - one runCount - one habitat percentage (for survival analysis)
-# TODO -- QW: runid isn't defined before this point so get an error.
-dyadNN[, mean_open := mean(propOpen, na.rm = TRUE), by = .(runid, dyadID)]
-
-# dominant habitat during the consecutive fixes dyads spent together 
-dyadNN[mean_open > 0.5, DyadDominantLC := "open"]
-dyadNN[mean_open < 0.5, DyadDominantLC := "closed"]
-
-# Set the order of the rows
-setorder(dyadNN, timegroup)
-
-# Count number of timegroups dyads are observed together ------------------
-dyadNN[, nObs := .N, by = .(dyadID)]
-
 # Count consecutive relocations together ----------------------------------
 # Shift the timegroup within dyadIDs
 dyadNN[, shifttimegrp := data.table::shift(timegroup, 1), by = ANIMAL_ID]
@@ -106,6 +79,21 @@ dyadNN[, runid := rleid(difftimegrp), by = dyadID]
 
 # N consecutive observations of dyadIDs
 dyadNN[, runCount := fifelse(difftimegrp == 1, .N, NA_integer_), by = .(runid, dyadID)]
+
+
+# one dyad - one runCount - one habitat percentage (for survival analysis)
+# TODO -- QW: runid isn't defined before this point so get an error.
+dyadNN[, mean_open := mean(propOpen, na.rm = TRUE), by = .(runid, dyadID)]
+
+# dominant habitat during the consecutive fixes dyads spent together 
+dyadNN[mean_open > 0.5, DyadDominantLC := "open"]
+dyadNN[mean_open < 0.5, DyadDominantLC := "closed"]
+
+# Set the order of the rows
+setorder(dyadNN, timegroup)
+
+# Count number of timegroups dyads are observed together ------------------
+dyadNN[, nObs := .N, by = .(dyadID)]
 
 
 # Flag start and end locs for each dyad -----------------------------------
@@ -140,7 +128,6 @@ dyads[, fusion0 := ((start) & (min2)) | is.na(NN)]
 
 # Start/Stop --------------------------------------------------------------
 dyads[, dyadPropOpenStop := shift(dyadPropOpen), by = .(runid, dyadID)]  # by dyadID only nop?
-dyads[, pcontigStop := shift(pcontig), by = .(runid, dyadID)]
 dyads[, ShannonStop := shift(ShanIndex), by = .(runid, dyadID)]
 
 # TODO: adjust timegroup for dyads when observations are sequential? use prev timegroup instead?
@@ -161,8 +148,7 @@ intervals <- dyads[, .(
   stayedTogether = min2 & (!end),
   dyadPropOpenStop,
   runid,
-  ShannonStop,
-  pcontigStop
+  ShannonStop
 )]
 
 
@@ -172,8 +158,13 @@ setorderv(intervals,c('dyadID','stop'),1)
 
 intervals[,futureEvent:=shift(stayedTogether,n=1, type='lead'),by=.(dyadID,runid)] #why NA???
 intervals[,pastEvent:=shift(stayedTogether,n=1, type='lag'),by=.(dyadID,runid)]
+intervals[,.N,by=futureEvent]
+intervals[,.N,by=pastEvent]
+intervals[,.N,by=stayedTogether]
 
-
+intervals[, FalseFission := ifelse(stayedTogether == FALSE & futureEvent == TRUE & pastEvent == TRUE,TRUE,FALSE)]
+intervals[,.N,by=FalseFission]
+# no true means no flse fission?
 
 # Output ------------------------------------------------------------------
 saveRDS(dyads, 'output/07-dyads.Rds')
