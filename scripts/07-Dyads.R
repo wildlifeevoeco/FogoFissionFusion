@@ -82,16 +82,16 @@ dyadNN[, shifttimegrp := data.table::shift(timegroup),
 # where difftimegrp == 1, the dyads remained together in consecutive timegroups
 dyadNN[, difftimegrp := timegroup - shifttimegrp]
 
-# Run id of diff timegroups
-dyadNN[, runid := rleid(difftimegrp), by = dyadID]
+# Dyad run id
+dyadNN[, dyadrun := rleid(difftimegrp), by = dyadID]
 
 # N consecutive observations of dyadIDs
-dyadNN[, runCount := fifelse(difftimegrp == 1, .N, NA_integer_), by = .(runid, dyadID)]
+dyadNN[, runCount := fifelse(difftimegrp == 1, .N, NA_integer_), by = .(dyadrun, dyadID)]
 
 
 # one dyad - one runCount - one habitat percentage (for survival analysis)
-# TODO -- QW: runid isn't defined before this point so get an error.
-dyadNN[, mean_open := mean(propOpen, na.rm = TRUE), by = .(runid, dyadID)]
+# TODO -- QW: dyadrun isn't defined before this point so get an error.
+dyadNN[, mean_open := mean(propOpen, na.rm = TRUE), by = .(dyadrun, dyadID)]
 
 # dominant habitat during the consecutive fixes dyads spent together 
 dyadNN[mean_open > 0.5, DyadDominantLC := "open"]
@@ -106,9 +106,9 @@ dyadNN[, nObs := .N, by = .(dyadID)]
 
 # Flag start and end locs for each dyad -----------------------------------
 # Dont consider where runs are less than 2 relocations
-dyadNN[runCount > 1, start := fifelse(timegroup == min(timegroup), TRUE, FALSE), by = .(runid, dyadID)]
+dyadNN[runCount > 1, start := fifelse(timegroup == min(timegroup), TRUE, FALSE), by = .(dyadrun, dyadID)]
 
-dyadNN[runCount > 1, end := fifelse(timegroup == max(timegroup), TRUE, FALSE), by = .(runid, dyadID)]
+dyadNN[runCount > 1, end := fifelse(timegroup == max(timegroup), TRUE, FALSE), by = .(dyadrun, dyadID)]
 
 dyadNN[runCount <= 1 | is.na(runCount), c('start', 'end') := FALSE]
 
@@ -135,8 +135,8 @@ dyads[, fusion0 := ((start) & (min2)) | is.na(NN)]
 
 
 # Start/Stop --------------------------------------------------------------
-dyads[, dyadPropOpenStop := shift(dyadPropOpen), by = .(runid, dyadID)]  # by dyadID only nop?
-dyads[, ShannonStop := shift(ShanIndex), by = .(runid, dyadID)]
+dyads[, dyadPropOpenStop := shift(dyadPropOpen), by = .(dyadrun, dyadID)]  # by dyadID only nop?
+dyads[, ShannonStop := shift(ShanIndex), by = .(dyadrun, dyadID)]
 
 # TODO: adjust timegroup for dyads when observations are sequential? use prev timegroup instead?
 
@@ -155,7 +155,7 @@ intervals <- dyads[, .(
   min2, 
   stayedTogether = min2 & (!end),
   dyadPropOpenStop,
-  runid,
+  dyadrun,
   ShannonStop
 )]
 
@@ -164,8 +164,8 @@ setorderv(intervals,c('dyadID','stop'),1)
 # seems to work but what does it do to the other columns about the order
 # + some intervals are not one, quid of the shift function right after then?
 
-intervals[,futureEvent:=shift(stayedTogether,n=1, type='lead'),by=.(dyadID,runid)] #why NA???
-intervals[,pastEvent:=shift(stayedTogether,n=1, type='lag'),by=.(dyadID,runid)]
+intervals[,futureEvent:=shift(stayedTogether,n=1, type='lead'),by=.(dyadID,dyadrun)] #why NA???
+intervals[,pastEvent:=shift(stayedTogether,n=1, type='lag'),by=.(dyadID,dyadrun)]
 intervals[,.N,by=futureEvent]
 intervals[,.N,by=pastEvent]
 intervals[,.N,by=stayedTogether]
