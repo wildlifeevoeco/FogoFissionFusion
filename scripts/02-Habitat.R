@@ -1,7 +1,7 @@
 # === Habitat -----------------------------------------------------
 
 # Packages ----------------------------------------------------------------
-libs <- c('data.table', 'rgdal', 'raster', 'sp', 'vegan')
+libs <- c('data.table', 'rgdal', 'raster', 'sp', 'vegan', 'landscapemetrics')
 lapply(libs, require, character.only = TRUE)
 
 # Input data --------------------------------------------------------------------
@@ -45,7 +45,7 @@ DT[, propOpen := extract(openFocal, matrix(c(EASTING, NORTHING), ncol = 2))]
 DT[, propClosed := extract(closedFocal, matrix(c(EASTING, NORTHING), ncol = 2))]
 
 # shannon index at each relocation in a new raster 
-shannon <- function(x, ...) {
+shannon <- function(x) {
   diversity(table(x), index="shannon")
 }
 weightShannon <- focalWeight(lc, d = 100, type = 'circle')
@@ -53,8 +53,13 @@ shanOut <- focal(lc, weightShannon, fun=shannon, pad=T)
 
 DT[, ShannonIdx := extract(shanOut, matrix(c(EASTING, NORTHING), ncol = 2))]
 
-
-
+# Calculate ED in window
+wed <- window_lsm(
+  landscape = lc,
+  window = weightShannon,
+  what = 'lsm_l_ed',
+  progress = TRUE
+)
 
 # Summary -----------------------------------------------------------------
 DT[, .N, by = lc]
