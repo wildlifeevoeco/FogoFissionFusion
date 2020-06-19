@@ -68,7 +68,8 @@ DT[, .N, habitat]
 # Unique dyads and NN=NA --------------------------------------------------
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
-            .(ANIMAL_ID, NN, dyadID, datetime, Year, season, timegroup)]
+            .(ANIMAL_ID, NN, dyadID, datetime, timegroup,
+              dyadPropOpen, dyadPropClosed)]
 
 # Set order explicitly
 setorder(dyadNN, timegroup)
@@ -85,35 +86,35 @@ dyadNN[, dyadrun := rleid(difftimegrp), by = dyadID]
 dyadNN[, runCount := fifelse(difftimegrp == 1, .N, NA_integer_), by = .(dyadrun, dyadID)]
 
 
-
-# Dyad habitat ------------------------------------------------------------
-# one dyad - one runCount - one habitat percentage (for survival analysis)
-dyadNN[, mean_open := mean(propOpen, na.rm = TRUE), by = .(dyadrun, dyadID)]
-
-`# dominant habitat during the consecutive fixes dyads spent together 
-dyadNN[mean_open > 0.5, DyadDominantLC := "open"]
-dyadNN[mean_open < 0.5, DyadDominantLC := "closed"]
-
-# Set the order of the rows
-setorder(dyadNN, timegroup)
-
 # Count number of timegroups dyads are observed together ------------------
 dyadNN[, nObs := .N, by = .(dyadID)]
 
 
 # Flag start and end locs for each dyad -----------------------------------
 # Dont consider where runs are less than 2 relocations
-dyadNN[runCount > 1, start := fifelse(timegroup == min(timegroup), TRUE, FALSE), by = .(dyadrun, dyadID)]
+dyadNN[runCount > 1, start := fifelse(timegroup == min(timegroup), TRUE, FALSE), 
+       by = .(dyadrun, dyadID)]
 
 dyadNN[runCount > 1, end := fifelse(timegroup == max(timegroup), TRUE, FALSE), by = .(dyadrun, dyadID)]
 
 dyadNN[runCount <= 1 | is.na(runCount), c('start', 'end') := FALSE]
 
-## if runCount is minimum 2, dyad stayed together (min2) = TRUE
+# if runCount is minimum 2, dyad stayed together (min2) = TRUE
 dyadNN[, min2 := fifelse(runCount >= 2 & !is.na(runCount), TRUE, FALSE)]
 
+
+# Dyad habitat ------------------------------------------------------------
+# one dyad - one runCount - one habitat percentage (for survival analysis)
+dyadNN[, mean_open := mean(dyadPropOpen, na.rm = TRUE), by = .(dyadrun, dyadID)]
+
+# dominant habitat during the consecutive fixes dyads spent together 
+dyadNN[mean_open > 0.5, DyadDominantLC := "open"]
+dyadNN[mean_open < 0.5, DyadDominantLC := "closed"]
+
+
+# Dyad NA -----------------------------------------------------------------
 # Get where NN was NA
-dyadNA <- DT[is.na(NN)]
+dyadNA <- DT[is.na(NN), .(ANIMAL_ID, NN, dyadID, datetime, timegroup)]
 
 dyadNA[, c('start', 'end', 'min2') := FALSE]
 
@@ -121,6 +122,12 @@ dyadNA[, shifttimegrp := prevTimegrpNNNA]
 
 # Combine where NN is NA
 dyads <- rbindlist(list(dyadNN, dyadNA), fill = TRUE)
+
+
+
+
+
+
 
 # Calculate fusion 0 ------------------------------------------------------
 ## Fusion 0 = 
