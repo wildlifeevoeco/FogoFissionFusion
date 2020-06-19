@@ -38,8 +38,8 @@ dyad_id(edges, 'ID', 'NN')
 m <- merge(
   DT,
   edges,
-  by.x = c('ANIMAL_ID', 'timegroup', 'Year'),
-  by.y = c('ID', 'timegroup', 'Year')
+  by.x = c('ANIMAL_ID', 'timegroup'),
+  by.y = c('ID', 'timegroup')
 )
 
 out <- m[, .(ANIMAL_ID, NN, dyadID, idate, itime, datetime, timegroup, Year,
