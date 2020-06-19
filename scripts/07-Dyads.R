@@ -10,7 +10,7 @@ lapply(libs, require, character.only = TRUE)
 DT <- readRDS('output/04-nn-locs')
 alloc.col(DT)
 
-lc <- raster('../nl-landcover/output/fogo_lc.tif')
+landcover <- raster('../nl-landcover/output/fogo_lc.tif')
 legend <- fread('../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv')
 
 openFocal <- raster('output/02-open-proportion.tif')
@@ -37,7 +37,7 @@ DT[, c('meanX', 'meanY') := lapply(.SD, mean),
 
 
 # Extract land cover at centroid ------------------------------------------
-DT[, dyadValue := extract(lc, matrix(c(meanX, meanY), ncol = 2))]
+DT[, dyadValue := extract(landcover, matrix(c(meanX, meanY), ncol = 2))]
 
 
 # Extract shannon index at centroid----------------------------------------
@@ -49,7 +49,7 @@ DT[, dyadPropOpen := extract(openFocal, matrix(c(meanX, meanY), ncol = 2))]
 DT[, dyadPropClosed := extract(closedFocal, matrix(c(meanX, meanY), ncol = 2))]
 
 # rename habitat types by merging legend
-DT[legend, dyadLC := lc, on = 'dyadValue == Value']
+DT[legend, dyadLC := landcover, on = 'dyadValue == Value']
 
 # Open vs closed (for the survival analysis)
 DT[Value %in% c(1, 6, 7, 8, 9), habitat := "open"]
