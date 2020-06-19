@@ -54,12 +54,12 @@ shanOut <- focal(lc, weightShannon, fun=shannon, pad=T)
 DT[, ShannonIdx := extract(shanOut, matrix(c(EASTING, NORTHING), ncol = 2))]
 
 # Calculate ED in window
-wed <- window_lsm(
-  landscape = lc,
-  window = weightShannon,
-  what = 'lsm_l_ed',
-  progress = TRUE
-)
+# wed <- window_lsm(
+#   landscape = lc,
+#   window = weightShannon,
+#   what = 'lsm_l_ed',
+#   progress = TRUE
+# )
 
 # Summary -----------------------------------------------------------------
 DT[, .N, by = lc]
