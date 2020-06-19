@@ -67,11 +67,16 @@ DT[, .N, habitat]
 
 # Unique dyads and NN=NA --------------------------------------------------
 # Get the unique dyads by timegroup
-dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))
+dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
+            .(ANIMAL_ID, NN, dyadID, datetime, Year, season, timegroup)]
+
+# Set order explicitly
+setorder(dyadNN, timegroup)
 
 # Count consecutive relocations together ----------------------------------
 # Shift the timegroup within dyadIDs
-dyadNN[, shifttimegrp := data.table::shift(timegroup, 1), by = dyadID]
+dyadNN[, shifttimegrp := data.table::shift(timegroup), 
+       by = dyadID]
 
 # Difference between consecutive timegroups for each dyadID
 # where difftimegrp == 1, the dyads remained together in consecutive timegroups
