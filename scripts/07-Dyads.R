@@ -19,7 +19,6 @@ shannon <- raster('output/02-shannon.tif')
 
 # Put LastLoc data in binary O-1, censored data are incomplete data used in 
 # survival analysis
-# TODO: 
 DT[(lastLoc), censored := 0]
 DT[!(lastLoc), censored := 1]
 DT[, .N, censored]
@@ -30,7 +29,6 @@ DT[, .N, censored]
 DT[, shiftTimeWithinID := shift(timegroup), by = ANIMAL_ID]
 
 
-# ====== LANDSCAPE METRICS ======= #
 
 # Dyad centroid -----------------------------------------------------------
 # For each dyad * timegroup
@@ -63,8 +61,6 @@ DT[, .N, habitat]
 
 
 
-# ====== REARRANGEMENT for fission/fusion  ====== #
-
 # Unique dyads and NN=NA --------------------------------------------------
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
@@ -73,6 +69,8 @@ dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[,
 
 # Set order explicitly
 setorder(dyadNN, timegroup)
+
+
 
 # Count consecutive relocations together ----------------------------------
 # Difference between consecutive timegroups for each dyadID
@@ -83,7 +81,8 @@ dyadNN[, difftimegrp := timegroup - data.table::shift(timegroup)]
 dyadNN[, dyadrun := rleid(difftimegrp), by = dyadID]
 
 # N consecutive observations of dyadIDs
-dyadNN[, runCount := fifelse(difftimegrp == 1, .N, NA_integer_), by = .(dyadrun, dyadID)]
+dyadNN[, runCount := fifelse(difftimegrp == 1, .N, NA_integer_), 
+       by = .(dyadrun, dyadID)]
 
 
 # Count number of timegroups dyads are observed together ------------------
@@ -95,7 +94,8 @@ dyadNN[, nObs := .N, by = .(dyadID)]
 dyadNN[runCount >= 2, start := fifelse(timegroup == min(timegroup), TRUE, FALSE), 
        by = .(dyadrun, dyadID)]
 
-dyadNN[runCount >= 2, end := fifelse(timegroup == max(timegroup), TRUE, FALSE), by = .(dyadrun, dyadID)]
+dyadNN[runCount >= 2, end := fifelse(timegroup == max(timegroup), TRUE, FALSE), 
+       by = .(dyadrun, dyadID)]
 
 dyadNN[runCount < 2 | is.na(runCount), c('start', 'end') := FALSE]
 
