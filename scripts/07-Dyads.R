@@ -49,7 +49,7 @@ DT[, dyadPropOpen := extract(openFocal, matrix(c(meanX, meanY), ncol = 2))]
 DT[, dyadPropClosed := extract(closedFocal, matrix(c(meanX, meanY), ncol = 2))]
 
 # rename habitat types by merging legend
-DT[legend, dyadLC := landcover, on = 'dyadValue == Value']
+DT[legend, dyadLC := Landcover, on = 'dyadValue == Value']
 
 # Open vs closed (for the survival analysis)
 DT[Value %in% c(1, 6, 7, 8, 9), habitat := "open"]
