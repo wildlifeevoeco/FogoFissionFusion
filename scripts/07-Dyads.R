@@ -128,13 +128,14 @@ dyads <- rbindlist(list(dyadNN, dyadNA), fill = TRUE)
 
 # Calculate fusion 0 ------------------------------------------------------
 ## Fusion 0 = 
-##   a) fussion events where dyads are together > 1 consecutive relocations
+##   a) fussion events where dyads are together >= 2 consecutive relocations
 ##   or b) individuals where NN = NA
-dyads[, fusion0 := ((start) & (min2)) | is.na(NN)]
-
+dyads[, fusion0 := ((start)) | is.na(NN)]
 
 # Start/Stop --------------------------------------------------------------
-dyads[, dyadPropOpenStop := shift(dyadPropOpen), by = .(dyadrun, dyadID)]  # by dyadID only nop?
+# TODO adjust start stop
+dyads[, dyadPropOpenStop := shift(dyadPropOpen), by = .(dyadrun, dyadID)]  
+# by dyadID only nop?
 dyads[, ShannonStop := shift(ShanIndex), by = .(dyadrun, dyadID)]
 
 # TODO: adjust timegroup for dyads when observations are sequential? use prev timegroup instead?
