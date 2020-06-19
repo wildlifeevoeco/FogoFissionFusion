@@ -35,7 +35,7 @@ fusion$dyadLC[fusion$dyadLC == "Anthropogenic and disturbance"] <- "Anthropogeni
 a1 <- ggplot(fusion[fusion0 == "fusion"], aes(reorder_size(dyadLC), count_fuse, fill=dyadLC)) +
   stat_summary(fun = "sum", geom="bar") +
   xlab('') +
-  ylab('Frequency') +
+  ylab('Number of points') +
   ggtitle('a) dyad fusion') +
   ylim(0,5000) +
   scale_fill_manual(values=cbPalette) + 
@@ -50,7 +50,7 @@ a1 <- ggplot(fusion[fusion0 == "fusion"], aes(reorder_size(dyadLC), count_fuse, 
 b1 <- ggplot(fusion[fusion0 == "fused"], aes(reorder_size(dyadLC), count_fuse, fill=dyadLC)) +
   stat_summary(fun = "sum", geom="bar") +
   xlab('') +
-  ylab('Frequency') +
+  ylab('Number of points') +
   ggtitle('b) dyads fused for >1 time step') +
   ylim(0,5000) +
   scale_fill_manual(values=cbPalette) + 
