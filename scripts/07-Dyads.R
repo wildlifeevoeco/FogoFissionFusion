@@ -65,7 +65,7 @@ DT[, .N, habitat]
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
             .(ANIMAL_ID, NN, dyadID, datetime, timegroup,
-              dyadPropOpen, dyadPropClosed)]
+              ShanIndex, dyadPropOpen, dyadPropClosed)]
 
 # Set order explicitly
 setorder(dyadNN, timegroup)
@@ -118,7 +118,9 @@ dyadNN[mean_open < 0.5, DyadDominantLC := "closed"]
 
 # Dyad NA -----------------------------------------------------------------
 # Get where NN was NA
-dyadNA <- DT[is.na(NN), .(ANIMAL_ID, NN, dyadID, datetime, timegroup, shiftTimeWithinID)]
+dyadNA <- DT[is.na(NN), .(ANIMAL_ID, NN, dyadID, datetime, timegroup, 
+                          shiftTimeWithinID, 
+                          ShanIndex, dyadPropOpen, dyadPropClosed)]
 
 dyadNA[, c('start', 'end', 'min2') := FALSE]
 
