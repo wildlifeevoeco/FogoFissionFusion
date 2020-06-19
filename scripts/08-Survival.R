@@ -11,24 +11,32 @@ lapply(pkgs, require, character.only = TRUE)
 dyads <- readRDS('output/07-dyads.Rds')
 
 
-# Start/Stop --------------------------------------------------------------
-# TODO adjust start stop
-dyads[, dyadPropOpenStop := shift(dyadPropOpen), by = .(dyadrun, dyadID)]  
-# by dyadID only nop?
-dyads[, ShannonStop := shift(ShanIndex), by = .(dyadrun, dyadID)]
 
-# TODO: adjust timegroup for dyads when observations are sequential? use prev timegroup instead?
-
+# Setup Intervals ---------------------------------------------------------
 # remove NAs for NN
-dyads <- dyads[!is.na(NN)]
+# dyadsNN <- dyads[!is.na(NN)]
 
-intervals <- dyads[, .(
+# 
+# intervals <-
+  dyads[, .(
   ANIMAL_ID,
-  Year,
   NN,
-  dyadID, 
+  dyadID,
   start = shifttimegrp, 
   stop = timegroup,
+  
+  Year = year(datetime),
+  stayedTogether = min2 & (!end),
+  
+  dyadPropOpen,
+  
+  ShanIndex
+  )]
+
+
+  Year,
+
+  dyadID, 
   start,
   end,
   min2, 
