@@ -82,7 +82,9 @@ dyadNN[, shifttimegrp := data.table::shift(timegroup),
 dyadNN[, difftimegrp := timegroup - shifttimegrp]
 
 # Dyad run id
-dyadNN[, dyadrun := rleid(difftimegrp), by = dyadID]
+dyadNN[, dyadrun := fifelse(difftimegrp == 1, TRUE, FALSE), by = dyadID]
+dyadNN[, dyadrunid := rleid(dyadrun), by = dyadID]
+dyadNN[!(dyadrun), dyadrunid := seq.int(.N), by = dyadID]
 
 # N consecutive observations of dyadIDs
 dyadNN[, runCount := fifelse(difftimegrp == 1, .N, NA_integer_), 
