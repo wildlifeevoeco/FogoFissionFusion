@@ -19,11 +19,13 @@ shannon <- raster('output/02-shannon.tif')
 
 # Put LastLoc data in binary O-1, censored data are incomplete data used in 
 # survival analysis
+# TODO: 
 DT[(lastLoc), censored := 0]
 DT[!(lastLoc), censored := 1]
 DT[, .N, censored]
 
 
+#TODO:
 # Calc previous timegroup for downstream when NN is NA
 DT[, prevTimegrpNNNA := shift(timegroup), by = ANIMAL_ID]
 
@@ -52,10 +54,11 @@ DT[, dyadPropClosed := extract(closedProp, matrix(c(meanX, meanY), ncol = 2))]
 DT[legend, dyadLC := Landcover, on = 'dyadValue == Value']
 
 # Open vs closed (for the survival analysis)
-DT[Value %in% c(1, 6, 8, 9), habitat := "open"]
+DT[Value %in% c(1, 6, 7, 8, 9), habitat := "open"]
 DT[Value %in% c(2, 3, 4, 5), habitat := "closed"]
 
 # Check 
+# TODO: NA
 DT[, .N, habitat]
 
 
