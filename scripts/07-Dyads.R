@@ -13,8 +13,8 @@ alloc.col(DT)
 landcover <- raster('../nl-landcover/output/fogo_lc.tif')
 legend <- fread('../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv')
 
-openProp <- raster('output/02-open-proportion.tif')
-closedProp <- raster('output/02-closed-proportion.tif')
+openFocal <- raster('output/02-open-proportion.tif')
+closedFocal <- raster('output/02-closed-proportion.tif')
 shannon <- raster('output/02-shannon.tif')
 
 # Put LastLoc data in binary O-1, censored data are incomplete data used in 
@@ -47,8 +47,8 @@ DT[, ShanIndex := extract(shannon, matrix(c(meanX, meanY), ncol = 2))]
 
 
 # Proportion of habitat at centroid
-DT[, dyadPropOpen := extract(openProp, matrix(c(meanX, meanY), ncol = 2))]
-DT[, dyadPropClosed := extract(closedProp, matrix(c(meanX, meanY), ncol = 2))]
+DT[, dyadPropOpen := extract(openFocal, matrix(c(meanX, meanY), ncol = 2))]
+DT[, dyadPropClosed := extract(closedFocal, matrix(c(meanX, meanY), ncol = 2))]
 
 # rename habitat types by merging legend
 DT[legend, dyadLC := Landcover, on = 'dyadValue == Value']
@@ -85,11 +85,12 @@ dyadNN[, dyadrun := rleid(difftimegrp), by = dyadID]
 dyadNN[, runCount := fifelse(difftimegrp == 1, .N, NA_integer_), by = .(dyadrun, dyadID)]
 
 
+
+# Dyad habitat ------------------------------------------------------------
 # one dyad - one runCount - one habitat percentage (for survival analysis)
-# TODO -- QW: dyadrun isn't defined before this point so get an error.
 dyadNN[, mean_open := mean(propOpen, na.rm = TRUE), by = .(dyadrun, dyadID)]
 
-# dominant habitat during the consecutive fixes dyads spent together 
+`# dominant habitat during the consecutive fixes dyads spent together 
 dyadNN[mean_open > 0.5, DyadDominantLC := "open"]
 dyadNN[mean_open < 0.5, DyadDominantLC := "closed"]
 

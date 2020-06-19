@@ -37,12 +37,12 @@ buff <- 100
 
 weight <- focalWeight(lc, d = buff, type = 'circle')
 
-openProp <- focal(open, weight, na.rm = TRUE, pad = TRUE, padValue = 0)
-closedProp <- focal(closed, weight, na.rm = TRUE, pad = TRUE, padValue = 0)
+openFocal <- focal(open, weight, na.rm = TRUE, pad = TRUE, padValue = 0)
+closedFocal <- focal(closed, weight, na.rm = TRUE, pad = TRUE, padValue = 0)
 
 # Proportion of habitat at each relocation
-DT[, propOpen := extract(openProp, matrix(c(EASTING, NORTHING), ncol = 2))]
-DT[, propClosed := extract(closedProp, matrix(c(EASTING, NORTHING), ncol = 2))]
+DT[, propOpen := extract(openFocal, matrix(c(EASTING, NORTHING), ncol = 2))]
+DT[, propClosed := extract(closedFocal, matrix(c(EASTING, NORTHING), ncol = 2))]
 
 # shannon index at each relocation in a new raster 
 shannon <- function(x, ...) {
@@ -61,6 +61,6 @@ DT[, .N, by = lc]
 
 # Output ------------------------------------------------------------------
 saveRDS(DT, 'output/02-habitat-locs.Rds')
-writeRaster(openProp, 'output/02-open-proportion.tif', overwrite=TRUE)
-writeRaster(closedProp, 'output/02-closed-proportion.tif', overwrite=TRUE)
+writeRaster(openFocal, 'output/02-open-proportion.tif', overwrite=TRUE)
+writeRaster(closedFocal, 'output/02-closed-proportion.tif', overwrite=TRUE)
 writeRaster(shanOut,'output/02-shannon.tif', overwrite=TRUE)
