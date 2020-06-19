@@ -1,3 +1,15 @@
+# === Survival Analysis ---------------------------------------------------
+
+
+
+# Packages ----------------------------------------------------------------
+pkgs <- c('data.table')
+lapply(pkgs, require, character.only = TRUE)
+
+
+# Input -------------------------------------------------------------------
+dyads <- readRDS('output/07-dyads.Rds')
+
 
 # Start/Stop --------------------------------------------------------------
 # TODO adjust start stop
@@ -42,7 +54,5 @@ intervals[,.N,by=FalseFission]
 # no true means no flse fission?
 
 # Output ------------------------------------------------------------------
-saveRDS(dyads, 'output/07-dyads.Rds')
-
 saveRDS(intervals, 'output/07-intervals.Rds')
 
