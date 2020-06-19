@@ -23,8 +23,7 @@ edges <-
     coords = c('EASTING', 'NORTHING'),
     timegroup = 'timegroup',
     returnDist = TRUE,
-    threshold = NULL,
-    splitBy = c('Year')
+    threshold = NULL
   )
 
 
