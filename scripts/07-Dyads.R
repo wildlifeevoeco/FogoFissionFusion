@@ -92,12 +92,12 @@ dyadNN[, nObs := .N, by = .(dyadID)]
 
 # Flag start and end locs for each dyad -----------------------------------
 # Dont consider where runs are less than 2 relocations
-dyadNN[runCount > 1, start := fifelse(timegroup == min(timegroup), TRUE, FALSE), 
+dyadNN[runCount >= 2, start := fifelse(timegroup == min(timegroup), TRUE, FALSE), 
        by = .(dyadrun, dyadID)]
 
-dyadNN[runCount > 1, end := fifelse(timegroup == max(timegroup), TRUE, FALSE), by = .(dyadrun, dyadID)]
+dyadNN[runCount >= 2, end := fifelse(timegroup == max(timegroup), TRUE, FALSE), by = .(dyadrun, dyadID)]
 
-dyadNN[runCount <= 1 | is.na(runCount), c('start', 'end') := FALSE]
+dyadNN[runCount < 2 | is.na(runCount), c('start', 'end') := FALSE]
 
 # if runCount is minimum 2, dyad stayed together (min2) = TRUE
 dyadNN[, min2 := fifelse(runCount >= 2 & !is.na(runCount), TRUE, FALSE)]
