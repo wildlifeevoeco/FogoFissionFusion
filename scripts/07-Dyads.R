@@ -74,13 +74,9 @@ dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[,
 setorder(dyadNN, timegroup)
 
 # Count consecutive relocations together ----------------------------------
-# Shift the timegroup within dyadIDs
-dyadNN[, shifttimegrp := data.table::shift(timegroup), 
-       by = dyadID]
-
 # Difference between consecutive timegroups for each dyadID
 # where difftimegrp == 1, the dyads remained together in consecutive timegroups
-dyadNN[, difftimegrp := timegroup - shifttimegrp]
+dyadNN[, difftimegrp := timegroup - data.table::shift(timegroup)]
 
 # Dyad run id
 dyadNN[, dyadrun := rleid(difftimegrp), by = dyadID]
