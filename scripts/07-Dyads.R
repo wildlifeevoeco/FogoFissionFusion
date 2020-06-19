@@ -25,9 +25,9 @@ DT[!(lastLoc), censored := 1]
 DT[, .N, censored]
 
 
-#TODO:
-# Calc previous timegroup for downstream when NN is NA
-DT[, prevTimegrpNNNA := shift(timegroup), by = ANIMAL_ID]
+# Preserve shifted timegroup for each individual
+#  when dyads are NA, this will tell us when IDs were observed last
+DT[, shiftTimeWithinID := shift(timegroup), by = ANIMAL_ID]
 
 
 # ====== LANDSCAPE METRICS ======= #
@@ -114,17 +114,14 @@ dyadNN[mean_open < 0.5, DyadDominantLC := "closed"]
 
 # Dyad NA -----------------------------------------------------------------
 # Get where NN was NA
-dyadNA <- DT[is.na(NN), .(ANIMAL_ID, NN, dyadID, datetime, timegroup)]
+dyadNA <- DT[is.na(NN), .(ANIMAL_ID, NN, dyadID, datetime, timegroup, shiftTimeWithinID)]
 
 dyadNA[, c('start', 'end', 'min2') := FALSE]
 
-dyadNA[, shifttimegrp := prevTimegrpNNNA]
+dyadNA[, shifttimegrp := shiftTimeWithinID]
 
 # Combine where NN is NA
 dyads <- rbindlist(list(dyadNN, dyadNA), fill = TRUE)
-
-
-
 
 
 
@@ -134,8 +131,6 @@ dyads <- rbindlist(list(dyadNN, dyadNA), fill = TRUE)
 ##   a) fussion events where dyads are together > 1 consecutive relocations
 ##   or b) individuals where NN = NA
 dyads[, fusion0 := ((start) & (min2)) | is.na(NN)]
-
-# TODO: consider dropping where nearest neighbour distance was greater than some maximum (no opportunity to be social)
 
 
 # Start/Stop --------------------------------------------------------------
