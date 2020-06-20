@@ -77,8 +77,7 @@ setorder(dyadNN, timegroup)
 dyadNN[, shifttimegrp := data.table::shift(timegroup), 
        by = dyadID]
 
-#TODO= got an error here 'Error in (function (classes, fdef, mtable)  : 
-#unable to find an inherited method for function ‘shift’ for signature ‘"integer"’
+
 # Difference between consecutive timegroups for each dyadID
 # where difftimegrp == 1, the dyads remained together in consecutive timegroups
 dyadNN[, difftimegrp := timegroup - shifttimegrp]
