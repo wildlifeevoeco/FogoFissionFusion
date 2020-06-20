@@ -22,7 +22,7 @@ reorder_size <- function(x) {
 }
 
 ## delete NAs from dyad habitat type
-fusion <- fusion[!is.na(dyadLC)]
+fusion <- fusion[!is.na(DyadDominantLC)]
 
 ## change name of false/true to fission/fusion
 fusion$fusion0[fusion$fusion0 == FALSE] <- "fused"
