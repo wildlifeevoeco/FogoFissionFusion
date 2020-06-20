@@ -64,7 +64,7 @@ DT[, .N, habitat]
 # Unique dyads and NN=NA --------------------------------------------------
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
-            .(ANIMAL_ID, NN, dyadID, datetime, timegroup,
+            .(ANIMAL_ID, NN, dyadID, datetime, timegroup,dyadLC,
               ShanIndex, dyadPropOpen, dyadPropClosed)]
 
 # Set order explicitly
@@ -77,6 +77,8 @@ setorder(dyadNN, timegroup)
 dyadNN[, shifttimegrp := data.table::shift(timegroup), 
        by = dyadID]
 
+#TODO= got an error here 'Error in (function (classes, fdef, mtable)  : 
+#unable to find an inherited method for function ‘shift’ for signature ‘"integer"’
 # Difference between consecutive timegroups for each dyadID
 # where difftimegrp == 1, the dyads remained together in consecutive timegroups
 dyadNN[, difftimegrp := timegroup - shifttimegrp]
@@ -122,7 +124,7 @@ dyadNN[mean_open < 0.5, DyadDominantLC := "closed"]
 # Get where NN was NA
 dyadNA <- DT[is.na(NN), .(ANIMAL_ID, NN, dyadID, datetime, timegroup, 
                           shiftTimeWithinID, 
-                          ShanIndex, dyadPropOpen, dyadPropClosed)]
+                          ShanIndex,dyadLC, dyadPropOpen, dyadPropClosed)]
 
 dyadNA[, c('start', 'end', 'min2') := FALSE]
 
