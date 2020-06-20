@@ -64,7 +64,7 @@ DT[, .N, habitat]
 # Unique dyads and NN=NA --------------------------------------------------
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
-            .(ANIMAL_ID, NN, dyadID, datetime, timegroup,dyadLC,
+            .(Year,ANIMAL_ID, NN, dyadID, censored,datetime, timegroup,dyadLC,
               ShanIndex, dyadPropOpen, dyadPropClosed)]
 
 # Set order explicitly
@@ -121,7 +121,7 @@ dyadNN[mean_open < 0.5, DyadDominantLC := "closed"]
 
 # Dyad NA -----------------------------------------------------------------
 # Get where NN was NA
-dyadNA <- DT[is.na(NN), .(ANIMAL_ID, NN, dyadID, datetime, timegroup, 
+dyadNA <- DT[is.na(NN), .(Year,ANIMAL_ID, NN, dyadID, censored, datetime, timegroup, 
                           shiftTimeWithinID, 
                           ShanIndex,dyadLC, dyadPropOpen, dyadPropClosed)]
 
@@ -135,7 +135,7 @@ dyads <- rbindlist(list(dyadNN, dyadNA), fill = TRUE)
 
 # Calculate fusion 0 ------------------------------------------------------
 ## Fusion 0 = 
-##   a) fussion events where dyads are together >= 2 consecutive relocations
+##   a) fusion events where dyads are together >= 2 consecutive relocations
 ##   or b) individuals where NN = NA
 dyads[, fusion0 := ((start)) | is.na(NN)]
 
