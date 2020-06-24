@@ -119,7 +119,7 @@ dyadNN[runCount >= 2, end := timegroup == max(timegroup),
 dyadNN[runCount < 2 | is.na(runCount), c('start', 'end') := FALSE]
 
 # if runCount is minimum 2, dyad stayed together (min2) = TRUE
-dyadNN[, min2 := fifelse(runCount >= 2 & !is.na(runCount), TRUE, FALSE)]
+dyadNN[, min2 := runCount >= 2]
 
 
 # Dyad habitat ------------------------------------------------------------
