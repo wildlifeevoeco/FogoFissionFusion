@@ -88,10 +88,12 @@ dyadNN[, dyadrun := difftimegrp == 1 & !is.na(difftimegrp), by = dyadID]
 # nObs = how many rows for each dyadID
 dyadNN[, nObs := .N, by = dyadID]
 
+
+# dyadrunid = WITHIN DYAD ID - run id
 # dyadrunid = 1st generate a run length id over dyad run
 #             eg. dyad run = TRUE, TRUE, FALSE, TRUE
 #                 dyadrunid = 1, 1, 2, 3
-dyadNN[, dyadrunid := rleid(dyadrun), dyadID]
+dyadNN[, dyadrunid := rleid(dyadrun), by = dyadID]
 
 # then catch where potentially the difference in timegroup between rows
 # is consecutively 2, 3, 4 anything > 1 
