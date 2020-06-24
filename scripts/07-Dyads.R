@@ -85,8 +85,8 @@ dyadNN[, difftimegrp := timegroup - shifttimegrp]
 # dyadrun = binary, is it a run of at least one relocation
 dyadNN[, dyadrun := fifelse(difftimegrp == 1 & !is.na(difftimegrp), TRUE, FALSE), by = dyadID]
 
-# dyadCount = how many rows for each dyadID
-dyadNN[, dyadCount := .N, by = dyadID]
+# nObs = how many rows for each dyadID
+dyadNN[, nObs := .N, by = dyadID]
 
 # dyadrunid = 1st generate a run length id over dyad run
 #             eg. dyad run = TRUE, TRUE, FALSE, TRUE
@@ -96,34 +96,25 @@ dyadNN[, dyadrunid := rleid(dyadrun), dyadID]
 # then catch where potentially the difference in timegroup between rows
 # is consecutively 2, 3, 4 anything > 1 
 # eg. difftimegrp 2, 2, 2 would have been tagged as the same dyadrunid
-# solution: generate a sequence starting from the number of locs
+# solution: generate a sequence starting from the nObs
 #           with the length out = to the number of rows that 
 #           arent TRUE for dyadrun
-#           starting at dyadCount to avoid risk of overlap
-dyadNN[!(dyadrun), dyadrunid := seq.int(dyadCount[[1]], length.out = .N),
+#           starting at nObs to avoid risk of overlap
+dyadNN[!(dyadrun), dyadrunid := seq.int(nObs[[1]], length.out = .N),
        dyadID]
 
 
-
-# TODO: try something directly with the difftimegrp
-# using logical of timegroup and shifttimegroup difference is 1, AND sequence, otherwise no
-
 # N consecutive observations of dyadIDs
-dyadNN[, runCount := fifelse(difftimegrp == 1, .N, NA_integer_), 
-       by = .(dyadrun, dyadID)]
-
-
-# Count number of timegroups dyads are observed together ------------------
-dyadNN[, nObs := .N, by = .(dyadID)]
+dyadNN[, runCount := .N, by = .(dyadrunid, dyadID)]
 
 
 # Flag start and end locs for each dyad -----------------------------------
 # Dont consider where runs are less than 2 relocations
 dyadNN[runCount >= 2, start := fifelse(timegroup == min(timegroup), TRUE, FALSE), 
-       by = .(dyadrun, dyadID)]
+       by = .(dyadrunid, dyadID)]
 
 dyadNN[runCount >= 2, end := fifelse(timegroup == max(timegroup), TRUE, FALSE), 
-       by = .(dyadrun, dyadID)]
+       by = .(dyadrunid, dyadID)]
 
 dyadNN[runCount < 2 | is.na(runCount), c('start', 'end') := FALSE]
 
