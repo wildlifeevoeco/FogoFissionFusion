@@ -151,7 +151,7 @@ dyads <- rbindlist(list(dyadNN, dyadNA), fill = TRUE)
 ## Fusion 0 = 
 ##   a) fusion events where dyads are together >= 2 consecutive relocations
 ##   or b) individuals where NN = NA
-dyads[, fusion0 := ((start)) | is.na(NN)]
+dyads[, fusion0 := (start) | is.na(NN)]
 
 
 # Output ------------------------------------------------------------------
