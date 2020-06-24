@@ -83,7 +83,7 @@ dyadNN[, shifttimegrp := data.table::shift(timegroup),
 dyadNN[, difftimegrp := timegroup - shifttimegrp]
 
 # dyadrun = binary, is it a run of at least one relocation
-dyadNN[, dyadrun := fifelse(difftimegrp == 1 & !is.na(difftimegrp), TRUE, FALSE), by = dyadID]
+dyadNN[, dyadrun := difftimegrp == 1 & !is.na(difftimegrp), by = dyadID]
 
 # nObs = how many rows for each dyadID
 dyadNN[, nObs := .N, by = dyadID]
@@ -110,10 +110,10 @@ dyadNN[, runCount := .N, by = .(dyadrunid, dyadID)]
 
 # Flag start and end locs for each dyad -----------------------------------
 # Dont consider where runs are less than 2 relocations
-dyadNN[runCount >= 2, start := fifelse(timegroup == min(timegroup), TRUE, FALSE), 
+dyadNN[runCount >= 2, start := timegroup == min(timegroup), 
        by = .(dyadrunid, dyadID)]
 
-dyadNN[runCount >= 2, end := fifelse(timegroup == max(timegroup), TRUE, FALSE), 
+dyadNN[runCount >= 2, end := timegroup == max(timegroup), 
        by = .(dyadrunid, dyadID)]
 
 dyadNN[runCount < 2 | is.na(runCount), c('start', 'end') := FALSE]
