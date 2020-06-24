@@ -103,7 +103,7 @@ dyadNN[, dyadrunid := rleid(dyadrun), by = dyadID]
 #           arent TRUE for dyadrun
 #           starting at nObs to avoid risk of overlap
 dyadNN[!(dyadrun), dyadrunid := seq.int(nObs[[1]], length.out = .N),
-       dyadID]
+       by = dyadID]
 
 
 # N consecutive observations of dyadIDs
