@@ -126,7 +126,7 @@ dyadNN[, min2 := runCount >= 2]
 
 # Dyad habitat ------------------------------------------------------------
 # one dyad - one runCount - one habitat percentage (for survival analysis)
-dyadNN[, mean_open := mean(dyadPropOpen, na.rm = TRUE), by = .(dyadrun, dyadID)]
+dyadNN[, mean_open := mean(dyadPropOpen, na.rm = TRUE), by = .(dyadrunid, dyadID)]
 
 # dominant habitat during the consecutive fixes dyads spent together 
 dyadNN[mean_open > 0.5, DyadDominantLC := "open"]
