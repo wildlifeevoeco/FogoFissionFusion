@@ -82,9 +82,19 @@ dyadNN[, shifttimegrp := data.table::shift(timegroup),
 # where difftimegrp == 1, the dyads remained together in consecutive timegroups
 dyadNN[, difftimegrp := timegroup - shifttimegrp]
 
-# Dyad run id
+# dyadrun = binary, is it a run of at least one relocation
 dyadNN[, dyadrun := fifelse(difftimegrp == 1 & !is.na(difftimegrp), TRUE, FALSE), by = dyadID]
-dyadNN[is.na(difftimegrp), dyadrun := FALSE]
+
+# dyadCount = how many rows for each dyadID
+dyadNN[, dyadCount := .N, by = dyadID]
+dyadNN[, dyadrunid := rleid(dyadrun), dyadID]
+dyadNN[dyadrun != 1, dyadrunid := seq.int(dyadCount[[1]], length.out = .N),
+       dyadID]
+# dyadNN[difftimegrp != 1, difftimegrp := difftimegrp + sample(1:100, replace = TRUE, .N)]
+# dyadNN[, dyadrunid := rleid(dyadrun), dyadID]
+# dyadNN[, dyadrunid2 := rleid(difftimegrp, dyadrun), dyadID]
+
+
 dyadNN[, dyadrunid := rleid(dyadrun), by = dyadID]
 dyadNN[!(dyadrun), dyadrunid := seq.int(.N), by = dyadID]
 
