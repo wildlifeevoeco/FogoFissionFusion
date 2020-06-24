@@ -87,16 +87,23 @@ dyadNN[, dyadrun := fifelse(difftimegrp == 1 & !is.na(difftimegrp), TRUE, FALSE)
 
 # dyadCount = how many rows for each dyadID
 dyadNN[, dyadCount := .N, by = dyadID]
+
+# dyadrunid = 1st generate a run length id over dyad run
+#             eg. dyad run = TRUE, TRUE, FALSE, TRUE
+#                 dyadrunid = 1, 1, 2, 3
 dyadNN[, dyadrunid := rleid(dyadrun), dyadID]
-dyadNN[dyadrun != 1, dyadrunid := seq.int(dyadCount[[1]], length.out = .N),
+
+# then catch where potentially the difference in timegroup between rows
+# is consecutively 2, 3, 4 anything > 1 
+# eg. difftimegrp 2, 2, 2 would have been tagged as the same dyadrunid
+# solution: generate a sequence starting from the number of locs
+#           with the length out = to the number of rows that 
+#           arent TRUE for dyadrun
+#           starting at dyadCount to avoid risk of overlap
+dyadNN[!(dyadrun), dyadrunid := seq.int(dyadCount[[1]], length.out = .N),
        dyadID]
-# dyadNN[difftimegrp != 1, difftimegrp := difftimegrp + sample(1:100, replace = TRUE, .N)]
-# dyadNN[, dyadrunid := rleid(dyadrun), dyadID]
-# dyadNN[, dyadrunid2 := rleid(difftimegrp, dyadrun), dyadID]
 
 
-dyadNN[, dyadrunid := rleid(dyadrun), by = dyadID]
-dyadNN[!(dyadrun), dyadrunid := seq.int(.N), by = dyadID]
 
 # TODO: try something directly with the difftimegrp
 # using logical of timegroup and shifttimegroup difference is 1, AND sequence, otherwise no
