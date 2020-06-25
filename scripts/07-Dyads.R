@@ -162,8 +162,12 @@ dyads[, runCount := .N, by = .(dyadrunid, dyadID)]
 # False fission events where not relevant to missed or potential missed
 #  and difference between previous and next timegroup is 2
 #  and incorrectly classified as not in a dyad run
-dyads[, falsefission := (!(missed) | is.na(potentialmiss)) & dif2 == 2 & !dyadrun]
 
+# TODO: triple check.. seems like none are being detected
+dyads[, falsefission := dif2 == 2 & !dyadrun & is.na(potentialmiss)]
+
+# TODO: tidy NAs
+dyads[, .N, .(falsefission, missed)]
 
 # Flag start and end locs for each dyad -----------------------------------
 # Dont consider where runs are less than 2 relocations
