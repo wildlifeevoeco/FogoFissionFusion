@@ -24,9 +24,16 @@ DT[!(lastLoc), censored := 1]
 DT[, .N, censored]
 
 
+# Shift type: lead
+# Look "forwards" so NAs are at the bottom
+# Shift is the next and not the previous
+shifttype <- 'lead'
+
+
 # Preserve shifted timegroup for each individual
 #  when dyads are NA, this will tell us when IDs were observed last
-DT[, shiftTimeWithinID := shift(timegroup), by = ANIMAL_ID]
+DT[, shiftTimeWithinID := data.table::shift(timegroup, type = shifttype), 
+   by = ANIMAL_ID]
 
 
 
@@ -74,13 +81,13 @@ setorder(dyadNN, timegroup)
 
 # Count consecutive relocations together ----------------------------------
 # Shift the timegroup within dyadIDs
-dyadNN[, shifttimegrp := data.table::shift(timegroup), 
+dyadNN[, shifttimegrp := data.table::shift(timegroup, type = shifttype), 
        by = dyadID]
 
 
 # Difference between consecutive timegroups for each dyadID
 # where difftimegrp == 1, the dyads remained together in consecutive timegroups
-dyadNN[, difftimegrp := timegroup - shifttimegrp]
+dyadNN[, difftimegrp := shifttimegrp - timegroup]
 
 # dyadrun = binary, is it a run of at least one relocation
 dyadNN[, dyadrun := difftimegrp == 1 & !is.na(difftimegrp), by = dyadID]
