@@ -1,6 +1,6 @@
 # === Dyads ---------------------------------------------------------------
 
- 
+
 # Packages ----------------------------------------------------------------
 libs <- c('raster', 'data.table', 'spatsoc', 'rgdal', 'landscapemetrics')
 lapply(libs, require, character.only = TRUE)
@@ -111,30 +111,28 @@ dyads <- dyadMiss[(missed) | is.na(potentialmiss)]
 
 # Count consecutive relocations together ----------------------------------
 # Shift the timegroup within dyadIDs
-dyadNN[, shifttimegrp := data.table::shift(timegroup, type = shifttype), 
+dyads[, shifttimegrp := data.table::shift(timegroup, type = shifttype), 
        by = dyadID]
 
-dyadNN[, shifttimefalse := data.table::shift(timegroup, 2, type = shifttype), 
-       by = dyadID]
 
 # Difference between consecutive timegroups for each dyadID
 # where difftimegrp == 1, the dyads remained together in consecutive timegroups
-dyadNN[, difftimegrp := shifttimegrp - timegroup]
+dyads[, difftimegrp := shifttimegrp - timegroup]
 
 
 # dyadrun = binary, is it a run of at least one relocation
-dyadNN[, dyadrun := difftimegrp == 1 & !is.na(difftimegrp), by = dyadID]
+dyads[, dyadrun := difftimegrp == 1 & !is.na(difftimegrp), by = dyadID]
 
 
 # nObs = how many rows for each dyadID
-dyadNN[, nObs := .N, by = dyadID]
+dyads[, nObs := .N, by = dyadID]
 
 
 # dyadrunid = WITHIN DYAD ID - run id
 # dyadrunid = 1st generate a run length id over dyad run
 #             eg. dyad run = TRUE, TRUE, FALSE, TRUE
 #                 dyadrunid = 1, 1, 2, 3
-dyadNN[, dyadrunid := rleid(dyadrun), by = dyadID]
+dyads[, dyadrunid := rleid(dyadrun), by = dyadID]
 
 # then catch where potentially the difference in timegroup between rows
 # is consecutively 2, 3, 4 anything > 1 
