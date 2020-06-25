@@ -100,7 +100,9 @@ setorder(dyadNN, timegroup)
 dyadNN[, dif2 := shift(timegroup, type = 'lead') - shift(timegroup, type = 'lag'),
        by = dyadID]
 
-dyadNN[dif2 != -2]
+dyadNN[, falsefission := dif2 == 2 & !missed]
+
+dyadNN[, missed]
 
 # dyadNN[, COMBONONSENSE := shift(dyadrun, type = 'lead') + shift(dyadrun, type = 'lag'), dyadID]
 
