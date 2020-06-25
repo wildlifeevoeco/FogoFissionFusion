@@ -81,20 +81,28 @@ diffs <- dyadids[, c(setdiff(DT[ANIMAL_ID == dID, unique(timegroup)],
 diffs[, difnot1 := (data.table::shift(V1, type = shifttype) - V1) != 1,
        dyadID]
 
-missed <- diffs[(difnot1), .(dyadID, timegroup = V1)]
-missed[, c('ANIMAL_ID', 'NN') := tstrsplit(dyadID, '-')]
+miss <- diffs[(difnot1), .(dyadID, timegroup = V1)]
+miss[, c('ANIMAL_ID', 'NN') := tstrsplit(dyadID, '-')]
+miss[, missed := TRUE]
 
 # Get the unique dyads by timegroup
 dyads <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
             .(Year, ANIMAL_ID, NN, dyadID, censored, datetime, timegroup,
               dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed)]
 
-dyadNN <- rbindlist(list(dyads, missed), fill = TRUE)
+dyadNN <- rbindlist(list(dyads, miss), fill = TRUE)
 
 
 # Set order explicitly
 setorder(dyadNN, timegroup)
 
+# Check 
+dyadNN[, dif2 := shift(timegroup, type = 'lead') - shift(timegroup, type = 'lag'),
+       by = dyadID]
+
+dyadNN[dif2 != -2]
+
+# dyadNN[, COMBONONSENSE := shift(dyadrun, type = 'lead') + shift(dyadrun, type = 'lag'), dyadID]
 
 # Count consecutive relocations together ----------------------------------
 # Shift the timegroup within dyadIDs
