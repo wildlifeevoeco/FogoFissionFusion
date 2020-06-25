@@ -14,37 +14,22 @@ dyads <- readRDS('output/07-dyads.Rds')
 
 # Setup Intervals ---------------------------------------------------------
 # remove NAs for NN
-# dyadsNN <- dyads[!is.na(NN)]
+dyadsNN <- dyads[!is.na(NN)]
 
-# 
-# intervals <-
-  dyads[, .(
+intervals <- dyadsNN[, .(
   ANIMAL_ID,
   NN,
   dyadID,
-  start = shifttimegrp, 
-  stop = timegroup,
+  
+  start = timegroup, 
+  stop = shifttimegrp,
   
   Year = year(datetime),
-  stayedTogether = min2 & (!end),
+  stayedTogether = !end,
   
   dyadPropOpen,
-  
   ShanIndex
   )]
-
-
-  Year,
-
-  dyadID, 
-  start,
-  end,
-  min2, 
-  stayedTogether = min2 & (!end),
-  dyadPropOpenStop,
-  dyadrun,
-  ShannonStop
-)]
 
 
 setorderv(intervals,c('dyadID','stop'),1)
