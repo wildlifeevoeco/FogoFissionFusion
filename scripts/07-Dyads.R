@@ -137,11 +137,11 @@ dyads[, dyadrun := difftimegrp == 1 & !is.na(difftimegrp), by = dyadID]
 dyads[, nObs := .N, by = dyadID]
 
 
-# dyadrunid = WITHIN DYAD ID - run id
-# dyadrunid = 1st generate a run length id over dyad run
+# withinID = WITHIN DYAD ID - run id
+# withinID = 1st generate a run length id over dyad run
 #             eg. dyad run = TRUE, TRUE, FALSE, TRUE
 #                 dyadrunid = 1, 1, 2, 3
-dyads[, dyadrunid := rleid(dyadrun), by = dyadID]
+dyads[, withinID := rleid(dyadrun), by = dyadID]
 
 # then catch where potentially the difference in timegroup between rows
 # is consecutively 2, 3, 4 anything > 1 
@@ -150,8 +150,12 @@ dyads[, dyadrunid := rleid(dyadrun), by = dyadID]
 #           with the length out = to the number of rows that 
 #           arent TRUE for dyadrun
 #           starting at nObs to avoid risk of overlap
-dyads[!(dyadrun), dyadrunid := seq.int(nObs[[1]], length.out = .N),
+dyads[!(dyadrun), withinID := seq.int(nObs[[1]], length.out = .N),
        by = dyadID]
+
+
+# ACROSS DYAD - RUN ID
+dyads[, dyadrunid := .GRP, .(withinID, dyadID)]
 
 
 # N consecutive observations of dyadIDs
