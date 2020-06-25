@@ -141,35 +141,42 @@ dyads[, dyadrunid := rleid(dyadrun), by = dyadID]
 #           with the length out = to the number of rows that 
 #           arent TRUE for dyadrun
 #           starting at nObs to avoid risk of overlap
-dyadNN[!(dyadrun), dyadrunid := seq.int(nObs[[1]], length.out = .N),
+dyads[!(dyadrun), dyadrunid := seq.int(nObs[[1]], length.out = .N),
        by = dyadID]
 
 
 # N consecutive observations of dyadIDs
-dyadNN[, runCount := .N, by = .(dyadrunid, dyadID)]
+dyads[, runCount := .N, by = .(dyadrunid, dyadID)]
+
+
+# False fission -----------------------------------------------------------
+# False fission events where not relevant to missed or potential missed
+#  and difference between previous and next timegroup is 2
+#  and incorrectly classified as not in a dyad run
+dyads[, falsefission := (!(missed) | is.na(potentialmiss)) & dif2 == 2 & !dyadrun]
 
 
 # Flag start and end locs for each dyad -----------------------------------
 # Dont consider where runs are less than 2 relocations
-dyadNN[runCount >= 2, start := timegroup == min(timegroup), 
+dyads[runCount >= 2, start := timegroup == min(timegroup), 
        by = .(dyadrunid, dyadID)]
 
-dyadNN[runCount >= 2, end := timegroup == max(timegroup), 
+dyads[runCount >= 2, end := timegroup == max(timegroup), 
        by = .(dyadrunid, dyadID)]
 
-dyadNN[runCount < 2 | is.na(runCount), c('start', 'end') := FALSE]
+dyads[runCount < 2 | is.na(runCount), c('start', 'end') := FALSE]
 
 # if runCount is minimum 2, dyad stayed together (min2) = TRUE
-dyadNN[, min2 := runCount >= 2]
+dyads[, min2 := runCount >= 2]
 
 
 # Dyad habitat ------------------------------------------------------------
 # one dyad - one runCount - one habitat percentage (for survival analysis)
-dyadNN[, mean_open := mean(dyadPropOpen, na.rm = TRUE), by = .(dyadrunid, dyadID)]
+dyads[, mean_open := mean(dyadPropOpen, na.rm = TRUE), by = .(dyadrunid, dyadID)]
 
 # dominant habitat during the consecutive fixes dyads spent together 
-dyadNN[mean_open > 0.5, DyadDominantLC := "open"]
-dyadNN[mean_open < 0.5, DyadDominantLC := "closed"]
+dyads[mean_open > 0.5, DyadDominantLC := "open"]
+dyads[mean_open < 0.5, DyadDominantLC := "closed"]
 
 
 # Dyad NA -----------------------------------------------------------------
