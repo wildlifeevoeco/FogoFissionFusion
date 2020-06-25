@@ -83,7 +83,7 @@ diffs[, difnot1 := (data.table::shift(V1, type = shifttype) - V1) != 1,
 
 miss <- diffs[(difnot1), .(dyadID, timegroup = V1)]
 miss[, c('ANIMAL_ID', 'NN') := tstrsplit(dyadID, '-')]
-miss[, missed := TRUE]
+miss[, potentialmiss := TRUE]
 
 # Get the unique dyads by timegroup
 dyads <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
@@ -96,15 +96,18 @@ dyadNN <- rbindlist(list(dyads, miss), fill = TRUE)
 # Set order explicitly
 setorder(dyadNN, timegroup)
 
-# Check 
+# Check difference between previous timegroup and next timegroup
+# if 2, then this relocation is within the stream of relocations
 dyadNN[, dif2 := shift(timegroup, type = 'lead') - shift(timegroup, type = 'lag'),
        by = dyadID]
 
-dyadNN[, falsefission := dif2 == 2 & !missed]
+# Check if potential misses are missed: if the dif2 is equal to 2 and it is
+#  a potential miss
+dyadNN[, missed := (dif2 == 2 & potentialmiss)]
 
-dyadNN[, missed]
+# Only preserve where missed is TRUE or NA
+dyads <- dyadNN[(missed) | is.na(missed)]
 
-# dyadNN[, COMBONONSENSE := shift(dyadrun, type = 'lead') + shift(dyadrun, type = 'lag'), dyadID]
 
 # Count consecutive relocations together ----------------------------------
 # Shift the timegroup within dyadIDs
