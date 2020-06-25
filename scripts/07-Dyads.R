@@ -37,17 +37,6 @@ DT[, shiftTimeWithinID := data.table::shift(timegroup, type = shifttype),
 
 
 
-
-# check where ID and NN differ in timegroups
-dyadids <- DT[!is.na(dyadID), .(dID = ANIMAL_ID, dNN = NN), dyadID][, .SD[[1]], dyadID]
-
-dyadids[, c(setdiff(DT[ANIMAL_ID == dID, unique(timegroup)],
-                    DT[ANIMAL_ID == dNN, unique(timegroup)]),
-            setdiff(DT[ANIMAL_ID == dNN, unique(timegroup)],
-                    DT[ANIMAL_ID == dID, unique(timegroup)])),
-        by = dyadID]
-
-
 # Dyad centroid -----------------------------------------------------------
 # For each dyad * timegroup
 DT[, c('meanX', 'meanY') := lapply(.SD, mean), 
@@ -80,14 +69,31 @@ DT[, .N, habitat]
 
 
 # Unique dyads and NN=NA --------------------------------------------------
+# check where ID and NN differ in timegroups
+dyadids <- DT[!is.na(dyadID), .(dID = ANIMAL_ID, dNN = NN), dyadID][, .SD[[1]], dyadID]
+
+diffs <- dyadids[, c(setdiff(DT[ANIMAL_ID == dID, unique(timegroup)],
+                              DT[ANIMAL_ID == dNN, unique(timegroup)]),
+                      setdiff(DT[ANIMAL_ID == dNN, unique(timegroup)],
+                              DT[ANIMAL_ID == dID, unique(timegroup)])),
+                  by = dyadID]
+
+diffs[, difnot1 := (data.table::shift(V1, type = shifttype) - V1) != 1,
+       dyadID]
+
+missed <- diffs[(difnot1), .(dyadID, timegroup = V1)]
+missed[, c('ANIMAL_ID', 'NN') := tstrsplit(dyadID, '-')]
+
 # Get the unique dyads by timegroup
-dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
-            .(Year,ANIMAL_ID, NN, dyadID, censored,datetime, timegroup,dyadLC,
-              ShanIndex, dyadPropOpen, dyadPropClosed)]
+dyads <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
+            .(Year, ANIMAL_ID, NN, dyadID, censored, datetime, timegroup,
+              dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed)]
+
+dyadNN <- rbindlist(list(dyads, missed), fill = TRUE)
+
 
 # Set order explicitly
 setorder(dyadNN, timegroup)
-
 
 
 # Count consecutive relocations together ----------------------------------
@@ -95,13 +101,17 @@ setorder(dyadNN, timegroup)
 dyadNN[, shifttimegrp := data.table::shift(timegroup, type = shifttype), 
        by = dyadID]
 
+dyadNN[, shifttimefalse := data.table::shift(timegroup, 2, type = shifttype), 
+       by = dyadID]
 
 # Difference between consecutive timegroups for each dyadID
 # where difftimegrp == 1, the dyads remained together in consecutive timegroups
 dyadNN[, difftimegrp := shifttimegrp - timegroup]
 
+
 # dyadrun = binary, is it a run of at least one relocation
 dyadNN[, dyadrun := difftimegrp == 1 & !is.na(difftimegrp), by = dyadID]
+
 
 # nObs = how many rows for each dyadID
 dyadNN[, nObs := .N, by = dyadID]
