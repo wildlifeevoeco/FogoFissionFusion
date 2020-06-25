@@ -37,6 +37,17 @@ DT[, shiftTimeWithinID := data.table::shift(timegroup, type = shifttype),
 
 
 
+
+# check where ID and NN differ in timegroups
+dyadids <- DT[!is.na(dyadID), .(dID = ANIMAL_ID, dNN = NN), dyadID][, .SD[[1]], dyadID]
+
+dyadids[, c(setdiff(DT[ANIMAL_ID == dID, unique(timegroup)],
+                    DT[ANIMAL_ID == dNN, unique(timegroup)]),
+            setdiff(DT[ANIMAL_ID == dNN, unique(timegroup)],
+                    DT[ANIMAL_ID == dID, unique(timegroup)])),
+        by = dyadID]
+
+
 # Dyad centroid -----------------------------------------------------------
 # For each dyad * timegroup
 DT[, c('meanX', 'meanY') := lapply(.SD, mean), 
