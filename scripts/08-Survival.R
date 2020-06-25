@@ -13,8 +13,8 @@ dyads <- readRDS('output/07-dyads.Rds')
 
 
 # Setup Intervals ---------------------------------------------------------
-# remove NAs for NN
-dyadsNN <- dyads[!is.na(NN)]
+# Only where dyads are minimum 2
+dyadsNN <- dyads[(min2)]
 
 intervals <- dyadsNN[, .(
   ANIMAL_ID,
@@ -31,6 +31,8 @@ intervals <- dyadsNN[, .(
   ShanIndex
   )]
 
+# Check:
+# intervals[stop - start != 1]
 
 setorderv(intervals,c('dyadID','stop'),1)
 # seems to work but what does it do to the other columns about the order
