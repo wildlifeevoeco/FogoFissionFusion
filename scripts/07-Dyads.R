@@ -203,16 +203,16 @@ dyadNA[, c('start', 'end', 'min2') := FALSE]
 dyadNA[, shifttimegrp := shiftTimeWithinID]
 
 # Combine where NN is NA
-dyads <- rbindlist(list(dyadNN, dyadNA), fill = TRUE)
+out <- rbindlist(list(dyadNN, dyadNA), fill = TRUE)
 
 
 # Calculate fusion 0 ------------------------------------------------------
 ## Fusion 0 = 
 ##   a) fusion events where dyads are together >= 2 consecutive relocations
 ##   or b) individuals where NN = NA
-dyads[, fusion0 := (start) | is.na(NN)]
+out[, fusion0 := (start) | is.na(NN)]
 
 
 # Output ------------------------------------------------------------------
-saveRDS(dyads, 'output/07-dyads.Rds')
+saveRDS(out, 'output/07-dyads.Rds')
 
