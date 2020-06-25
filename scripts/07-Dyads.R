@@ -86,27 +86,27 @@ miss[, c('ANIMAL_ID', 'NN') := tstrsplit(dyadID, '-')]
 miss[, potentialmiss := TRUE]
 
 # Get the unique dyads by timegroup
-dyads <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
+dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
             .(Year, ANIMAL_ID, NN, dyadID, censored, datetime, timegroup,
               dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed)]
 
-dyadNN <- rbindlist(list(dyads, miss), fill = TRUE)
+dyadMiss <- rbindlist(list(dyadNN, miss), fill = TRUE)
 
 
 # Set order explicitly
-setorder(dyadNN, timegroup)
+setorder(dyadMiss, timegroup)
 
 # Check difference between previous timegroup and next timegroup
 # if 2, then this relocation is within the stream of relocations
-dyadNN[, dif2 := shift(timegroup, type = 'lead') - shift(timegroup, type = 'lag'),
+dyadMiss[, dif2 := shift(timegroup, type = 'lead') - shift(timegroup, type = 'lag'),
        by = dyadID]
 
 # Check if potential misses are missed: if the dif2 is equal to 2 and it is
 #  a potential miss
-dyadNN[, missed := (dif2 == 2 & potentialmiss)]
+dyadMiss[, missed := (dif2 == 2 & potentialmiss)]
 
 # Only preserve where missed is TRUE or NA
-dyads <- dyadNN[(missed) | is.na(missed)]
+dyads <- dyadMiss[(missed) | is.na(potentialmiss)]
 
 
 # Count consecutive relocations together ----------------------------------
