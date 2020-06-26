@@ -167,10 +167,8 @@ dyads[, runCount := .N, by = .(dyadrunid, dyadID)]
 #  and difference between previous and next timegroup is 2
 #  and incorrectly classified as not in a dyad run
 
-# TODO: triple check.. seems like none are being detected
 dyads[, falsefission := dif2 == 2 & !dyadrun & is.na(potentialmiss)]
 
-# TODO: tidy NAs
 dyads[, .N, .(falsefission, missed)]
 
 # Flag start and end locs for each dyad -----------------------------------
@@ -200,14 +198,14 @@ dyads[mean_open < 0.5, DyadDominantLC := "closed"]
 # Get where NN was NA
 dyadNA <- DT[is.na(NN), .(Year,ANIMAL_ID, NN, dyadID, censored, datetime, timegroup, 
                           shiftTimeWithinID, 
-                          ShanIndex,dyadLC, dyadPropOpen, dyadPropClosed)]
+                          ShanIndex, dyadLC, dyadPropOpen, dyadPropClosed)]
 
 dyadNA[, c('start', 'end', 'min2') := FALSE]
 
 dyadNA[, shifttimegrp := shiftTimeWithinID]
 
 # Combine where NN is NA
-out <- rbindlist(list(dyadNN, dyadNA), fill = TRUE)
+out <- rbindlist(list(dyads, dyadNA), fill = TRUE)
 
 
 # Calculate fusion 0 ------------------------------------------------------
