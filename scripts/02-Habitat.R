@@ -33,7 +33,7 @@ closed <- Reduce('+', focals[c(2, 3, 4, 5)])
 
 # Proportion of habitat in buffer -----------------------------------------
 # Set buffer size
-buff <- 100
+buff <- 200
 
 weight <- focalWeight(lc, d = buff, type = 'circle')
 
@@ -48,7 +48,7 @@ DT[, propClosed := extract(closedFocal, matrix(c(EASTING, NORTHING), ncol = 2))]
 shannon <- function(x) {
   diversity(table(x), index="shannon")
 }
-weightShannon <- focalWeight(lc, d = 100, type = 'circle')
+weightShannon <- focalWeight(lc, d = 200, type = 'circle')
 shanOut <- focal(lc, weightShannon, fun=shannon, pad=T)
 
 DT[, ShannonIdx := extract(shanOut, matrix(c(EASTING, NORTHING), ncol = 2))]
