@@ -23,12 +23,14 @@ intervals <- dyadsNN[, .(
   
   start = timegroup, 
   stop = shifttimegrp,
+  falsefission,
   
   Year = year(datetime),
   stayedTogether = !end,
   
   dyadPropOpen,
-  ShanIndex
+  ShanIndex,
+  dyadLC
   )]
 
 # Check:
