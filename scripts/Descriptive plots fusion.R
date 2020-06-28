@@ -7,10 +7,14 @@ library(gridExtra)
 
 fusion=readRDS('output/07-dyads.Rds')
 
-Fusion=subset(fusion, fusion0==TRUE)
+#takes only the time step in between fission and fusion events = fused
+fusion[ , start:= ifelse(start==TRUE,1,0)]
+fusion[ , end:= ifelse(end==TRUE,1,0)]
+fusion[ , fused:= rowSums(fusion[,23:24])]
+fusion=fusion[ min2==TRUE]
 
-fusion[, count_fuse := length(fusion0), by = .(fusion0)]
-
+fusion[, count_fuse := length(fused), by = .(fused)]
+fusion[ , count_fusion := length(start), by=.(start)]
 
 ## color palette
 cbPalette <- c("#999999", "red", "#56B4E9", "#009E73", 
@@ -22,22 +26,18 @@ reorder_size <- function(x) {
 }
 
 ## delete NAs from dyad habitat type
-fusion <- fusion[!is.na(DyadDominantLC)]
-
-## change name of false/true to fission/fusion
-fusion$fusion0[fusion$fusion0 == FALSE] <- "fused"
-fusion$fusion0[fusion$fusion0 == TRUE] <- "fusion"
+fusion <- fusion[!is.na(dyadLC)]
 
 ## change name of anthro
 fusion$dyadLC[fusion$dyadLC == "Anthropogenic and disturbance"] <- "Anthropogenic"
 
 
-a1 <- ggplot(fusion[fusion0 == "fusion"], aes(reorder_size(dyadLC), count_fuse, fill=dyadLC)) +
+b1 <- ggplot(fusion[fused == 0], aes(reorder_size(dyadLC), count_fuse, fill=dyadLC)) +
   stat_summary(fun = "sum", geom="bar") +
   xlab('') +
   ylab('Number of points') +
-  ggtitle('a) dyad fusion') +
-  ylim(0,5000) +
+  ggtitle('a) dyad fused') +
+  ylim(0,2000) +
   scale_fill_manual(values=cbPalette) + 
   theme(legend.position = 'none',
         axis.text.x=element_text(size=12, color = "black", angle = 45, hjust = 1),
@@ -47,12 +47,12 @@ a1 <- ggplot(fusion[fusion0 == "fusion"], aes(reorder_size(dyadLC), count_fuse, 
         panel.grid.minor = element_blank(),
         panel.background = element_blank(),
         panel.border = element_rect(colour = "black", fill=NA, size=1))
-b1 <- ggplot(fusion[fusion0 == "fused"], aes(reorder_size(dyadLC), count_fuse, fill=dyadLC)) +
+a1 <- ggplot(fusion[start== TRUE], aes(reorder_size(dyadLC), count_fusion, fill=dyadLC)) +
   stat_summary(fun = "sum", geom="bar") +
   xlab('') +
   ylab('Number of points') +
-  ggtitle('b) dyads fused for >1 time step') +
-  ylim(0,5000) +
+  ggtitle('b) dyad fusion') +
+  ylim(0,1000) +
   scale_fill_manual(values=cbPalette) + 
   theme(legend.position = 'none',
         axis.text.x=element_text(size=12, color = "black", angle = 45, hjust = 1),
@@ -64,6 +64,7 @@ b1 <- ggplot(fusion[fusion0 == "fused"], aes(reorder_size(dyadLC), count_fuse, f
         panel.border = element_rect(colour = "black", fill=NA, size=1))
 grid.arrange(a1, b1, nrow = 1)
 
+fusion[ , .N, by=fused]
 
 
 #mosaic graph
