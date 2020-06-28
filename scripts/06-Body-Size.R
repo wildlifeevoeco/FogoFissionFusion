@@ -14,7 +14,6 @@ body <- fread('input/body.csv')
 # Add columns, remove columns
 body[, c('hump_girth', 'neck') := NULL]
 body[, sum_heart_length := total_length + heart_girth]
-body[, volume := (total_length * heart_girth ^ 2) / 4 * pi]
 
 # Functions ---------------------------------------------------------------
 #' @param DT input data.table 
