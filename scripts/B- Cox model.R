@@ -78,7 +78,7 @@ aictab(fit, 1:7)
 #  Plot risk ratio --------------------------------------------------------
 # try coxph = frailty to have approched predicted values
 
-fit1<-coxph(surv_object~dyadPropOpen+ShanIndex*ED.value+diff_size+sri+ frailty(dyadID), data=cox)
+fit1<-coxph(surv_object~dyadPropOpen+ShanIndex+diff_size+sri+ frailty(dyadID), data=cox)
 
 all_sd<-expand.grid(ShanIndex=min(cox$ShanIndex):max(cox$ShanIndex),
                     diff_size=mean(cox$diff_size), # cause want to nknow the effect
@@ -100,7 +100,7 @@ A=ggplot()+
   theme(axis.text=element_text(size=12),
         axis.title=element_text(size=14))
 
-all_sd1<-expand.grid(sri=min(cox$sri):max(cox$sri),  # cause want to nknow the effect
+all_sd1<-expand.grid(sri=c(0:1),  # cause want to nknow the effect - QW: need to make sure this is 0 and 1, can't have decimal points
                     diff_size=mean(cox$diff_size), 
                     dyadPropOpen=mean(cox$dyadPropOpen),
                     ShanIndex=mean(cox$ShanIndex)) #making new data with all values kept at their mean
@@ -109,11 +109,11 @@ all_sd1$pred <- predict(fit1,newdata=all_sd1, type="risk")
 all_sd1$pred.se <- predict(fit1, newdata=all_sd1, type="risk", se.fit=TRUE)$se.fit
 
 B=ggplot()+
-  geom_line(data=all_sd1, aes(x=sri,y=pred, group=1)) + 
+  geom_line(data=all_sd1, aes(x=sri,y=pred)) + 
   geom_ribbon(data=all_sd1, aes(x=sri, ymin = pred-pred.se, ymax = pred+pred.se), colour = NA,alpha = 0.3, fill="blue") +
   xlab("SRI") +
   theme_classic()+
-  xlim(0,0.4)+
+  xlim(0,1)+
   ylim(0,4)+
   geom_hline(yintercept=1, lty=2) +
   theme(axis.text=element_text(size=12),
