@@ -7,12 +7,20 @@ library(data.table)
 # Input data
 SURVI=readRDS("output/07-dyads.Rds")
 
-
-
 # Duration of a dyad acording to habitat openness (K-M curves) ------------
 
 # one line = one dyad run
-survi=SURVI[(start)]
+#remove when not a dyadrun
+survi=SURVI[(min2)]
+survi=survi[start=='TRUE']
+
+#check
+survi[ , .N, by=dyadID]
+
+# still dyadID=NA __< NOT NORMAL
+survi <- survi[!is.na(dyadID)]
+
+
 names(survi)
 survi=survi[,.(ANIMAL_ID, NN,dyadID,Year,DyadDominantLC,censored,runCount,dyadrunid)]
 # remove duplicated rows
