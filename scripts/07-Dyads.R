@@ -102,8 +102,8 @@ setorder(dyadMiss, timegroup)
 
 # Check difference between previous timegroup and next timegroup
 # if 2, then this relocation is within the stream of relocations
-dyadMiss[, dif2 := shift(timegroup, type = 'lead') - 
-            shift(timegroup, type = 'lag'),
+dyadMiss[, dif2 := data.table::shift(timegroup, type = 'lead') - 
+            data.table::shift(timegroup, type = 'lag'),
        by = dyadID]
 
 # Check if potential misses are missed: if the dif2 is equal to 2 and it is
@@ -117,8 +117,8 @@ dyadMiss[, dif2 := NULL]
 dyads <- dyadMiss[(missed) | is.na(potentialmiss)]
 
 # Recalculate dif2 after dropping extra missed
-dyads[, dif2 := shift(timegroup, type = 'lead') - 
-            shift(timegroup, type = 'lag'),
+dyads[, dif2 := data.table::shift(timegroup, type = 'lead') - 
+         data.table::shift(timegroup, type = 'lag'),
          by = dyadID]
 
 
