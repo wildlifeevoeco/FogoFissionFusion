@@ -67,6 +67,10 @@ DT[Value %in% c(2, 3, 4, 5), habitat := "closed"]
 DT[, .N, habitat]
 
 
+# try edge density
+sample_points= matrix(c(DT$meanX,DT$meanY), ncol=2)
+ED=sample_lsm(landcover, y=sample_points, shape='circle', size=200,what='lsm_l_ed', progress=TRUE)
+
 
 # Unique dyads and NN=NA --------------------------------------------------
 # check where ID and NN differ in timegroups
@@ -217,4 +221,5 @@ out[, fusion0 := (start) | is.na(NN)]
 
 # Output ------------------------------------------------------------------
 saveRDS(out, 'output/07-dyads.Rds')
+
 
