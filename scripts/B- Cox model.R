@@ -80,7 +80,7 @@ aictab(fit, 1:7)
 
 fit1<-coxph(surv_object~dyadPropOpen+ShanIndex+diff_size+sri+ frailty(dyadID), data=cox)
 
-all_sd<-expand.grid(ShanIndex=min(cox$ShanIndex):max(cox$ShanIndex),
+all_sd<-expand.grid(ShanIndex=c(0:3),
                     diff_size=mean(cox$diff_size), # cause want to nknow the effect
                     dyadPropOpen=mean(cox$dyadPropOpen),
                                       sri=mean(cox$sri)) #making new data with all values kept at their mean expect snow depth
@@ -91,6 +91,7 @@ all_sd$pred.se <- predict(fit1, newdata=all_sd, type="risk", se.fit=TRUE)$se.fit
 A=ggplot()+
   geom_line(data=all_sd, aes(x=ShanIndex,y=pred)) + 
   geom_ribbon(data=all_sd, aes(x=ShanIndex, ymin = pred-pred.se, ymax = pred+pred.se), colour = NA,alpha = 0.3, fill="blue") +
+  geom_rug(data=cox, aes(x=ShanIndex), color="black", alpha = 0.5) + 
   ylab("Risk (above baseline)") +
   xlab("Shannon index") +
   theme_classic()+
@@ -111,10 +112,11 @@ all_sd1$pred.se <- predict(fit1, newdata=all_sd1, type="risk", se.fit=TRUE)$se.f
 B=ggplot()+
   geom_line(data=all_sd1, aes(x=sri,y=pred)) + 
   geom_ribbon(data=all_sd1, aes(x=sri, ymin = pred-pred.se, ymax = pred+pred.se), colour = NA,alpha = 0.3, fill="blue") +
+  geom_rug(data=cox, aes(x=sri), color="black", alpha = 0.5) + 
   xlab("SRI") +
   theme_classic()+
   xlim(0,1)+
-  ylim(0,4)+
+  ylim(0,3)+
   geom_hline(yintercept=1, lty=2) +
   theme(axis.text=element_text(size=12),
         axis.title=element_text(size=14))
@@ -130,6 +132,7 @@ all_sd2$pred.se <- predict(fit1, newdata=all_sd2, type="risk", se.fit=TRUE)$se.f
 C=ggplot()+
   geom_line(data=all_sd2, aes(x=diff_size,y=pred)) + 
   geom_ribbon(data=all_sd2, aes(x=diff_size, ymin = pred-pred.se, ymax = pred+pred.se), colour = NA,alpha = 0.3, fill="blue") +
+  geom_rug(data=cox, aes(x=diff_size), color="black", alpha = 0.5) + 
   xlab("Difference in body size") +
   ylab("Risk (above baseline)") +
   theme_classic()+
@@ -151,6 +154,7 @@ all_sd3$pred.se <- predict(fit1, newdata=all_sd3, type="risk", se.fit=TRUE)$se.f
 D=ggplot()+
   geom_line(data=all_sd3, aes(x=dyadPropOpen,y=pred)) + 
   geom_ribbon(data=all_sd3, aes(x=dyadPropOpen, ymin = pred-pred.se, ymax = pred+pred.se), colour = NA,alpha = 0.3, fill="blue") +
+  geom_rug(data=cox, aes(x=dyadPropOpen), color="black", alpha = 0.5) + 
   xlab("Habitat openness") +
   theme_classic()+
   xlim(0,1)+
