@@ -10,17 +10,20 @@ library(ggplot2)
 COX=readRDS('output/07-intervals.Rds')
 body=readRDS('output/6-all-dyad-data.Rds')
 cox=merge(COX,body, by=c('dyadID','Year'))
-range(cox$diff_sum_heart_length)
+
+#COX[ ,.N, by=ED.value]
+
 # Fission event = 1
 cox[ ,stayedTogether:=ifelse(stayedTogether==TRUE,0,1)]
 cox[ , fission:= stayedTogether]
 cox[ , diff_size:= diff_sum_heart_length]
-range(cox$diff_size)
 
 # remove NA
 cox <- cox[!is.na(dyadPropOpen)]
 cox <- cox[!is.na(ShanIndex)]
 cox <- cox[!is.na(diff_size)]
+#cox <- cox[!is.na(ED.value)]
+
 
 # Survival analysis Cox PHM -----------------------------------------------
 
@@ -32,7 +35,7 @@ surv_object <-Surv(cox$start, cox$stop, cox$fission)
 
 ## IF HR<1 = less risk that the dyad does not survive = stay longer together
 ## exp(coeff) = hazard ratio in the output
-fit1<-coxme(surv_object~dyadPropOpen+ShanIndex+diff_size+sri+ (1|dyadID), data=cox)
+fit1<-coxme(surv_object~ dyadPropOpen+ShanIndex+diff_size+sri+ (1|dyadID), data=cox)
 fit1
 # (ERROR MESSAGE WITH YEAR)
 
@@ -75,7 +78,7 @@ aictab(fit, 1:7)
 #  Plot risk ratio --------------------------------------------------------
 # try coxph = frailty to have approched predicted values
 
-fit1<-coxph(surv_object~dyadPropOpen+ShanIndex+diff_size+sri+ frailty(dyadID), data=cox)
+fit1<-coxph(surv_object~dyadPropOpen+ShanIndex*ED.value+diff_size+sri+ frailty(dyadID), data=cox)
 
 all_sd<-expand.grid(ShanIndex=min(cox$ShanIndex):max(cox$ShanIndex),
                     diff_size=mean(cox$diff_size), # cause want to nknow the effect
