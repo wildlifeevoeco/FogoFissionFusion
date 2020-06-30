@@ -92,7 +92,12 @@ miss[, potentialmiss := TRUE]
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
             .(Year, ANIMAL_ID, NN, dyadID, censored, datetime, timegroup,
-              dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed)]
+              dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed, ED)]
+
+
+#i know this is weird, I had to run this script in two times
+saveRDS(dyadNN, 'output/10-dyad-NN.Rds')
+dyadNN=readRDS('output/10-dyad-NN.Rds')
 
 dyadMiss <- rbindlist(list(dyadNN, miss), fill = TRUE)
 
