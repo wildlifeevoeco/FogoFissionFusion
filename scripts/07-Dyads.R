@@ -71,6 +71,7 @@ DT[, .N, habitat]
 sample_points= matrix(c(DT$meanX,DT$meanY), ncol=2)
 ED=sample_lsm(landcover, y=sample_points, shape='circle', size=200,what='lsm_l_ed', progress=TRUE)
 
+saveRDS(ED, "output/07-EdgeDensity.Rds")
 
 # Unique dyads and NN=NA --------------------------------------------------
 # check where ID and NN differ in timegroups
