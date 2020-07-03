@@ -68,10 +68,11 @@ DT[, .N, habitat]
 
 
 # try edge density
-sample_points= matrix(c(DT$meanX,DT$meanY), ncol=2)
-ED=sample_lsm(landcover, y=sample_points, shape='circle', size=200,what='lsm_l_ed', progress=TRUE)
+#sample_points= matrix(c(DT$meanX,DT$meanY), ncol=2)
+#ED=sample_lsm(landcover, y=sample_points, shape='circle', size=200,what='lsm_l_ed', progress=TRUE)
+#saveRDS(ED, "output/07-EdgeDensity.Rds")
+ED <- readRDS("output/07-EdgeDensity.Rds")
 
-saveRDS(ED, "output/07-EdgeDensity.Rds")
 
 # edit edge density file
 ED <- setDT(ED)[,c("value", "plot_id", "percentage_inside")]
@@ -99,7 +100,9 @@ miss[, potentialmiss := TRUE]
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
             .(Year, ANIMAL_ID, NN, dyadID, censored, datetime, timegroup,
-              dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed)]
+              dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed, 
+              ED, plot_id, percentage_inside_ED
+              )]
 
 
 #i know this is weird, I had to run this script in two times
