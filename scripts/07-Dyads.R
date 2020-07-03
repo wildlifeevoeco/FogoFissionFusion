@@ -73,6 +73,12 @@ ED=sample_lsm(landcover, y=sample_points, shape='circle', size=200,what='lsm_l_e
 
 saveRDS(ED, "output/07-EdgeDensity.Rds")
 
+# edit edge density file
+ED <- setDT(ED)[,c("value", "plot_id", "percentage_inside")]
+colnames(ED) <- c("ED", "plot_id", "percentage_inside_ED")
+
+DT <- cbind(DT, ED)
+
 # Unique dyads and NN=NA --------------------------------------------------
 # check where ID and NN differ in timegroups
 dyadids <- DT[!is.na(dyadID), .(dID = ANIMAL_ID, dNN = NN), dyadID][, .SD[[1]], dyadID]
@@ -93,7 +99,7 @@ miss[, potentialmiss := TRUE]
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
             .(Year, ANIMAL_ID, NN, dyadID, censored, datetime, timegroup,
-              dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed, ED)]
+              dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed)]
 
 
 #i know this is weird, I had to run this script in two times
