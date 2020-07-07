@@ -1,4 +1,7 @@
 
+# Compare random data points to actual fusion sites (1000 locations)
+# Are there prefered habitats?
+
 # Packages ----------------------------------------------------------------
 libs <- c('data.table', 'raster','ggplot2','patchwork')
 lapply(libs, require, character.only = TRUE)
@@ -6,28 +9,31 @@ lapply(libs, require, character.only = TRUE)
 # Input data -------------------------------------------------------------------
 legend <- fread('../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv')
 landcover <- raster('../nl-landcover/output/fogo_lc.tif')
+fusion <- readRDS('output/07-dyads.Rds')
 
 
-# Random nb of data points on Fogo
+# Choose 1000 random data points on Fogo ----------------------------------
 random=sampleRandom(landcover, size=1000, na.rm=TRUE, xy=TRUE)
 
-#merge legend value and LC
+# Merge legend value and LC
 random=as.data.table(random)
 colnames(random)[3] <-"Value"
  
 random=merge(random,legend, by='Value')
 random=random[ ,.(Landcover)]
 random
+
+# Change name
 random$Landcover[random$Landcover == "Anthropogenic and disturbance"] <- "Anthropogenic"
 
 
-
-fusion <- readRDS('output/07-dyads.Rds')
-# SUBSET ONLY FUSION
+# Choose 1000 random locations within observed fusion sites ---------------
 
 fusion=fusion[ start==TRUE]
 fusion[ ,.N, by =dyadrun]
 fusion<-fusion[!is.na(dyadLC)]
+
+# Change name
 fusion$dyadLC[fusion$dyadLC == "Anthropogenic and disturbance"] <- "Anthropogenic"
 
 # sample random fusion locations x 1000
@@ -35,31 +41,31 @@ samplefusion=fusion[sample(nrow(fusion), 1000), ]
 samplefusion=samplefusion[ , .(dyadLC)]
 samplefusion[,Landcover:=dyadLC]
 samplefusion[,dyadLC:=NULL]
-
 samplefusion
 
-# compare the two
 dataR=table(random$Landcover)
 dataF=table(samplefusion$Landcover)
 dataR=as.data.table(dataR)
 dataF=as.data.table(dataF)
 
 
-# add row, broadleaf=0 if à in the sample
+# Comparing the two sets of random locations ------------------------------
+
+# Add row, broadleaf=0 if 0 in the sample
 #dataF=rbind(data.frame(V1='Broadleaf', N=0),dataF)
+
 MAT <- matrix(c(dataR$N,dataF$N), ncol=2)
 
 # Chi2
 chisq.test(MAT)
 
+
+# Plotting the results ----------------------------------------------------
+
 ## color palette
 cbPalette <- c("#EF6C00", "#d90000", "#56B4E9", "#009E73", 
                "#F0E442", "#0072B2", "#ffab91", "#CC79A7","#E69F00")
 
-## function to re-order bars on figure
-reorder_size <- function(x) {
-  factor(x, levels = names(sort(table(x), decreasing = T)))
-}
 
 A=ggplot(dataF, aes(reorder(V1, -N), N, fill=V1)) +
   stat_summary(fun = "sum", geom="bar") +
@@ -97,7 +103,7 @@ A+B
 
 #TODO : why not the same number on the graph but same nb in reality?
 #water disappeared!! BECAUSE IT IS RANDOM MORON!
-#TODO: why not the same scale for Y
+#TODO: why not the same scale for Y in B, Alec?
 dataF[ ,sum:=sum(N)]
 dataR[ ,sum:=sum(N)]
 
