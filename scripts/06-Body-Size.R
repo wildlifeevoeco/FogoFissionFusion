@@ -52,7 +52,7 @@ varls <- bodyavg[, names(.SD), .SDcols = -idcol]
 
 lsdiff <- lapply(varls, diff_dyad, DT = bodyavg, id = idcol)
 
-diffs <- Reduce(function(x, y) merge(x, y, on = 'dyadID'),
+diffs <- Reduce(function(x, y) merge(x, y, by = 'dyadID'),
                 lsdiff)
 
 ## Other ways of using diff_dyad:
