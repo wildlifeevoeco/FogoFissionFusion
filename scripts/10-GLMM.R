@@ -89,7 +89,7 @@ square <- function(x){
 
 HRpos$UDOI=HRpos$udoi
 mod1.A=lm(sqrt(sri)~Difference*UDOI, data=HRpos)
-
+dev.off()
 visreg(mod1.A,"Difference", by="UDOI", 
        
        breaks = c(0.1, 0.5, 1.2),
