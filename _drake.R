@@ -58,6 +58,9 @@ plan <- drake_plan(
   merge = merge_data(sri, hro, body, dyads),
   glmm = model_glmm(merge),
   cox = model_cox(merge, survival),
-  a_glmm = model_a_glmm(),
-  b_cox = model_b_cox()
+  a_glmm = model_a_glmm(merge),
+  b_cox = model_b_cox(merge, survival)
 )
+
+
+drake_config(plan)
