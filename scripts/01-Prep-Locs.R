@@ -31,7 +31,7 @@ fogo[, locID := rleid(datetime), by = .(ANIMAL_ID, Year)]
 fogo[, lastLoc := locID == max(locID), by = .(ANIMAL_ID, Year)]
 
 
-fogo[, (projCols) := as.data.table(project(cbind(X_COORD, Y_COORD), crs))]
+fogo[, (coords) := as.data.table(project(cbind(X_COORD, Y_COORD), crs))]
 fogo <- fogo[(lowEastFogo < EASTING & EASTING < highEastFogo) &
                (lowNorthFogo < NORTHING & EASTING < highNorthFogo)]
 
