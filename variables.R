@@ -1,7 +1,8 @@
 # === Variables -----------------------------------------------------------
 
 
-# Paths
+
+# Paths -------------------------------------------------------------------
 fogo_path <- 'input/FogoCaribou.csv'
 lc_path <- '../nl-landcover/output/fogo_lc.tif'
 legend_path <- '../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv'
@@ -9,17 +10,25 @@ body_path <- 'input/body.csv'
 
 
 
-# Bounds
+# Bounds ------------------------------------------------------------------
 lowEastFogo <- 690000; highEastFogo <- 800000
 lowNorthFogo <- 5450000; highNorthFogo <- 6000000
 
+
+
+# Datetimes ---------------------------------------------------------------
 # Time zone 
 tz <- 'America/St_Johns'
 
+
+
+# Movement ----------------------------------------------------------------
 # Max moverate
 maxMoveRate <- 30000
 
-# Projection
+
+
+# Projection --------------------------------------------------------------
 # TODO: fix this proj4string
 utm21N <- '+proj=utm +zone=21 ellps=WGS84'
 
@@ -32,6 +41,8 @@ id <- 'ANIMAL_ID'
 
 
 
+
+# Drop rows ---------------------------------------------------------------
 # Animals with malfunctioning collars or dead animals
 dropIDYr <- c(
   'FO2016006_2017', # not enough fixes 
