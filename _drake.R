@@ -27,8 +27,6 @@ calc_survival <- code_to_function('scripts/08-Survival.R')
 merge_data <- code_to_function('scripts/09-Merge.R')
 model_glmm <- code_to_function('scripts/10-GLMM.R') 
 model_cox <- code_to_function('scripts/11-Cox-model.R') 
-model_a_glmm <- code_to_function('scripts/A - GLMM.R') 
-model_b_cox <- code_to_function('scripts/B- Cox model.R')
 
 
 # Check if data exists
@@ -61,9 +59,7 @@ plan <- drake_plan(
   survival = calc_survival(dyads),
   merge = merge_data(sri, hro, body, dyads),
   glmm = model_glmm(merge),
-  cox = model_cox(merge, survival),
-  a_glmm = model_a_glmm(merge),
-  b_cox = model_b_cox(merge, survival)
+  cox = model_cox(merge, survival)
 )
 
 
