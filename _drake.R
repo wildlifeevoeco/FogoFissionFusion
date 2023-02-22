@@ -8,6 +8,11 @@ source('packages.R')
 
 
 
+# Variables ---------------------------------------------------------------
+source('variables.R')
+
+
+
 # "Functions" -------------------------------------------------------------
 source('functions/get_sri.R')
 source('functions/hr_network.R')
