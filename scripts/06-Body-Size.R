@@ -19,12 +19,12 @@ body[, sum_heart_length := total_length + heart_girth]
 # Body size ---------------------------------------------------------------
 # Average body size for each individual (some with multiple observations)
 bodyavg <- body[, lapply(.SD, mean, na.rm = T), 
-                by = idcol, .SDcols = -'date']
+                by = id, .SDcols = -'date']
 
 # Calculate difference between all individuals
-varls <- bodyavg[, names(.SD), .SDcols = -idcol]
+varls <- bodyavg[, names(.SD), .SDcols = -id]
 
-lsdiff <- lapply(varls, diff_dyad, DT = bodyavg, id = idcol)
+lsdiff <- lapply(varls, diff_dyad, DT = bodyavg, id = id)
 
 diffs <- Reduce(function(x, y) merge(x, y, by = 'dyadID'),
                 lsdiff)
