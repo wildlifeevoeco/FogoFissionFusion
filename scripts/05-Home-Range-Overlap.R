@@ -10,11 +10,6 @@ lapply(libs, require, character.only = TRUE)
 DT <- readRDS('output/01-prep-locs.Rds')
 
 
-# Functions ---------------------------------------------------------------
-source('functions/hr_network.R')
-
-
-
 # Set variables -----------------------------------------------------------
 coords <- c('EASTING', 'NORTHING')
 

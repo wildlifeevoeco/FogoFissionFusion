@@ -12,7 +12,6 @@ alloc.col(DT)
 
 
 # Functions ---------------------------------------------------------------
-source('functions/get_sri.R')
 
 
 

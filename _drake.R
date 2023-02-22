@@ -9,6 +9,10 @@ source('packages.R')
 
 
 # "Functions" -------------------------------------------------------------
+source('functions/get_sri.R')
+source('functions/hr_network.R')
+
+
 # This is a shim to use drake with numbered scripts... 
 # In the future, use targets. 
 prep_locs <- code_to_function('scripts/01-Prep-Locs.R') 
@@ -28,7 +32,6 @@ model_b_cox <- code_to_function('scripts/B- Cox model.R')
 
 # Check if data exists
 check_exists <- function(path) stopifnot(file.exists(path))
-
 
 
 # Data --------------------------------------------------------------------
