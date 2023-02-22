@@ -10,8 +10,8 @@ lapply(libs, require, character.only = TRUE)
 DT <- readRDS('output/04-nn-locs')
 alloc.col(DT)
 
-landcover <- raster('../nl-landcover/output/fogo_lc.tif')
-legend <- fread('../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv')
+landcover <- raster(lc_path)
+legend <- fread(legend_path)
 
 openFocal <- raster('output/02-open-proportion.tif')
 closedFocal <- raster('output/02-closed-proportion.tif')
@@ -81,7 +81,7 @@ diffs[, difnot1 := (data.table::shift(V1, type = shifttype) - V1) != 1,
        dyadID]
 
 miss <- diffs[(difnot1), .(dyadID, timegroup = V1)]
-miss[, c('ANIMAL_ID', 'NN') := tstrsplit(dyadID, '-')]
+miss[, c(id, 'NN') := tstrsplit(dyadID, '-')]
 miss[, potentialmiss := TRUE]
 
 # Get the unique dyads by timegroup
