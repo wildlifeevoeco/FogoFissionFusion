@@ -16,3 +16,10 @@ library(spatsoc)
 library(adehabitatHR)
 
 library(vegan)
+library(lme4)
+library(visreg)
+library(sjstats)
+
+library(coxme)
+library(AICcmodavg)
+library(survival)
