@@ -19,12 +19,16 @@ tz <- 'America/St_Johns'
 # Max moverate
 maxMoveRate <- 30000
 
-# Projected columns
-projCols <- c('EASTING', 'NORTHING')
-
 # Projection
 # TODO: fix this proj4string
 utm21N <- '+proj=utm +zone=21 ellps=WGS84'
+
+
+
+# Column names ------------------------------------------------------------
+coords <- c('EASTING', 'NORTHING')
+
+id <- 'ANIMAL_ID'
 
 
 
