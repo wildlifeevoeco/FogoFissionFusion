@@ -30,8 +30,7 @@ maxMoveRate <- 30000
 
 # Projection --------------------------------------------------------------
 # TODO: fix this proj4string
-utm21N <- '+proj=utm +zone=21 ellps=WGS84'
-
+crs <- '+init=epsg:32621'
 
 
 # Column names ------------------------------------------------------------
