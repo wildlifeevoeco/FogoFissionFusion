@@ -32,3 +32,21 @@ model_cox <- code_to_function('scripts/11-Cox-model.R')
 model_a_glmm <- code_to_function('scripts/A - GLMM.R') 
 model_b_cox <- code_to_function('scripts/B- Cox model.R')
 
+
+# Plan --------------------------------------------------------------------
+plan <- drake_plan(
+  locs = prep_locs(), 
+  hab = make_habitat(),
+  sri = calc_sri(),
+  nn = calc_nn(),
+  hr = calc_hr(),
+  body = calc_body(),
+  dyad = calc_dyads(),
+  survival = calc_survival(),
+  merge = merge_data(),
+  glmm = model_glmm(),
+  cox = model_cox(),
+  a_glmm = model_a_glmm(),
+  b_cox = model_b_cox()
+)
+
