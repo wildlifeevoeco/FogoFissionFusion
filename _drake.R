@@ -32,7 +32,7 @@ check_exists <- function(path) stopifnot(file.exists(path))
 
 
 # Data --------------------------------------------------------------------
-fogo_path <- '../prepare-locs/output/NL-Fogo-Caribou-Telemetry.csv'
+fogo_path <- 'input/FogoCaribou.csv'
 check_exists(fogo_path)
 
 lc_path <- '../nl-landcover/output/fogo_lc.tif'

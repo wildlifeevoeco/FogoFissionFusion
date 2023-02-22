@@ -6,7 +6,7 @@ lapply(libs, require, character.only = TRUE)
 
 
 # Input data --------------------------------------------------------------
-fogo <- fread('../prepare-locs/output/NL-Fogo-Caribou-Telemetry.csv')
+fogo <- fread('input/FogoCaribou.csv')
 
 
 # Set variables -----------------------------------------------------------
