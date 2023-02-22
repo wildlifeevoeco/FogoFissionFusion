@@ -10,11 +10,6 @@ lapply(libs, require, character.only = TRUE)
 DT <- readRDS('output/01-prep-locs.Rds')
 
 
-# Set variables -----------------------------------------------------------
-coords <- c('EASTING', 'NORTHING')
-
-crs <- '+init=epsg:32621'
-
 # Calculate home range area -----------------------------------------------
 pts <- SpatialPointsDataFrame(DT[, ..coords],
                               proj4string = CRS(crs),
@@ -25,7 +20,7 @@ vertices <- getverticeshr(ud, 95)
 vert.dt <- as.data.table(vertices)
 
 # Split up paste ID
-vert.dt[, c('ANIMAL_ID', 'Year') := tstrsplit(id, '_')]
+vert.dt[, c(id, 'Year') := tstrsplit(id, '_')]
 
 # convert from ha to km2
 vert.dt[, areaKM2 := area / 100]
@@ -33,8 +28,8 @@ vert.dt[, areaKM2 := area / 100]
 
 # Home range overlap networks ---------------------------------------------
 hr.nets <- hr_network(DT, 
-                      id = 'ANIMAL_ID', 
-                      coords = c('EASTING', 'NORTHING'),
+                      id = id, 
+                      coords = coords,
                       crs = crs, 
                       by = c('Year'),
                       returns = 'overlap')[!is.na(value)]
