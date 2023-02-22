@@ -8,16 +8,9 @@ source('packages.R')
 
 
 
-# Data --------------------------------------------------------------------
-# TODO: check if exists
-
-
-
-
 # "Functions" -------------------------------------------------------------
 # This is a shim to use drake with numbered scripts... 
 # In the future, use targets. 
-
 prep_locs <- code_to_function('scripts/01-Prep-Locs.R') 
 make_habitat <- code_to_function('scripts/02-Habitat.R') 
 calc_sri <- code_to_function('scripts/03-SRI.R') 
@@ -31,6 +24,25 @@ model_glmm <- code_to_function('scripts/10-GLMM.R')
 model_cox <- code_to_function('scripts/11-Cox-model.R') 
 model_a_glmm <- code_to_function('scripts/A - GLMM.R') 
 model_b_cox <- code_to_function('scripts/B- Cox model.R')
+
+
+# Check if data exists
+check_exists <- function(path) stopifnot(file.exists(path))
+
+
+
+# Data --------------------------------------------------------------------
+fogo_path <- '../prepare-locs/output/NL-Fogo-Caribou-Telemetry.csv'
+check_exists(fogo_path)
+
+lc_path <- '../nl-landcover/output/fogo_lc.tif'
+legend_path <- '../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv'
+check_exists(lc_path)
+check_exists(legend_path)
+
+body_path <- 'input/body.csv'
+check_exists(body_path)
+
 
 
 # Plan --------------------------------------------------------------------
