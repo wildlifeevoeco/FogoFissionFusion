@@ -87,8 +87,7 @@ miss[, potentialmiss := TRUE]
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
             .(Year, ANIMAL_ID, NN, dyadID, censored, datetime, timegroup,
-              dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed, 
-              ED, plot_id, percentage_inside_ED
+              dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed
               )]
 
 
