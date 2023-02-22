@@ -11,6 +11,7 @@ source('packages.R')
 # "Functions" -------------------------------------------------------------
 source('functions/get_sri.R')
 source('functions/hr_network.R')
+source('functions/diff_dyad.R')
 
 
 # This is a shim to use drake with numbered scripts... 
