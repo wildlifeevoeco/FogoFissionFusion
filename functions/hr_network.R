@@ -29,7 +29,7 @@ hr_network <- function(DT = NULL, id = NULL, coords = NULL, crs = NULL, by = NUL
   if (returns == 'network-stats') {
     
     DT[, {
-      KOver <- build_hr_net(.SD, id = id, utm = utm)
+      KOver <- build_hr_net(.SD, id = id, crs = crs)
       hr.grph_df <-
         igraph::graph.adjacency(KOver,
                                 mode = "undirected",
