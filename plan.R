@@ -15,7 +15,7 @@ prep_locs <- code_to_function('scripts/01-Prep-Locs.R')
 make_habitat <- code_to_function('scripts/02-Habitat.R') 
 calc_sri <- code_to_function('scripts/03-SRI.R') 
 calc_nn <- code_to_function('scripts/04-NN.R') 
-calc_hr <- code_to_function('scripts/05-Home-Range-Overlap.R') 
+calc_hro <- code_to_function('scripts/05-Home-Range-Overlap.R') 
 calc_body <- code_to_function('scripts/06-Body-Size.R') 
 calc_dyads <- code_to_function('scripts/07-Dyads.R') 
 calc_survival <- code_to_function('scripts/08-Survival.R') 
@@ -48,17 +48,16 @@ check_exists(body_path)
 # Plan --------------------------------------------------------------------
 plan <- drake_plan(
   locs = prep_locs(), 
-  hab = make_habitat(),
-  sri = calc_sri(),
-  nn = calc_nn(),
-  hr = calc_hr(),
+  habitat = make_habitat(locs),
+  sri = calc_sri(locs),
+  nn = calc_nn(sri),
+  hro = calc_hro(locs),
   body = calc_body(),
-  dyad = calc_dyads(),
-  survival = calc_survival(),
-  merge = merge_data(),
-  glmm = model_glmm(),
-  cox = model_cox(),
+  dyads = calc_dyads(nn, habitat),
+  survival = calc_survival(dyads),
+  merge = merge_data(sri, hro, body, dyads),
+  glmm = model_glmm(merge),
+  cox = model_cox(merge, survival),
   a_glmm = model_a_glmm(),
   b_cox = model_b_cox()
 )
-
