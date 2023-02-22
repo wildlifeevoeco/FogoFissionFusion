@@ -1,12 +1,16 @@
 # === Packages ------------------------------------------------------------
 library(data.table)
+
 library(ggplot2)
-library(rgdal)
 library(lubridate)
+
+library(rgdal)
 library(raster)
 library(sp)
-library(vegan)
 library(landscapemetrics)
+
 library(spatsoc)
+
 library(adehabitatHR)
 
+library(vegan)
