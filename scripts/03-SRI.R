@@ -25,13 +25,13 @@ group_pts(
   threshold = 50,
   splitBy = 'Year',
   timegroup = 'timegroup',
-  id = 'ANIMAL_ID',
-  coords = c('EASTING', 'NORTHING')
+  id = id,
+  coords = coords
 )
 
 
 # Calculate SRI for each year ---------------------------------------------
-nets <- get_sri(DT, id = 'ANIMAL_ID', by = 'Year')[!is.na(sri)]
+nets <- get_sri(DT, id = id, by = 'Year')[!is.na(sri)]
 
 # Set dyad id
 dyad_id(nets, 'ID1', 'ID2')
