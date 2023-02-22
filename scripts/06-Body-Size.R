@@ -15,10 +15,6 @@ body <- fread('input/body.csv')
 body[, c('hump_girth', 'neck') := NULL]
 body[, sum_heart_length := total_length + heart_girth]
 
-# Set variables -----------------------------------------------------------
-idcol <- 'ANIMAL_ID'
-
-
 
 # Body size ---------------------------------------------------------------
 # Average body size for each individual (some with multiple observations)
