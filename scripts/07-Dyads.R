@@ -55,6 +55,29 @@ DT[, ShanIndex := extract(shannon, matrix(c(meanX, meanY), ncol = 2))]
 DT[, dyadPropOpen := extract(openFocal, matrix(c(meanX, meanY), ncol = 2))]
 DT[, dyadPropClosed := extract(closedFocal, matrix(c(meanX, meanY), ncol = 2))]
 
+#library(landscapetools)
+#contag<-readRDS('output/07-contagion.Rds')
+#contagion<-util_tibble2raster(contag)
+
+# Extract contagion index at centroid----------------------------------------
+contag <- sample_lsm(
+  landcover,
+  y = matrix(c(DT$meanX, DT$meanY), ncol = 2),
+  shape = 'circle',
+  size = 200,
+  what = 'lsm_l_contag',
+  progress = TRUE
+)
+saveRDS(contag,'output/0X-CONTAGION2802.rds')
+
+
+#weightC<-focalWeight(lc, d = 200, type = 'circle', fillNA = TRUE)
+#contagOUT <- focal(landcover, weightC, pad=T)
+
+#contagion_window<-window_lsm(lc, window = contagOUT, what = "lsm_l_contag")
+
+#DT[, value := extract(DT, matrix(c(meanX, meanY), ncol = 2))]
+
 # rename habitat types by merging legend
 DT[legend, dyadLC := Landcover, on = 'dyadValue == Value']
 
@@ -66,6 +89,12 @@ DT[Value %in% c(2, 3, 4, 5), habitat := "closed"]
 # TODO: NA
 DT[, .N, habitat]
 
+
+# edit edge density file
+contagion<- setDT(contag)[,c("value", "plot_id", "percentage_inside")]
+
+
+DT <- cbind(DT, contagion)
 
 # Unique dyads and NN=NA --------------------------------------------------
 # check where ID and NN differ in timegroups
@@ -86,9 +115,10 @@ miss[, potentialmiss := TRUE]
 
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
-            .(Year, ANIMAL_ID, NN, dyadID, censored, datetime, timegroup,
-              dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed
-              )]
+                                                                .(Year, ANIMAL_ID, NN, dyadID, censored, datetime, timegroup,
+                                                                  dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed, 
+                                                                  value, plot_id, percentage_inside
+                                                                )]
 
 
 #i know this is weird, I had to run this script in two times
