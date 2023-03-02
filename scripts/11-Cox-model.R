@@ -10,7 +10,7 @@ library(survival)
 
 
 # input files
-COX=readRDS('output/07-intervals.Rds')
+COX=readRDS('output/08-intervals.Rds')
 body=readRDS('output/6-all-dyad-data.Rds')
 cox=merge(COX,body, by=c('dyadID','Year'))
 
