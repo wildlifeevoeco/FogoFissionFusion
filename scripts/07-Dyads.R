@@ -58,6 +58,9 @@ DT[, dyadPropClosed := extract(closedFocal, matrix(c(meanX, meanY), ncol = 2))]
 
 
 # Extract contagion index at centroid----------------------------------------
+check_lc <- check_landscape(landcover)
+stopifnot(check_lc$OK == "✔")
+
 contag <- sample_lsm(
   landcover,
   y = matrix(c(DT$meanX, DT$meanY), ncol = 2),
