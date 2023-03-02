@@ -69,15 +69,16 @@ contag <- sample_lsm(
   what = 'lsm_l_contag',
   progress = TRUE
 )
-saveRDS(contag,'output/0X-CONTAGION2802.rds')
+
+stopifnot(nrow(contag) == nrow(DT))
+
+DT[, metric := contag$metric]
+DT[, value := contag$value]
+DT[, percentage_inside := contag$percentage_inside]
+DT[, plot_id := contag$plot_id]
 
 
-#weightC<-focalWeight(lc, d = 200, type = 'circle', fillNA = TRUE)
-#contagOUT <- focal(landcover, weightC, pad=T)
 
-#contagion_window<-window_lsm(lc, window = contagOUT, what = "lsm_l_contag")
-
-#DT[, value := extract(DT, matrix(c(meanX, meanY), ncol = 2))]
 
 # rename habitat types by merging legend
 DT[legend, dyadLC := Landcover, on = 'dyadValue == Value']
