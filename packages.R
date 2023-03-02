@@ -1,5 +1,6 @@
 # === Packages ------------------------------------------------------------
 library(drake)
+library(visNetwork)
 
 library(data.table)
 
