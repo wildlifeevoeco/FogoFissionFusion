@@ -31,7 +31,7 @@ intervals <- dyadsNN[, .(
   dyadPropOpen,
   ShanIndex,
   dyadLC
-  )]
+)]
 
 # Check:
 # intervals[stop - start != 1]

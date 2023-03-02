@@ -78,8 +78,6 @@ DT[, percentage_inside := contag$percentage_inside]
 DT[, plot_id := contag$plot_id]
 
 
-
-
 # rename habitat types by merging legend
 DT[legend, dyadLC := Landcover, on = 'dyadValue == Value']
 
