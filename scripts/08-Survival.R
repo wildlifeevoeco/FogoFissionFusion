@@ -30,7 +30,12 @@ intervals <- dyadsNN[, .(
   
   dyadPropOpen,
   ShanIndex,
-  dyadLC
+  dyadLC,
+  
+  metric, 
+  value, 
+  plot_id, 
+  percentage_inside
 )]
 
 # Check:
@@ -39,5 +44,5 @@ intervals <- dyadsNN[, .(
 
 
 # Output ------------------------------------------------------------------
-saveRDS(intervals, 'output/07-intervals.Rds')
+saveRDS(intervals, 'output/08-intervals.Rds')
 
