@@ -15,9 +15,9 @@ body = readRDS('output/09-all-dyad-data.Rds')
 cox = merge(COX, body, by = c('dyadID', 'Year'))
 
 # Fission event = 1
-cox[ ,stayedTogether:=ifelse(stayedTogether==TRUE,0,1)]
-cox[ , fission:= stayedTogether]
-cox[ , diff_size:= diff_sum_heart_length]
+cox[, stayedTogether := ifelse(stayedTogether == TRUE, 0, 1)]
+cox[, fission := stayedTogether]
+cox[, diff_size := diff_sum_heart_length]
 
 #same scale for contagion and openness
 cox[, contag := value / 100]
@@ -33,10 +33,10 @@ hist(cox$contag)
 # Survival analysis Cox PHM -----------------------------------------------
 
 str(cox)
-cox$fission=as.integer(cox$fission)
-cox$Year=as.factor(cox$Year)
+cox$fission = as.integer(cox$fission)
+cox$Year = as.factor(cox$Year)
 
-surv_object <-Surv(cox$start, cox$stop, cox$fission)
+surv_object <- Surv(cox$start, cox$stop, cox$fission)
 
 ## If HR<1 = less risk that the dyad does not survive = stay longer together
 ## exp(coeff) = hazard ratio in the output
