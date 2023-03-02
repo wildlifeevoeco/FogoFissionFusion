@@ -113,7 +113,7 @@ miss[, potentialmiss := TRUE]
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
             .(Year, ANIMAL_ID, NN, dyadID, censored, datetime, timegroup,
               dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed, 
-              value, plot_id, percentage_inside
+              metric, value, plot_id, percentage_inside
             )]
 
 
@@ -225,7 +225,8 @@ dyads[mean_open < 0.5, DyadDominantLC := "closed"]
 # Get where NN was NA
 dyadNA <- DT[is.na(NN), .(Year,ANIMAL_ID, NN, dyadID, censored, datetime, timegroup, 
                           shiftTimeWithinID, 
-                          ShanIndex, dyadLC, dyadPropOpen, dyadPropClosed)]
+                          ShanIndex, dyadLC, dyadPropOpen, dyadPropClosed, 
+                          metric, value, plot_id, percentage_inside)]
 
 dyadNA[, c('start', 'end', 'min2') := FALSE]
 
