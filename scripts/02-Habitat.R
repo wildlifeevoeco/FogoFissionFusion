@@ -7,8 +7,8 @@ lapply(libs, require, character.only = TRUE)
 # Input data --------------------------------------------------------------------
 DT <- readRDS('output/01-prep-locs.Rds')
 
-lc <- raster('../nl-landcover/output/fogo_lc.tif')
-legend <- fread('../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv')
+lc <- raster(lc_path)
+legend <- fread(legend_path)
 
 
 # Extract point land cover ------------------------------------------------
@@ -48,7 +48,7 @@ DT[, propClosed := extract(closedFocal, matrix(c(EASTING, NORTHING), ncol = 2))]
 shannon <- function(x) {
   diversity(table(x), index="shannon")
 }
-weightShannon <- focalWeight(lc, d = 200, type = 'circle')
+weightShannon <- focalWeight(lc, d = buff, type = 'circle')
 shanOut <- focal(lc, weightShannon, fun=shannon, pad=T)
 
 DT[, ShannonIdx := extract(shanOut, matrix(c(EASTING, NORTHING), ncol = 2))]

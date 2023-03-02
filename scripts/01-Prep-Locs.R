@@ -6,27 +6,11 @@ lapply(libs, require, character.only = TRUE)
 
 
 # Input data --------------------------------------------------------------
-fogo <- fread(paste0('input/FogoCaribou.csv'))
+fogo <- fread(fogo_path)
 
 
-# Set variables -----------------------------------------------------------
-# Bounds
-lowEastFogo <- 690000; highEastFogo <- 800000
-lowNorthFogo <- 5450000; highNorthFogo <- 6000000
 
-# Time zone 
-tz <- 'America/St_Johns'
-
-# Max moverate
-maxMoveRate <- 30000
-
-# Projected columns
-projCols <- c('EASTING', 'NORTHING')
-
-# Projection
-# TODO: fix this proj4string
-utm21N <- '+proj=utm +zone=21 ellps=WGS84'
-
+# Prepare -----------------------------------------------------------------
 # Prep Fogo data to merge 
 fogo[, idate := as.IDate(idate, tz = tz)]
 fogo[, itime := as.ITime(itime, tz = tz)]
@@ -47,26 +31,11 @@ fogo[, locID := rleid(datetime), by = .(ANIMAL_ID, Year)]
 fogo[, lastLoc := locID == max(locID), by = .(ANIMAL_ID, Year)]
 
 
-# UTM zone 21N
-fogo[, (projCols) := as.data.table(project(cbind(X_COORD, Y_COORD), utm21N))]
+fogo[, (coords) := as.data.table(project(cbind(X_COORD, Y_COORD), crs))]
 fogo <- fogo[(lowEastFogo < EASTING & EASTING < highEastFogo) &
                (lowNorthFogo < NORTHING & EASTING < highNorthFogo)]
 
 # Subset ------------------------------------------------------------------
-# Remove  animals with malfunctioning collars
-dropIDYr <- c(
-  'FO2016006_2017', # not enough fixes 
-  'FO2016006_2018', # not enough fixes
-  'FO2017006_2019', # not enough fixes
-  'FO2017013_2018', # Dead animal
-  'FO2017004_2019', # not enough fixes
-  'FO2017007_2019'  # not enough fixes
-)
-
-dropID <- c(
-  'FO2016001' # Dead animal
-)
-
 fogo <- fogo[!(IDYr %in% dropIDYr) &
                !(ANIMAL_ID %in% dropID)]
 

@@ -10,8 +10,8 @@ lapply(libs, require, character.only = TRUE)
 DT <- readRDS('output/04-nn-locs')
 alloc.col(DT)
 
-landcover <- raster('../nl-landcover/output/fogo_lc.tif')
-legend <- fread('../nl-landcover/input/FINAL_PRODUCT/FINAL_RC_legend.csv')
+landcover <- raster(lc_path)
+legend <- fread(legend_path)
 
 openFocal <- raster('output/02-open-proportion.tif')
 closedFocal <- raster('output/02-closed-proportion.tif')
@@ -67,19 +67,6 @@ DT[Value %in% c(2, 3, 4, 5), habitat := "closed"]
 DT[, .N, habitat]
 
 
-# try edge density
-#sample_points= matrix(c(DT$meanX,DT$meanY), ncol=2)
-#ED=sample_lsm(landcover, y=sample_points, shape='circle', size=200,what='lsm_l_ed', progress=TRUE)
-#saveRDS(ED, "output/07-EdgeDensity.Rds")
-ED <- readRDS("output/07-EdgeDensity.Rds")
-
-
-# edit edge density file
-ED <- setDT(ED)[,c("value", "plot_id", "percentage_inside")]
-colnames(ED) <- c("ED", "plot_id", "percentage_inside_ED")
-
-DT <- cbind(DT, ED)
-
 # Unique dyads and NN=NA --------------------------------------------------
 # check where ID and NN differ in timegroups
 dyadids <- DT[!is.na(dyadID), .(dID = ANIMAL_ID, dNN = NN), dyadID][, .SD[[1]], dyadID]
@@ -94,14 +81,13 @@ diffs[, difnot1 := (data.table::shift(V1, type = shifttype) - V1) != 1,
        dyadID]
 
 miss <- diffs[(difnot1), .(dyadID, timegroup = V1)]
-miss[, c('ANIMAL_ID', 'NN') := tstrsplit(dyadID, '-')]
+miss[, c(id, 'NN') := tstrsplit(dyadID, '-')]
 miss[, potentialmiss := TRUE]
 
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
             .(Year, ANIMAL_ID, NN, dyadID, censored, datetime, timegroup,
-              dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed, 
-              ED, plot_id, percentage_inside_ED
+              dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed
               )]
 
 

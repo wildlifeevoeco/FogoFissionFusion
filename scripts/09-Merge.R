@@ -11,9 +11,6 @@ sri <- readRDS('output/03-sri.Rds')
 hro <- readRDS('output/05-hro.Rds')
 body <- readRDS('output/06-body-size-diffs.Rds')
 
-dyads <- readRDS('output/07-dyads.Rds')
-
-# TODO: merge dyads? use where
 
 # Merge -------------------------------------------------------------------
 # List data.tables
@@ -31,4 +28,3 @@ out <- merge(DT, body, by = 'dyadID')
 
 # Output ------------------------------------------------------------------
 saveRDS(out, 'output/6-all-dyad-data.Rds')
-# fwrite(out, 'output/6-all-dyad-data.csv')

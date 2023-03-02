@@ -11,16 +11,12 @@ DT <- readRDS('output/03-grouped-locs.Rds')
 alloc.col(DT)
 
 
-# Set variables -----------------------------------------------------------
-projCols <- c('EASTING', 'NORTHING')
-
-
 # Nearest neighbour -------------------------------------------------------
 edges <-
   edge_nn(
     DT = DT,
-    id = 'ANIMAL_ID',
-    coords = c('EASTING', 'NORTHING'),
+    id = id,
+    coords = coords,
     timegroup = 'timegroup',
     returnDist = TRUE,
     threshold = NULL
@@ -38,7 +34,7 @@ dyad_id(edges, 'ID', 'NN')
 m <- merge(
   DT,
   edges,
-  by.x = c('ANIMAL_ID', 'timegroup'),
+  by.x = c(id, 'timegroup'),
   by.y = c('ID', 'timegroup')
 )
 
