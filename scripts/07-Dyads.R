@@ -92,11 +92,7 @@ DT[Value %in% c(2, 3, 4, 5), habitat := "closed"]
 DT[, .N, habitat]
 
 
-# edit edge density file
-contagion<- setDT(contag)[,c("value", "plot_id", "percentage_inside")]
 
-
-DT <- cbind(DT, contagion)
 
 # Unique dyads and NN=NA --------------------------------------------------
 # check where ID and NN differ in timegroups
