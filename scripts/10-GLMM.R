@@ -11,7 +11,7 @@ library(sjstats)
 
 
 #input data
-data=readRDS("output/6-all-dyad-data.Rds")
+data=readRDS("output/09-all-dyad-data.Rds")
 
 summary(data)
 str(data)

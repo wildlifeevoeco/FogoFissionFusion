@@ -10,12 +10,9 @@ library(survival)
 
 
 # input files
-COX=readRDS('output/08-intervals.Rds')
-body=readRDS('output/6-all-dyad-data.Rds')
-cox=merge(COX,body, by=c('dyadID','Year'))
-
-#COX[ ,.N, by=ED.value]
-
+COX = readRDS('output/08-intervals.Rds')
+body = readRDS('output/09-all-dyad-data.Rds')
+cox = merge(COX, body, by = c('dyadID', 'Year'))
 
 # Fission event = 1
 cox[ ,stayedTogether:=ifelse(stayedTogether==TRUE,0,1)]
