@@ -55,9 +55,7 @@ DT[, ShanIndex := extract(shannon, matrix(c(meanX, meanY), ncol = 2))]
 DT[, dyadPropOpen := extract(openFocal, matrix(c(meanX, meanY), ncol = 2))]
 DT[, dyadPropClosed := extract(closedFocal, matrix(c(meanX, meanY), ncol = 2))]
 
-#library(landscapetools)
-#contag<-readRDS('output/07-contagion.Rds')
-#contagion<-util_tibble2raster(contag)
+
 
 # Extract contagion index at centroid----------------------------------------
 contag <- sample_lsm(
