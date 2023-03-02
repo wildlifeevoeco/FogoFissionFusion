@@ -20,7 +20,7 @@ cox[ , fission:= stayedTogether]
 cox[ , diff_size:= diff_sum_heart_length]
 
 #same scale for contagion and openness
-cox[,contag:= contag/100]
+cox[, contag := value / 100]
 
 # remove NA
 cox <- cox[!is.na(dyadPropOpen)]
