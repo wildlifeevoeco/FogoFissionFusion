@@ -100,3 +100,14 @@ visreg(mod1.A,"Difference", by="UDOI",
        trans=square,xlab="Difference in body size (cm)",
        ylab="Simple ratio index (SRI)", overlay = TRUE, partial = FALSE, rug=FALSE, frame.plot=FALSE,legend=TRUE,
        line=list(lty=1:3, col="black", lwd=0.5))
+
+
+
+
+# -------------------------------------------------------------------------
+
+mod1
+
+mod1.1
+
+mod1.2
