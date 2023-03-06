@@ -52,7 +52,7 @@ check_exists(body_path)
 plan <- drake_plan(
   locs = prep_locs(), 
   habitat = make_habitat(locs),
-  sri = calc_sri(locs),
+  sri = calc_sri(habitat),
   nn = calc_nn(sri),
   hro = calc_hro(locs),
   body = calc_body(),

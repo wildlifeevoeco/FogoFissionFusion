@@ -55,6 +55,29 @@ DT[, ShanIndex := extract(shannon, matrix(c(meanX, meanY), ncol = 2))]
 DT[, dyadPropOpen := extract(openFocal, matrix(c(meanX, meanY), ncol = 2))]
 DT[, dyadPropClosed := extract(closedFocal, matrix(c(meanX, meanY), ncol = 2))]
 
+
+
+# Extract contagion index at centroid----------------------------------------
+check_lc <- check_landscape(landcover)
+stopifnot(check_lc$OK == "✔")
+
+contag <- sample_lsm(
+  landcover,
+  y = matrix(c(DT$meanX, DT$meanY), ncol = 2),
+  shape = 'circle',
+  size = 200,
+  what = 'lsm_l_contag',
+  progress = TRUE
+)
+
+stopifnot(nrow(contag) == nrow(DT))
+
+DT[, metric := contag$metric]
+DT[, value := contag$value]
+DT[, percentage_inside := contag$percentage_inside]
+DT[, plot_id := contag$plot_id]
+
+
 # rename habitat types by merging legend
 DT[legend, dyadLC := Landcover, on = 'dyadValue == Value']
 
@@ -65,6 +88,8 @@ DT[Value %in% c(2, 3, 4, 5), habitat := "closed"]
 # Check 
 # TODO: NA
 DT[, .N, habitat]
+
+
 
 
 # Unique dyads and NN=NA --------------------------------------------------
@@ -87,13 +112,10 @@ miss[, potentialmiss := TRUE]
 # Get the unique dyads by timegroup
 dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[, 
             .(Year, ANIMAL_ID, NN, dyadID, censored, datetime, timegroup,
-              dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed
-              )]
+              dyadLC, ShanIndex, dyadPropOpen, dyadPropClosed, 
+              metric, value, plot_id, percentage_inside
+            )]
 
-
-#i know this is weird, I had to run this script in two times
-saveRDS(dyadNN, 'output/10-dyad-NN.Rds')
-dyadNN=readRDS('output/10-dyad-NN.Rds')
 
 dyadMiss <- rbindlist(list(dyadNN, miss), fill = TRUE)
 
@@ -203,7 +225,8 @@ dyads[mean_open < 0.5, DyadDominantLC := "closed"]
 # Get where NN was NA
 dyadNA <- DT[is.na(NN), .(Year,ANIMAL_ID, NN, dyadID, censored, datetime, timegroup, 
                           shiftTimeWithinID, 
-                          ShanIndex, dyadLC, dyadPropOpen, dyadPropClosed)]
+                          ShanIndex, dyadLC, dyadPropOpen, dyadPropClosed, 
+                          metric, value, plot_id, percentage_inside)]
 
 dyadNA[, c('start', 'end', 'min2') := FALSE]
 
