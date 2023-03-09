@@ -82,6 +82,12 @@ plan <- drake_plan(
   glmm_render = {
     write_r_to_rmd('scripts/10-GLMM.R'); 
     render('md/10-GLMM.Rmd', 'pdf_document', clean = FALSE)
+    unlink('md/10-GLMM.html')
+  },
+  cox_render = {
+    write_r_to_rmd('scripts/11-Cox-model.R'); 
+    render('md/11-Cox-model.Rmd', 'pdf_document', clean = FALSE)
+    unlink('md/11-Cox-model.html')
   }
   
 )
