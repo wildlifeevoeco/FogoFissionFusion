@@ -29,3 +29,4 @@ library(performance)
 
 library(rmarkdown)
 library(xfun)
+library(rprojroot)
