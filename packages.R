@@ -26,3 +26,6 @@ library(AICcmodavg)
 library(survival)
 
 library(performance)
+
+library(rmarkdown)
+library(xfun)
