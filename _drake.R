@@ -78,7 +78,12 @@ plan <- drake_plan(
   survival = calc_survival(dyads),
   merge = merge_data(sri, hro, body, dyads),
   glmm = model_glmm(merge),
-  cox = model_cox(merge, survival)
+  cox = model_cox(merge, survival),
+  glmm_render = {
+    write_r_to_rmd('scripts/10-GLMM.R'); 
+    render('md/10-GLMM.Rmd', 'pdf_document', clean = FALSE)
+  }
+  
 )
 
 
