@@ -18,6 +18,22 @@ source('functions/get_sri.R')
 source('functions/hr_network.R')
 source('functions/diff_dyad.R')
 
+write_r_to_rmd <- function(r_file) {
+  rmd_file <- gsub('scripts', 'md', with_ext(r_file, 'Rmd'))
+  file.copy(r_file, rmd_file, overwrite = TRUE)
+  
+  writeLines(
+    c(
+      paste0('# ', Sys.Date()),
+      '',
+      '```{r}',
+      'knitr::opts_chunk$set(root.dir = rprojroot::find_rstudio_root_file())',
+      readLines(rmd_file),
+      '```'),
+    rmd_file
+  )
+}
+
 
 # This is a shim to use drake with numbered scripts... 
 # In the future, use targets. 
