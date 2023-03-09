@@ -27,7 +27,7 @@ write_r_to_rmd <- function(r_file) {
       paste0('# ', Sys.Date()),
       '',
       '```{r}',
-      'knitr::opts_chunk$set(root.dir = rprojroot::find_rstudio_root_file())',
+      'knitr::opts_chunk$set("../")',
       readLines(rmd_file),
       '```'),
     rmd_file
