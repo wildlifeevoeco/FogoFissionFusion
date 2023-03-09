@@ -2,6 +2,7 @@
 
 
 ```r
+knitr::opts_chunk$set(dev = "png")
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 ```
 
@@ -40,7 +41,7 @@ cox <- cox[!is.na(contag)]
 hist(cox$contag)
 ```
 
-![](11-Cox-model_files/figure-latex/unnamed-chunk-2-1.pdf)<!-- --> 
+![](11-Cox-model_files/figure-latex/unnamed-chunk-2-1.png)<!-- --> 
 
 ```r
 # Survival analysis Cox PHM -----------------------------------------------

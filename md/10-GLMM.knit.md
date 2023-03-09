@@ -2,6 +2,7 @@
 
 
 ```r
+knitr::opts_chunk$set(dev = "png")
 knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())
 ```
 
@@ -80,14 +81,14 @@ HRpos[ , Difference:= diff_total_length]
 hist(HRpos$sri, breaks = 20)
 ```
 
-![](10-GLMM_files/figure-latex/unnamed-chunk-2-1.pdf)<!-- --> 
+![](10-GLMM_files/figure-latex/unnamed-chunk-2-1.png)<!-- --> 
 
 ```r
 plot2=ggplot(HRpos,aes(x=diff_total_length,y=sri, color=udoi))+geom_point()
 plot2+scale_color_gradient(low="gold", high="dark red")
 ```
 
-![](10-GLMM_files/figure-latex/unnamed-chunk-2-2.pdf)<!-- --> 
+![](10-GLMM_files/figure-latex/unnamed-chunk-2-2.png)<!-- --> 
 
 ```r
 #  GLMMs ------------------------------------------------------------------
@@ -107,21 +108,21 @@ qqnorm(residuals(mod1),ylab="Residuals")   #ko
 qqline(residuals(mod1))
 ```
 
-![](10-GLMM_files/figure-latex/unnamed-chunk-2-3.pdf)<!-- --> 
+![](10-GLMM_files/figure-latex/unnamed-chunk-2-3.png)<!-- --> 
 
 ```r
 qqnorm(residuals(mod1.1),ylab="Residuals")   #ko
 qqline(residuals(mod1.1))
 ```
 
-![](10-GLMM_files/figure-latex/unnamed-chunk-2-4.pdf)<!-- --> 
+![](10-GLMM_files/figure-latex/unnamed-chunk-2-4.png)<!-- --> 
 
 ```r
 qqnorm(residuals(mod1.2),ylab="Residuals")   #ok
 qqline(residuals(mod1.2))
 ```
 
-![](10-GLMM_files/figure-latex/unnamed-chunk-2-5.pdf)<!-- --> 
+![](10-GLMM_files/figure-latex/unnamed-chunk-2-5.png)<!-- --> 
 
 ```r
 # par()
@@ -129,7 +130,7 @@ qqline(residuals(mod1.2))
 plot(mod1.2)    #homoscedasticity ok
 ```
 
-![](10-GLMM_files/figure-latex/unnamed-chunk-2-6.pdf)<!-- --> 
+![](10-GLMM_files/figure-latex/unnamed-chunk-2-6.png)<!-- --> 
 
 ```r
 shapiro.test((residuals(mod1.2)))
@@ -209,7 +210,7 @@ visreg(mod1.A,"Difference", by="UDOI",
        line=list(lty=1:3, col="black", lwd=0.5))
 ```
 
-![](10-GLMM_files/figure-latex/unnamed-chunk-2-7.pdf)<!-- --> 
+![](10-GLMM_files/figure-latex/unnamed-chunk-2-7.png)<!-- --> 
 
 ```r
 # -------------------------------------------------------------------------

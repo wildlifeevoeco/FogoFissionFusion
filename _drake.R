@@ -27,6 +27,7 @@ write_r_to_rmd <- function(r_file) {
       paste0('# ', Sys.Date()),
       '',
       '```{r}',
+      'knitr::opts_chunk$set(dev = "png")',
       'knitr::opts_knit$set(root.dir = rprojroot::find_rstudio_root_file())',
       '```', '',
       '```{r}',
