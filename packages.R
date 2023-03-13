@@ -21,6 +21,7 @@ library(lme4)
 library(visreg)
 library(sjstats)
 
+library(MuMIn)
 library(coxme)
 library(AICcmodavg)
 library(survival)
