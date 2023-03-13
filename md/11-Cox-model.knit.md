@@ -1,4 +1,4 @@
-# 2023-03-09
+# 2023-03-13
 
 
 ```r
@@ -17,6 +17,7 @@ library(data.table)
 library(AICcmodavg)
 library(ggplot2)
 library(survival)
+library(MuMIn)
 
 
 # input files
@@ -93,89 +94,145 @@ surv_object <- Surv(cox$start, cox$stop, cox$fission)
 # Backward selection from the interactions that make sense biologicaaly
 
 m1<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+ sri*diff_size+sri*ShanIndex+sri*contag+
-               sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox)  
+            sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox)  
 AIC(m1) #3506.501
 ```
 
 ```
-## [1] 3506.501
+## [1] 3569.134
+```
+
+```r
+AICc(m1) #3570.456
+```
+
+```
+## [1] 3570.456
 ```
 
 ```r
 # - sri*ShanIndex
 
 m2<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
-               sri*diff_size+sri*contag+
-               sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
+            sri*diff_size+sri*contag+
+            sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
 AIC(m2) # 3504.635
 ```
 
 ```
-## [1] 3504.635
+## [1] 3567.239
+```
+
+```r
+AICc(m2) #3568.524
+```
+
+```
+## [1] 3568.524
 ```
 
 ```r
 #- sri*contag
 
 m3<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
-               sri*diff_size+
-               sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
+            sri*diff_size+
+            sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
 AIC(m3)# 3502.772
 ```
 
 ```
-## [1] 3502.772
+## [1] 3565.452
+```
+
+```r
+AICc(m3) #3566.705
+```
+
+```
+## [1] 3566.705
 ```
 
 ```r
 # - sri*size
 
 m4<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
-               sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
+            sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
 
 AIC(m4)# 3502.298
 ```
 
 ```
-## [1] 3502.298
+## [1] 3564.921
+```
+
+```r
+AICc(m4) #3566.157
+```
+
+```
+## [1] 3566.157
 ```
 
 ```r
 # -sri*open
 
 m5<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
-               diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
+            diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
 
 AIC(m5)# 3500.976
 ```
 
 ```
-## [1] 3500.976
+## [1] 3563.485
+```
+
+```r
+AICc(m5) #3564.685
+```
+
+```
+## [1] 3564.685
 ```
 
 ```r
 # -size*ShanIndex
 
 m6<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
-               diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
+            diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
 
 AIC(m6)# 3500.554
 ```
 
 ```
-## [1] 3500.554
+## [1] 3563.126
+```
+
+```r
+AICc(m6) #3564.294
+```
+
+```
+## [1] 3564.294
 ```
 
 ```r
 #- size*contag
 
 m7<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
-               (1|dyadID)+(1|Year), data=cox)
+            (1|dyadID)+(1|Year), data=cox)
 AIC(m7)# 3499.792
 ```
 
 ```
-## [1] 3499.792
+## [1] 3562.259
+```
+
+```r
+AICc(m7) # 3563.39
+```
+
+```
+## [1] 3563.39
 ```
 
 ```r
@@ -185,8 +242,8 @@ AIC(m7)# 3499.792
 
 #Check of the proportional hazards assumptions
 
-m7<-coxph(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen, data=cox)
-cox.zph(m7)
+mod7<-coxph(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen, data=cox)
+cox.zph(mod7)
 ```
 
 ```
@@ -200,23 +257,16 @@ cox.zph(m7)
 ```
 
 ```r
-# m7                  coef exp(coef)  se(coef)     z      p
-#sri          -1.703383294 0.1820665 0.639112738 -2.67 0.0077
-#diff_size     0.004127345 1.0041359 0.007372678  0.56 0.5800
-#ShanIndex     0.516934180 1.6768788 0.222095625  2.33 0.0200
-#contag        0.401085033 1.4934443 0.426264086  0.94 0.3500
-#dyadPropOpen  0.400738669 1.4929271 0.216653649  1.85 0.0640
-
 exp(confint(m7, level=0.95))
 ```
 
 ```
-##                   2.5 %    97.5 %
-## sri          0.06769332 0.2807858
-## diff_size    0.99710845 1.0138778
-## ShanIndex    1.12965659 2.5042330
-## contag       0.45986483 2.1483131
-## dyadPropOpen 1.37238030 2.9300984
+##                  2.5 %    97.5 %
+## sri          0.0520255 0.6371531
+## diff_size    0.9897303 1.0187512
+## ShanIndex    1.0850594 2.5914916
+## contag       0.6476679 3.4437028
+## dyadPropOpen 0.9763885 2.2827298
 ```
 
 ```r
@@ -432,17 +482,43 @@ m7
 ```
 
 ```
-## Call:
-## coxph(formula = surv_object ~ sri + diff_size + ShanIndex + contag + 
-##     dyadPropOpen, data = cox)
+## Cox mixed-effects model fit by maximum likelihood
+##   Data: cox
+##   events, n = 1617, 8040
+##   Iterations= 12 67 
+##                     NULL Integrated    Fitted
+## Log-likelihood -1861.529  -1762.313 -1683.245
 ## 
-##                   coef exp(coef)  se(coef)      z        p
-## sri          -1.981465  0.137867  0.362916 -5.460 4.77e-08
-## diff_size     0.005443  1.005458  0.004255  1.279 0.200769
-## ShanIndex     0.519948  1.681940  0.203083  2.560 0.010459
-## contag       -0.006070  0.993949  0.393248 -0.015 0.987685
-## dyadPropOpen  0.695791  2.005295  0.193496  3.596 0.000323
+##                    Chisq    df p    AIC     BIC
+## Integrated loglik 198.43  7.00 0 184.43  146.71
+##  Penalized loglik 356.57 66.65 0 223.27 -135.87
 ## 
-## Likelihood ratio test=50.75  on 5 df, p=9.725e-10
-## n= 8040, number of events= 1617
+## Model:  surv_object ~ sri + diff_size + ShanIndex + contag + dyadPropOpen +      (1 | dyadID) + (1 | Year) 
+## Fixed coefficients
+##                      coef exp(coef)    se(coef)     z      p
+## sri          -1.703383294 0.1820665 0.639112738 -2.67 0.0077
+## diff_size     0.004127345 1.0041359 0.007372678  0.56 0.5800
+## ShanIndex     0.516934180 1.6768788 0.222095625  2.33 0.0200
+## contag        0.401085033 1.4934443 0.426264086  0.94 0.3500
+## dyadPropOpen  0.400738668 1.4929271 0.216653649  1.85 0.0640
+## 
+## Random effects
+##  Group  Variable  Std Dev   Variance 
+##  dyadID Intercept 0.3964678 0.1571867
+##  Year   Intercept 0.0200000 0.0004000
+```
+
+```r
+# m7                  coef exp(coef)  se(coef)     z      p
+#sri          -1.703383294 0.1820665 0.639112738 -2.67 0.0077
+#diff_size     0.004127345 1.0041359 0.007372678  0.56 0.5800
+#ShanIndex     0.516934180 1.6768788 0.222095625  2.33 0.0200
+#contag        0.401085033 1.4934443 0.426264086  0.94 0.3500
+#dyadPropOpen  0.400738669 1.4929271 0.216653649  1.85 0.0640
+
+
+
+
+# sample size = individual-year or dyad id?
+#140 dyadID 11 parameter in model
 ```

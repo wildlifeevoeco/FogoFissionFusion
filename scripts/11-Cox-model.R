@@ -7,6 +7,7 @@ library(data.table)
 library(AICcmodavg)
 library(ggplot2)
 library(survival)
+library(MuMIn)
 
 
 # input files
@@ -45,59 +46,59 @@ surv_object <- Surv(cox$start, cox$stop, cox$fission)
 # Backward selection from the interactions that make sense biologicaaly
 
 m1<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+ sri*diff_size+sri*ShanIndex+sri*contag+
-               sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox)  
+            sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox)  
 AIC(m1) #3506.501
+AICc(m1) #3570.456
 # - sri*ShanIndex
 
 m2<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
-               sri*diff_size+sri*contag+
-               sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
+            sri*diff_size+sri*contag+
+            sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
 AIC(m2) # 3504.635
+AICc(m2) #3568.524
+
 #- sri*contag
 
 m3<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
-               sri*diff_size+
-               sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
+            sri*diff_size+
+            sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
 AIC(m3)# 3502.772
+AICc(m3) #3566.705
 # - sri*size
 
 m4<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
-               sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
+            sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
 
 AIC(m4)# 3502.298
+AICc(m4) #3566.157
 # -sri*open
 
 m5<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
-               diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
+            diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
 
 AIC(m5)# 3500.976
+AICc(m5) #3564.685
 # -size*ShanIndex
 
 m6<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
-               diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
+            diff_size*contag+(1|dyadID)+(1|Year), data=cox) 
 
 AIC(m6)# 3500.554
+AICc(m6) #3564.294
 #- size*contag
 
 m7<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
-               (1|dyadID)+(1|Year), data=cox)
+            (1|dyadID)+(1|Year), data=cox)
 AIC(m7)# 3499.792
+AICc(m7) # 3563.39
 # - size
 # ===> final model
 
 
 #Check of the proportional hazards assumptions
 
-m7<-coxph(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen, data=cox)
-cox.zph(m7)
-
-
-# m7                  coef exp(coef)  se(coef)     z      p
-#sri          -1.703383294 0.1820665 0.639112738 -2.67 0.0077
-#diff_size     0.004127345 1.0041359 0.007372678  0.56 0.5800
-#ShanIndex     0.516934180 1.6768788 0.222095625  2.33 0.0200
-#contag        0.401085033 1.4934443 0.426264086  0.94 0.3500
-#dyadPropOpen  0.400738669 1.4929271 0.216653649  1.85 0.0640
+mod7<-coxph(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen, data=cox)
+cox.zph(mod7)
 
 exp(confint(m7, level=0.95))
 
@@ -118,3 +119,20 @@ m5
 m6
 
 m7
+
+
+# m7                  coef exp(coef)  se(coef)     z      p
+#sri          -1.703383294 0.1820665 0.639112738 -2.67 0.0077
+#diff_size     0.004127345 1.0041359 0.007372678  0.56 0.5800
+#ShanIndex     0.516934180 1.6768788 0.222095625  2.33 0.0200
+#contag        0.401085033 1.4934443 0.426264086  0.94 0.3500
+#dyadPropOpen  0.400738669 1.4929271 0.216653649  1.85 0.0640
+
+
+
+
+# sample size = individual-year or dyad id?
+#140 dyadID 11 parameter in model
+
+
+
