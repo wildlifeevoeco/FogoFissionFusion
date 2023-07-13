@@ -1,0 +1,30 @@
+{
+  "description": "<p>This repository contains the code accompanying the paper &ldquo;Environmental, social, and morphological drivers of fission-fusion dynamics in a social ungulate &rdquo;.</p>\n\n<p>, 
+  "title": "Code accompanying - Environmental, social, and morphological drivers of fission-fusion dynamics in a social ungulate ", 
+  "creators": [
+    {
+      "affiliation": "Memorial University", 
+      "name": "Morgane Le Goff"
+    }, 
+    {
+      "orcid": "0000-0002-8606-1239", 
+      "affiliation": "Memorial University", 
+      "name": "Jack G. Hendrix"
+    }, 
+    {
+      "orcid": "0000-0002-0434-9360", 
+      "affiliation": "Guelph University", 
+      "name": "Quinn M.R. Webber"
+    }, 
+    {
+      "orcid": "0000-0002-4706-1762", 
+      "affiliation": "Memorial University", 
+      "name": "Alec L. Robitaille"
+    }, 
+    {
+      "orcid": "0000-0002-8534-4317", 
+      "affiliation": "Memorial University", 
+      "name": "Eric Vander Wal"
+    }
+  ]
+}
