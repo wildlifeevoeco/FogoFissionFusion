@@ -1,14 +1,17 @@
 # === Calculate NN --------------------------------------------------------
 
 
+
 # Packages ----------------------------------------------------------------
 libs <- c('data.table', 'spatsoc')
 lapply(libs, require, character.only = TRUE)
 
 
+
 # Input data --------------------------------------------------------------
 DT <- readRDS('output/03-grouped-locs.Rds')
 alloc.col(DT)
+
 
 
 # Nearest neighbour -------------------------------------------------------
@@ -23,12 +26,15 @@ edges <-
   )
 
 
+
 # Threshold neighbours ----------------------------------------------------
 maxdist <- 500
 edges[distance > maxdist, NN := NA]
 
 # Set dyad id
 dyad_id(edges, 'ID', 'NN')
+
+
 
 # Merge -------------------------------------------------------------------
 m <- merge(
@@ -42,6 +48,8 @@ out <- m[, .(ANIMAL_ID, NN, dyadID, idate, itime, datetime, timegroup, Year,
              Value, lc, propOpen, propClosed,
              season, distance, EASTING, NORTHING,
              locID, lastLoc)]
+
+
 
 # Output ------------------------------------------------------------------
 saveRDS(out, 'output/04-nn-locs')

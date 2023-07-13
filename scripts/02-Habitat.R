@@ -1,14 +1,19 @@
 # === Habitat -----------------------------------------------------
 
+
+
 # Packages ----------------------------------------------------------------
 libs <- c('data.table', 'rgdal', 'raster', 'sp', 'vegan', 'landscapemetrics')
 lapply(libs, require, character.only = TRUE)
+
+
 
 # Input data --------------------------------------------------------------------
 DT <- readRDS('output/01-prep-locs.Rds')
 
 lc <- raster(lc_path)
 legend <- fread(legend_path)
+
 
 
 # Extract point land cover ------------------------------------------------
@@ -18,6 +23,8 @@ DT[, Value := extract(lc, matrix(c(EASTING, NORTHING), ncol = 2))]
 # rename habitat types by merging legend
 DT[legend, lc := Landcover, on = 'Value']
 
+
+
 # Focal rasters -----------------------------------------------------------
 focals <- lapply(legend$Value, function(val) {
   subs(lc, legend[, .(Value, Value == val)])
@@ -25,10 +32,12 @@ focals <- lapply(legend$Value, function(val) {
 names(focals) <- legend$Value
 
 
+
 # Combine rasters ---------------------------------------------------------
 # Combine land cover types using the Value numbers from the legend
 open <- Reduce('+', focals[c(1, 6, 7, 8, 9)])
 closed <- Reduce('+', focals[c(2, 3, 4, 5)])
+
 
 
 # Proportion of habitat in buffer -----------------------------------------
@@ -53,16 +62,12 @@ shanOut <- focal(lc, weightShannon, fun=shannon, pad=T)
 
 DT[, ShannonIdx := extract(shanOut, matrix(c(EASTING, NORTHING), ncol = 2))]
 
-# Calculate ED in window
-# wed <- window_lsm(
-#   landscape = lc,
-#   window = weightShannon,
-#   what = 'lsm_l_ed',
-#   progress = TRUE
-# )
+
 
 # Summary -----------------------------------------------------------------
 DT[, .N, by = lc]
+
+
 
 # Output ------------------------------------------------------------------
 saveRDS(DT, 'output/02-habitat-locs.Rds')

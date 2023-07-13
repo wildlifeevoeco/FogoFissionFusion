@@ -1,9 +1,11 @@
 # === Dyads ---------------------------------------------------------------
 
 
+
 # Packages ----------------------------------------------------------------
 libs <- c('raster', 'data.table', 'spatsoc', 'rgdal', 'landscapemetrics')
 lapply(libs, require, character.only = TRUE)
+
 
 
 # Input data --------------------------------------------------------------
@@ -43,13 +45,14 @@ DT[, c('meanX', 'meanY') := lapply(.SD, mean),
    .SDcols = c('EASTING', 'NORTHING'), by = .(dyadID, timegroup)]
 
 
+
 # Extract land cover at centroid ------------------------------------------
 DT[, dyadValue := extract(landcover, matrix(c(meanX, meanY), ncol = 2))]
 
 
+
 # Extract shannon index at centroid----------------------------------------
 DT[, ShanIndex := extract(shannon, matrix(c(meanX, meanY), ncol = 2))]
-
 
 # Proportion of habitat at centroid
 DT[, dyadPropOpen := extract(openFocal, matrix(c(meanX, meanY), ncol = 2))]
@@ -77,7 +80,6 @@ DT[, value := contag$value]
 DT[, percentage_inside := contag$percentage_inside]
 DT[, plot_id := contag$plot_id]
 
-
 # rename habitat types by merging legend
 DT[legend, dyadLC := Landcover, on = 'dyadValue == Value']
 
@@ -86,9 +88,7 @@ DT[Value %in% c(1, 6, 7, 8, 9), habitat := "open"]
 DT[Value %in% c(2, 3, 4, 5), habitat := "closed"]
 
 # Check 
-# TODO: NA
 DT[, .N, habitat]
-
 
 
 
@@ -116,9 +116,7 @@ dyadNN <- unique(DT[!is.na(NN)], by = c('timegroup', 'dyadID'))[,
               metric, value, plot_id, percentage_inside
             )]
 
-
 dyadMiss <- rbindlist(list(dyadNN, miss), fill = TRUE)
-
 
 # Set order explicitly
 setorder(dyadMiss, timegroup)
@@ -145,24 +143,21 @@ dyads[, dif2 := data.table::shift(timegroup, type = 'lead') -
          by = dyadID]
 
 
+
 # Count consecutive relocations together ----------------------------------
 # Shift the timegroup within dyadIDs
 dyads[, shifttimegrp := data.table::shift(timegroup, type = shifttype), 
        by = dyadID]
 
-
 # Difference between consecutive timegroups for each dyadID
 # where difftimegrp == 1, the dyads remained together in consecutive timegroups
 dyads[, difftimegrp := shifttimegrp - timegroup]
 
-
 # dyadrun = binary, is it a run of at least one relocation
 dyads[, dyadrun := difftimegrp == 1 & !is.na(difftimegrp), by = dyadID]
 
-
 # nObs = how many rows for each dyadID
 dyads[, nObs := .N, by = dyadID]
-
 
 # withinID = WITHIN DYAD ID - run id
 # withinID = 1st generate a run length id over dyad run
@@ -180,13 +175,13 @@ dyads[, withinID := rleid(dyadrun), by = dyadID]
 dyads[!(dyadrun), withinID := seq.int(nObs[[1]], length.out = .N),
        by = dyadID]
 
-
 # ACROSS DYAD - RUN ID
 dyads[, dyadrunid := .GRP, .(withinID, dyadID)]
 
 
 # N consecutive observations of dyadIDs
 dyads[, runCount := .N, by = .(dyadrunid, dyadID)]
+
 
 
 # False fission -----------------------------------------------------------
@@ -212,6 +207,7 @@ dyads[runCount < 2 | is.na(runCount), c('start', 'end') := FALSE]
 dyads[, min2 := runCount >= 2]
 
 
+
 # Dyad habitat ------------------------------------------------------------
 # one dyad - one runCount - one habitat percentage (for survival analysis)
 dyads[, mean_open := mean(dyadPropOpen, na.rm = TRUE), by = .(dyadrunid, dyadID)]
@@ -219,6 +215,7 @@ dyads[, mean_open := mean(dyadPropOpen, na.rm = TRUE), by = .(dyadrunid, dyadID)
 # dominant habitat during the consecutive fixes dyads spent together 
 dyads[mean_open > 0.5, DyadDominantLC := "open"]
 dyads[mean_open < 0.5, DyadDominantLC := "closed"]
+
 
 
 # Dyad NA -----------------------------------------------------------------
@@ -236,6 +233,7 @@ dyadNA[, shifttimegrp := shiftTimeWithinID]
 out <- rbindlist(list(dyads, dyadNA), fill = TRUE)
 
 
+
 # Calculate fusion 0 ------------------------------------------------------
 ## Fusion 0 = 
 ##   a) fusion events where dyads are together >= 2 consecutive relocations
@@ -243,7 +241,6 @@ out <- rbindlist(list(dyads, dyadNA), fill = TRUE)
 out[, fusion0 := (start) | is.na(NN)]
 
 
+
 # Output ------------------------------------------------------------------
 saveRDS(out, 'output/07-dyads.Rds')
-
-

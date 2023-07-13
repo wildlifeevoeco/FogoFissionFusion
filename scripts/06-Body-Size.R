@@ -7,6 +7,7 @@ libs <- c('data.table', 'spatsoc')
 lapply(libs, require, character.only = TRUE)
 
 
+
 # Input data --------------------------------------------------------------
 body <- fread('input/body.csv')
 
@@ -14,6 +15,7 @@ body <- fread('input/body.csv')
 # Add columns, remove columns
 body[, c('hump_girth', 'neck') := NULL]
 body[, sum_heart_length := total_length + heart_girth]
+
 
 
 # Body size ---------------------------------------------------------------
@@ -28,6 +30,8 @@ lsdiff <- lapply(varls, diff_dyad, DT = bodyavg, id = id)
 
 diffs <- Reduce(function(x, y) merge(x, y, by = c('dyadID', 'ID1', 'ID2')),
                 lsdiff)
+
+
 
 # Output ------------------------------------------------------------------
 saveRDS(diffs, 'output/06-body-size-diffs.Rds')

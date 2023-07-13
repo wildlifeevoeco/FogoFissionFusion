@@ -5,6 +5,7 @@ libs <- c('lubridate', 'data.table', 'ggplot2', 'rgdal')
 lapply(libs, require, character.only = TRUE)
 
 
+
 # Input data --------------------------------------------------------------
 fogo <- fread(fogo_path)
 
@@ -35,6 +36,8 @@ fogo[, (coords) := as.data.table(project(cbind(X_COORD, Y_COORD), crs))]
 fogo <- fogo[(lowEastFogo < EASTING & EASTING < highEastFogo) &
                (lowNorthFogo < NORTHING & EASTING < highNorthFogo)]
 
+
+
 # Subset ------------------------------------------------------------------
 fogo <- fogo[!(IDYr %in% dropIDYr) &
                !(ANIMAL_ID %in% dropID)]
@@ -51,6 +54,7 @@ fogo[, itime := as.ITime(datetime)]
 
 # Summary -----------------------------------------------------------------
 aa <- fogo[, .N, by = .(ANIMAL_ID, Year)]
+
 
 
 # Output  -----------------------------------------------------------------

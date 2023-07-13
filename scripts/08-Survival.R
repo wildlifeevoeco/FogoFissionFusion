@@ -7,6 +7,7 @@ pkgs <- c('data.table')
 lapply(pkgs, require, character.only = TRUE)
 
 
+
 # Input -------------------------------------------------------------------
 dyads <- readRDS('output/07-dyads.Rds')
 
@@ -45,4 +46,3 @@ intervals <- dyadsNN[, .(
 
 # Output ------------------------------------------------------------------
 saveRDS(intervals, 'output/08-intervals.Rds')
-

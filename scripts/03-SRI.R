@@ -1,17 +1,16 @@
 # === SRI ---------------------------------------------------------------------
 
 
+
 # Packages ----------------------------------------------------------------
 libs <- c('data.table', 'spatsoc')
 lapply(libs, require, character.only = TRUE)
 
 
+
 # Input data --------------------------------------------------------------
 DT <- readRDS('output/02-habitat-locs.Rds')
 alloc.col(DT)
-
-
-# Functions ---------------------------------------------------------------
 
 
 
@@ -30,11 +29,13 @@ group_pts(
 )
 
 
+
 # Calculate SRI for each year ---------------------------------------------
 nets <- get_sri(DT, id = id, by = 'Year')[!is.na(sri)]
 
 # Set dyad id
 dyad_id(nets, 'ID1', 'ID2')
+
 
 
 # Output ------------------------------------------------------------------

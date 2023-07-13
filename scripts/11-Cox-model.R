@@ -1,6 +1,7 @@
 # === Model - cox ---------------------------------------------------------
 
 
+
 # Packages ----------------------------------------------------------------
 library(coxme)
 library(data.table)
@@ -10,6 +11,7 @@ library(survival)
 library(MuMIn)
 
 
+# Data --------------------------------------------------------------------
 # input files
 COX = readRDS('output/08-intervals.Rds')
 body = readRDS('output/09-all-dyad-data.Rds')
@@ -32,6 +34,7 @@ cox <- cox[!is.na(contag)]
 hist(cox$contag)
 
 
+
 # Survival analysis Cox PHM -----------------------------------------------
 
 str(cox)
@@ -45,73 +48,73 @@ surv_object <- Surv(cox$start, cox$stop, cox$fission)
 ## exp(coeff) = hazard ratio in the output
 
 
-# Backward selection from the interactions that make sense biologicaaly
+# Backward selection from the interactions that make sense biologicaly
 
 m1<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+ sri*diff_size+sri*ShanIndex+sri*contag+
             sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox)  
-AIC(m1) #3506.501
-AICc(m1) #3570.456
-# - sri*ShanIndex
+AIC(m1)
+AICc(m1)
 
 m2<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
             sri*diff_size+sri*contag+
             sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox)
-AIC(m2) # 3504.635
-AICc(m2) #3568.524
+AIC(m2)
+AICc(m2)
 
 #- sri*contag
 
 m3<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
             sri*diff_size+
             sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox)
-AIC(m3)# 3502.772
-AICc(m3) #3566.705
+AIC(m3)
+AICc(m3)
 # - sri*size
 
 m4<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
             sri*dyadPropOpen+diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox)
 
-AIC(m4)# 3502.298
-AICc(m4) #3566.157
+AIC(m4)
+AICc(m4)
 # -sri*open
 
 m5<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
             diff_size*ShanIndex+diff_size*contag+(1|dyadID)+(1|Year), data=cox)
 
-AIC(m5)# 3500.976
-AICc(m5) #3564.685
+AIC(m5)
+AICc(m5)
 # -size*ShanIndex
 
 m6<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
             diff_size*contag+(1|dyadID)+(1|Year), data=cox)
 
-AIC(m6)# 3500.554
-AICc(m6) #3564.294
+AIC(m6)
+AICc(m6)
 #- size*contag
 
 m7<-coxme(surv_object~ sri+diff_size+ShanIndex+contag+dyadPropOpen+
             (1|dyadID)+(1|Year), data=cox)
-AIC(m7)# 3499.792
-AICc(m7) # 3563.39
+AIC(m7)
+AICc(m7)
 # - size
+
 # ===> final model
 m7
 
 m8<-coxme(surv_object~ sri+ShanIndex+contag+dyadPropOpen+
             (1|dyadID)+(1|Year), data=cox)
 m8
-AIC(m8)# 3561.884
-AICc(m8) # 3563.01
+AIC(m8)
+AICc(m8)
 
 m9<-coxme(surv_object~ sri+ShanIndex+dyadPropOpen+
             (1|dyadID)+(1|Year), data=cox)
 m9
-AICc(m9) # 3561.972
+AICc(m9)
 
 m10<-coxme(surv_object~ sri+ShanIndex+
             (1|dyadID)+(1|Year), data=cox)
 m10
-AICc(m10) # 3563.125 GOES UP
+AICc(m10)
 
 #Check of the proportional hazards assumptions
 
@@ -140,26 +143,11 @@ m7
 m8
 
 m9
-# m7
-#Call:
-#  coxph(formula = surv_object ~ sri + diff_size + ShanIndex + contag + 
-          dyadPropOpen, data = cox)
-
-#.                coef  exp(coef)  se(coef)      z        p
-#sri          -1.981465  0.137867  0.362916 -5.460 4.77e-08
-#diff_size     0.005443  1.005458  0.004255  1.279 0.200769
-#ShanIndex     0.519948  1.681940  0.203083  2.560 0.010459
-#contag       -0.006070  0.993949  0.393248 -0.015 0.987685
-#dyadPropOpen  0.695791  2.005295  0.193496  3.596 0.000323
-
-#Likelihood ratio test=50.75  on 5 df, p=9.725e-10
-#n= 8040, number of events= 1617 
-
-
-# sample size = individual-year or dyad id?
-#140 dyadID 11 parameter in model
 
 AICc(m1,m2,m3,m4,m5,m6,m7)
+
+
+
 #### Variance inflation factor for mixed models. Run the code and then use vif.mer(model)
 
 vif.mer <- function (fit) {

@@ -1,13 +1,16 @@
 # === Home Range Overlap --------------------------------------------------
 
 
+
 # Packages ----------------------------------------------------------------
 libs <- c('data.table', 'sp', 'adehabitatHR', 'spatsoc')
 lapply(libs, require, character.only = TRUE)
 
 
+
 # Input data --------------------------------------------------------------
 DT <- readRDS('output/01-prep-locs.Rds')
+
 
 
 # Calculate home range area -----------------------------------------------
@@ -26,6 +29,7 @@ vert.dt[, c(id, 'Year') := tstrsplit(id, '_')]
 vert.dt[, areaKM2 := area / 100]
 
 
+
 # Home range overlap networks ---------------------------------------------
 hr.nets <- hr_network(DT, 
                       id = id, 
@@ -34,7 +38,6 @@ hr.nets <- hr_network(DT,
                       by = c('Year'),
                       returns = 'overlap')[!is.na(value)]
 
-
 # Restructure IDs for consistency
 idcols <- c('ID1', 'ID2')
 setnames(hr.nets, c('Year', idcols, 'udoi'))
@@ -42,6 +45,7 @@ hr.nets[, (idcols) := lapply(.SD, as.character), .SDcols = idcols]
 
 # Generate dyad id
 dyad_id(hr.nets, idcols[[1]], idcols[[2]])
+
 
 
 # Output ------------------------------------------------------------------
