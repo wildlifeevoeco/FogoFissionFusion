@@ -1,5 +1,9 @@
 # Environmental, social, and morphological drivers of fission-fusion dynamics in a social ungulate
 
+
+[![DOI](https://zenodo.org/badge/666180962.svg)](https://zenodo.org/badge/latestdoi/666180962)
+
+
 -   Authors:
     - Morgane Le Goff
     - Jack G. Hendrix
